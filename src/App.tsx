@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { TdfDataProvider } from './context/TdfDataContext';
 import HomePage from './pages/Klassement';
 import RennerPunten from './pages/RennerPunten';
 import TeamSelectie from './pages/TeamSelectie';
@@ -88,18 +89,20 @@ function Navigation() {
 // App component
 function App() {
   return (
-    <HashRouter>
-      <Navigation />
-      <main className="max-w-7xl mx-auto">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/Klassement" element={<HomePage />} />
-          <Route path="/RennerPunten" element={<RennerPunten />} />
-          <Route path="/TeamSelectie" element={<TeamSelectie />} />
-          <Route path="/OverDezePoule" element={<OverDezePoule />} />
-        </Routes>
-      </main>
-    </HashRouter>
+    <TdfDataProvider>
+      <HashRouter>
+        <Navigation />
+        <main className="max-w-7xl mx-auto">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/Klassement" element={<HomePage />} />
+            <Route path="/RennerPunten" element={<RennerPunten />} />
+            <Route path="/TeamSelectie" element={<TeamSelectie />} />
+            <Route path="/OverDezePoule" element={<OverDezePoule />} />
+          </Routes>
+        </main>
+      </HashRouter>
+    </TdfDataProvider>
   );
 }
 

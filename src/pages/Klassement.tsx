@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 
 // Data Import
-import { useTdfData } from '../hooks/useTdfData';
+import { useTdfData } from '../context/TdfDataContext';
 
 interface LeaderboardEntry {
   participant_name: string;
@@ -34,24 +34,18 @@ function HomePage() {
 
   const { data: tdfData, loading, error } = useTdfData();
 
-  // Add loading state
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!tdfData) return null;
-
-  const { metadata, leaderboard_by_stage, directie_leaderboard_by_stage } = tdfData;
-  const currentStageNum = metadata.current_stage;
-  const currentStageKey = `stage_${currentStageNum}`;
-
-  const currentLeaderboard = useMemo(() => 
-  leaderboard_by_stage[currentStageKey as keyof typeof leaderboard_by_stage] || [], 
-  [leaderboard_by_stage, currentStageKey]
-  );
+  // ALL HOOKS MUST COME BEFORE ANY CONDITIONAL RETURNS
+  const currentLeaderboard = useMemo(() => {
+    if (!tdfData) return [];
+    const currentStageKey = `stage_${tdfData.metadata.current_stage}`;
+    return tdfData.leaderboard_by_stage[currentStageKey] || [];
+  }, [tdfData]);
   
-  const currentDirectieLeaderboard = useMemo(() => 
-    directie_leaderboard_by_stage[currentStageKey as keyof typeof directie_leaderboard_by_stage] || [], 
-    [directie_leaderboard_by_stage, currentStageKey]
-  );
+  const currentDirectieLeaderboard = useMemo(() => {
+    if (!tdfData) return [];
+    const currentStageKey = `stage_${tdfData.metadata.current_stage}`;
+    return tdfData.directie_leaderboard_by_stage[currentStageKey] || [];
+  }, [tdfData]);
 
   const stageResults = useMemo(() => {
     return [...currentLeaderboard].sort((a, b) => a.stage_rank - b.stage_rank);
@@ -79,12 +73,47 @@ function HomePage() {
     } else {
       return currentDirectieLeaderboard.filter((d) => 
         d.directie_name.toLowerCase().includes(searchLower) ||
-        d.overall_participant_contributions.some((cp: { participant_name: string }) =>
+        d.overall_participant_contributions.some((cp: { participant_name: string }) => 
           cp.participant_name.toLowerCase().includes(searchLower)
         )
       );
     }
   }, [activeView, searchTerm, stageResults, currentDirectieLeaderboard, currentLeaderboard]);
+
+  // NOW THE EARLY RETURNS (after all hooks)
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-tdf-bg">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-tdf-primary mb-4">Loading...</div>
+          <div className="text-tdf-text-secondary">Fetching race data...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-tdf-bg">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-red-600 mb-4">Error</div>
+          <div className="text-tdf-text-secondary mb-4">{error.message}</div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-tdf-accent text-white rounded hover:bg-yellow-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!tdfData) return null;
+
+  // Now safely destructure after null check
+  const { metadata, leaderboard_by_stage } = tdfData;
+  const currentStageNum = metadata.current_stage;
 
   const renderRankChange = (rankChange: number) => {
     if (rankChange > 0) {
@@ -528,4 +557,3 @@ function HomePage() {
 }
 
 export default HomePage;
-

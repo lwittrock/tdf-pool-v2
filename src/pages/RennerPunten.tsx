@@ -1,13 +1,13 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { TabButton, SearchInput } from '../components/Button';
 
 // Import jersey icons
-import yellowIcon from '/assets/jersey_yellow.svg';
-import greenIcon from '/assets/jersey_green.svg';
-import polkaDotIcon from '/assets/jersey_polka_dot.svg';
-import whiteIcon from '/assets/jersey_white.svg';
+const yellowIcon = '/assets/jersey_yellow.svg';
+const greenIcon = '/assets/jersey_green.svg';
+const polkaDotIcon = '/assets/jersey_polka_dot.svg';
+const whiteIcon = '/assets/jersey_white.svg';
 
 // Reference the imported variables in your object
 const jerseyIcons: Record<string, string> = {
@@ -53,7 +53,7 @@ const CombativeIcon = ({ size = 'sm', riderNumber }: CombativeIconProps) => {
 };
 
 // Import your data
-import tdfData from '../data/tdf_data.json';
+import { useTdfData } from '../context/TdfDataContext';
 
 interface RiderStageData {
   date: string;
@@ -110,7 +110,21 @@ function RidersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
-  const data = tdfData;
+  const { data: mainData, ridersData, ridersLoading, ridersError, fetchRiders } = useTdfData();
+
+  useEffect(() => {
+    fetchRiders();
+  }, [fetchRiders]);
+
+  if (ridersLoading && !ridersData) {
+    return <Layout title="Renner Punten"><div className="text-center py-12">Loading...</div></Layout>;
+  }
+  if (ridersError) {
+    return <Layout title="Renner Punten"><div className="text-center py-12 text-red-600">Error: {ridersError.message}</div></Layout>;
+  }
+  if (!ridersData || !mainData) return null;
+
+  const data = { metadata: mainData.metadata, riders: ridersData };
   const currentStageNum = data.metadata.current_stage;
   const currentStageKey = `stage_${currentStageNum}`;
 
