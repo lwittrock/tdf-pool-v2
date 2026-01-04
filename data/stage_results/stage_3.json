@@ -1,0 +1,56 @@
+{
+    "stage_info": {
+        "date": "2025-07-07",
+        "distance": "178.3 km",
+        "departure_city": "Valenciennes",
+        "arrival_city": "Dunkerque",
+        "stage_type_category": "Flat",
+        "stage_difficulty": "Flat",
+        "won_how": "Bunch sprint"
+    },
+    "dnf_riders": [
+        "Jasper Philipsen"
+    ],
+    "top_20_finishers": [
+        {
+            "rider_name": "Tim Merlier",
+            "rank": "1",
+            "time": "3:59:22",
+            "team": "Soudal-QuickStep",
+            "bib": "25"
+        },
+        {
+            "rider_name": "Jonathan Milan",
+            "rank": "2",
+            "time": "s.t.",
+            "team": "Lidl-Trek",
+            "bib": "81"
+        },
+        {
+            "rider_name": "Phil Bauhaus",
+            "rank": "3",
+            "time": "s.t.",
+            "team": "Bahrain Victorious",
+            "bib": "51"
+        }
+    ],
+    "top_gc_rider": {
+        "rider_name": "Mathieu van der Poel",
+        "rank": "1"
+    },
+    "top_kom_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": "1"
+    },
+    "top_points_rider": {
+        "rider_name": "Jonathan Milan",
+        "rank": "1"
+    },
+    "top_youth_rider": {
+        "rider_name": "Jonas Abrahamsen",
+        "rank": "1"
+    },
+    "combative_rider": {
+        "rider_name": "Tim Wellens"
+    }
+}

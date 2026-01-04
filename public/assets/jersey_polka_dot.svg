@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <pattern id="diagonalDotPattern" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <circle cx="8" cy="8" r="4" fill="#D32F2F"/>
+    </pattern>
+  </defs>
+  <path d="M32 15 Q50 25 68 15 L88 28 L82 42 L72 36 L72 85 L28 85 L28 36 L18 42 L12 28 Z" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M32 15 Q50 25 68 15 L88 28 L82 42 L72 36 L72 85 L28 85 L28 36 L18 42 L12 28 Z" fill="url(#diagonalDotPattern)"/>
+</svg>

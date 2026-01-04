@@ -1,0 +1,43 @@
+{
+  "name": "tdf-pool-v2",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "seed-participants": "tsx scripts/seed-participants.ts",
+    "seed-stages": "tsx scripts/seed-stages.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
+    "@tanstack/react-query": "^5.17.19",
+    "@tanstack/react-query-devtools": "^5.17.19",
+    "date-fns": "^3.3.1",
+    "dotenv": "^16.6.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.22.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0-alpha.25",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@vercel/node": "^5.5.16",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "tailwindcss": "^4.0.0-alpha.25",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  }
+}

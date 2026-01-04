@@ -1,0 +1,133 @@
+{
+    "stage_info": {
+        "date": "2025-07-13",
+        "distance": 174.1,
+        "departure_city": "Chinon",
+        "arrival_city": "Châteauroux",
+        "stage_type_category": "RR",
+        "stage_difficulty": "Flat",
+        "won_how": "Sprint of large group"
+    },
+    "dnf_riders": [
+        "Joao Almeida"
+    ],
+    "top_20_finishers": [
+        {
+            "rider_name": "Tim Merlier",
+            "rank": 1,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Jonathan Milan",
+            "rank": 2,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Arnaud de Lie",
+            "rank": 3,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Pavel Bittner",
+            "rank": 4,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Paul Penhoet",
+            "rank": 5,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Biniam Girmay",
+            "rank": 6,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Phil Bauhaus",
+            "rank": 7,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Jordi Meeus",
+            "rank": 8,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Stian Fredheim",
+            "rank": 9,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Kaden Groves",
+            "rank": 10,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Alexis Renard",
+            "rank": 11,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Pascal Ackermann",
+            "rank": 12,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Arnaud Demare",
+            "rank": 13,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Anthony Turgis",
+            "rank": 14,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Dylan Groenewegen",
+            "rank": 15,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Alberto Dainese",
+            "rank": 16,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Bastien Tronchon",
+            "rank": 17,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Matteo Trentin",
+            "rank": 18,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Danny van Poppel",
+            "rank": 19,
+            "time": "3:28:52"
+        },
+        {
+            "rider_name": "Cees Bol",
+            "rank": 20,
+            "time": "3:28:52"
+        }
+    ],
+    "top_gc_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": 1
+    },
+    "top_kom_rider": {
+        "rider_name": "Tim Wellens",
+        "rank": 1
+    },
+    "top_points_rider": {
+        "rider_name": "Jonathan Milan",
+        "rank": 1
+    },
+    "top_youth_rider": {
+        "rider_name": "Remco Evenepoel",
+        "rank": 1
+    },
+    "combative_rider": null
+}

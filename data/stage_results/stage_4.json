@@ -1,0 +1,131 @@
+{
+    "stage_info": {
+        "date": "2025-07-08",
+        "distance": 174.2,
+        "departure_city": "Amiens Métropole",
+        "arrival_city": "Rouen",
+        "stage_type_category": "RR",
+        "stage_difficulty": "Hills, flat finish",
+        "won_how": "Sprint of 6 riders"
+    },
+    "dnf_riders": [],
+    "top_20_finishers": [
+        {
+            "rider_name": "Tadej Pogacar",
+            "rank": 1,
+            "time": "3:50:29"
+        },
+        {
+            "rider_name": "Mathieu van der Poel",
+            "rank": 2,
+            "time": "3:50:29"
+        },
+        {
+            "rider_name": "Jonas Vingegaard",
+            "rank": 3,
+            "time": "3:50:29"
+        },
+        {
+            "rider_name": "Oscar Onley",
+            "rank": 4,
+            "time": "3:50:29"
+        },
+        {
+            "rider_name": "Romain Gregoire",
+            "rank": 5,
+            "time": "3:50:29"
+        },
+        {
+            "rider_name": "Joao Almeida",
+            "rank": 6,
+            "time": "3:50:29"
+        },
+        {
+            "rider_name": "Remco Evenepoel",
+            "rank": 7,
+            "time": "3:50:32"
+        },
+        {
+            "rider_name": "Matteo Jorgenson",
+            "rank": 8,
+            "time": "3:50:32"
+        },
+        {
+            "rider_name": "Mattias Skjelmose",
+            "rank": 9,
+            "time": "3:50:36"
+        },
+        {
+            "rider_name": "Kevin Vauquelin",
+            "rank": 10,
+            "time": "3:50:39"
+        },
+        {
+            "rider_name": "Wout van Aert",
+            "rank": 11,
+            "time": "3:50:59"
+        },
+        {
+            "rider_name": "Aurelien Paret-Peintre",
+            "rank": 12,
+            "time": "3:50:59"
+        },
+        {
+            "rider_name": "Alex Baudin",
+            "rank": 13,
+            "time": "3:50:59"
+        },
+        {
+            "rider_name": "Jhonatan Narvaez",
+            "rank": 14,
+            "time": "3:50:59"
+        },
+        {
+            "rider_name": "Tobias Halland Johannessen",
+            "rank": 15,
+            "time": "3:50:59"
+        },
+        {
+            "rider_name": "Tiesj Benoot",
+            "rank": 16,
+            "time": "3:51:01"
+        },
+        {
+            "rider_name": "Enric Mas",
+            "rank": 17,
+            "time": "3:51:01"
+        },
+        {
+            "rider_name": "Primoz Roglic",
+            "rank": 18,
+            "time": "3:51:01"
+        },
+        {
+            "rider_name": "Alexey Lutsenko",
+            "rank": 19,
+            "time": "3:51:01"
+        },
+        {
+            "rider_name": "Marc Hirschi",
+            "rank": 20,
+            "time": "3:51:04"
+        }
+    ],
+    "top_gc_rider": {
+        "rider_name": "Mathieu van der Poel",
+        "rank": 1
+    },
+    "top_kom_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": 1
+    },
+    "top_points_rider": {
+        "rider_name": "Jonathan Milan",
+        "rank": 1
+    },
+    "top_youth_rider": {
+        "rider_name": "Kevin Vauquelin",
+        "rank": 1
+    },
+    "combative_rider": null
+}

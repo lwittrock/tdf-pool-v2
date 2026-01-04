@@ -1,0 +1,133 @@
+{
+    "stage_info": {
+        "date": "2025-07-17",
+        "distance": 180.6,
+        "departure_city": "Auch",
+        "arrival_city": "Hautacam",
+        "stage_type_category": "RR",
+        "stage_difficulty": "Mountains, uphill finish",
+        "won_how": "11.1 km solo"
+    },
+    "dnf_riders": [
+        "Cees Bol"
+    ],
+    "top_20_finishers": [
+        {
+            "rider_name": "Tadej Pogacar",
+            "rank": 1,
+            "time": "4:21:19"
+        },
+        {
+            "rider_name": "Jonas Vingegaard",
+            "rank": 2,
+            "time": "4:23:29"
+        },
+        {
+            "rider_name": "Florian Lipowitz",
+            "rank": 3,
+            "time": "4:23:42"
+        },
+        {
+            "rider_name": "Tobias Halland Johannessen",
+            "rank": 4,
+            "time": "4:24:19"
+        },
+        {
+            "rider_name": "Oscar Onley",
+            "rank": 5,
+            "time": "4:24:19"
+        },
+        {
+            "rider_name": "Kevin Vauquelin",
+            "rank": 6,
+            "time": "4:24:52"
+        },
+        {
+            "rider_name": "Remco Evenepoel",
+            "rank": 7,
+            "time": "4:24:54"
+        },
+        {
+            "rider_name": "Felix Gall",
+            "rank": 8,
+            "time": "4:25:21"
+        },
+        {
+            "rider_name": "Primoz Roglic",
+            "rank": 9,
+            "time": "4:25:27"
+        },
+        {
+            "rider_name": "Cristian Rodriguez",
+            "rank": 10,
+            "time": "4:28:45"
+        },
+        {
+            "rider_name": "Einer Rubio",
+            "rank": 11,
+            "time": "4:28:46"
+        },
+        {
+            "rider_name": "Raul Garcia Pierna",
+            "rank": 12,
+            "time": "4:28:52"
+        },
+        {
+            "rider_name": "Guillaume Martin",
+            "rank": 13,
+            "time": "4:30:24"
+        },
+        {
+            "rider_name": "Sergio Higuita",
+            "rank": 14,
+            "time": "4:30:57"
+        },
+        {
+            "rider_name": "Matteo Jorgenson",
+            "rank": 15,
+            "time": "4:31:44"
+        },
+        {
+            "rider_name": "Ben O'Connor",
+            "rank": 16,
+            "time": "4:32:02"
+        },
+        {
+            "rider_name": "Bruno Armirail",
+            "rank": 17,
+            "time": "4:32:05"
+        },
+        {
+            "rider_name": "Jhonatan Narvaez",
+            "rank": 18,
+            "time": "4:32:09"
+        },
+        {
+            "rider_name": "Jordan Jegat",
+            "rank": 19,
+            "time": "4:33:06"
+        },
+        {
+            "rider_name": "Aurelien Paret-Peintre",
+            "rank": 20,
+            "time": "4:33:06"
+        }
+    ],
+    "top_gc_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": 1
+    },
+    "top_kom_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": 1
+    },
+    "top_points_rider": {
+        "rider_name": "Jonathan Milan",
+        "rank": 1
+    },
+    "top_youth_rider": {
+        "rider_name": "Remco Evenepoel",
+        "rank": 1
+    },
+    "combative_rider": null
+}

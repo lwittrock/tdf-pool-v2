@@ -1,0 +1,58 @@
+{
+    "stage_info": {
+        "date": "2025-07-05",
+        "distance": "185.5 km",
+        "departure_city": "Lille",
+        "arrival_city": "Lille",
+        "stage_type_category": "Flat",
+        "stage_difficulty": "Flat",
+        "won_how": "Bunch sprint"
+    },
+    "dnf_riders": [
+        "Filippo Ganna", 
+        "Stefan Bissegger"
+    ],
+    "top_20_finishers": [
+        {
+            "rider_name": "Jasper Philipsen",
+            "rank": "1",
+            "time": "4:09:35",
+            "team": "Alpecin-Deceuninck",
+            "bib": "101"
+        },
+        {
+            "rider_name": "Biniam Girmay",
+            "rank": "2",
+            "time": "s.t.",
+            "team": "Intermarche-Wanty",
+            "bib": "161"
+        },
+        {
+            "rider_name": "Soren Waerenskjold",
+            "rank": "3",
+            "time": "s.t.",
+            "team": "Uno-X Mobility",
+            "bib": "201"
+        }
+    ],
+    "top_gc_rider": {
+        "rider_name": "Jasper Philipsen",
+        "rank": "1"
+    },
+    "top_kom_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": "1"
+    },
+    "top_points_rider": {
+        "rider_name": "Jasper Philipsen",
+        "rank": "1"
+    },
+    "top_youth_rider": {
+        "rider_name": "Jonas Abrahamsen",
+        "rank": "1"
+    },
+    "combative_rider": {
+        "rider_name": "Benjamin Thomas",
+        "rank": "1"
+    }
+}

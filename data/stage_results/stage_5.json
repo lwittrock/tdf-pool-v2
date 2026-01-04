@@ -1,0 +1,134 @@
+{
+    "stage_info": {
+        "date": "2025-07-09",
+        "distance": 33.0,
+        "departure_city": "Caen",
+        "arrival_city": "Caen",
+        "stage_type_category": "ITT",
+        "stage_difficulty": "Flat",
+        "won_how": "Time trial"
+    },
+    "dnf_riders": [
+        "Emilien Jeanniere",
+        "Jasper de Buyst"
+    ],
+    "top_20_finishers": [
+        {
+            "rider_name": "Remco Evenepoel",
+            "rank": 1,
+            "time": "0:36:42"
+        },
+        {
+            "rider_name": "Tadej Pogacar",
+            "rank": 2,
+            "time": "0:36:58"
+        },
+        {
+            "rider_name": "Edoardo Affini",
+            "rank": 3,
+            "time": "0:37:15"
+        },
+        {
+            "rider_name": "Bruno Armirail",
+            "rank": 4,
+            "time": "0:37:17"
+        },
+        {
+            "rider_name": "Kevin Vauquelin",
+            "rank": 5,
+            "time": "0:37:31"
+        },
+        {
+            "rider_name": "Florian Lipowitz",
+            "rank": 6,
+            "time": "0:37:40"
+        },
+        {
+            "rider_name": "Ivan Romeo",
+            "rank": 7,
+            "time": "0:37:44"
+        },
+        {
+            "rider_name": "Joao Almeida",
+            "rank": 8,
+            "time": "0:37:56"
+        },
+        {
+            "rider_name": "Luke Plapp",
+            "rank": 9,
+            "time": "0:37:59"
+        },
+        {
+            "rider_name": "Pablo Castrillo",
+            "rank": 10,
+            "time": "0:38:00"
+        },
+        {
+            "rider_name": "Matteo Jorgenson",
+            "rank": 11,
+            "time": "0:38:01"
+        },
+        {
+            "rider_name": "Primoz Roglic",
+            "rank": 12,
+            "time": "0:38:01"
+        },
+        {
+            "rider_name": "Jonas Vingegaard",
+            "rank": 13,
+            "time": "0:38:03"
+        },
+        {
+            "rider_name": "Tobias Foss",
+            "rank": 14,
+            "time": "0:38:07"
+        },
+        {
+            "rider_name": "Nelson Oliveira",
+            "rank": 15,
+            "time": "0:38:19"
+        },
+        {
+            "rider_name": "Nils Politt",
+            "rank": 16,
+            "time": "0:38:19"
+        },
+        {
+            "rider_name": "Raul Garcia Pierna",
+            "rank": 17,
+            "time": "0:38:20"
+        },
+        {
+            "rider_name": "Mathieu van der Poel",
+            "rank": 18,
+            "time": "0:38:26"
+        },
+        {
+            "rider_name": "Mattias Skjelmose",
+            "rank": 19,
+            "time": "0:38:28"
+        },
+        {
+            "rider_name": "Mauro Schmid",
+            "rank": 20,
+            "time": "0:38:28"
+        }
+    ],
+    "top_gc_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": 1
+    },
+    "top_kom_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": 1
+    },
+    "top_points_rider": {
+        "rider_name": "Tadej Pogacar",
+        "rank": 1
+    },
+    "top_youth_rider": {
+        "rider_name": "Remco Evenepoel",
+        "rank": 1
+    },
+    "combative_rider": null
+}

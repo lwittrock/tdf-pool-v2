@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+/* Custom theme colors for TdF Pool */
+@theme {
+  /* TdF Yellow theme */
+  --color-tdf-primary: #ca8a04;
+  --color-tdf-accent: #eab308;
+  --color-tdf-score: #ca8a04;
+  
+  /* Grays for backgrounds and text */
+  --color-tdf-bg: #f9fafb;
+  --color-tdf-card: #ffffff;
+  --color-tdf-card-hover: #f3f4f6;
+  --color-tdf-expanded: #f9fafb;
+  
+  /* Table colors */
+  --color-table-header: #e5e7eb;
+  --color-table-row-even: #ffffff;
+  --color-table-row-odd: #f9fafb;
+  
+  /* Text colors */
+  --color-tdf-text-primary: #111827;
+  --color-tdf-text-highlight: #4b5563;
+  --color-tdf-text-secondary: #6b7280;
+  --color-tdf-text-muted: #9ca3af;
+  
+  /* Button states */
+  --color-tdf-button-inactive: #e5e7eb;
+  --color-tdf-button-text: #374151;
+  
+  /* Status colors */
+  --color-tdf-green: #16a34a;
+  --color-tdf-red: #dc2626;
+}

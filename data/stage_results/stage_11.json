@@ -1,0 +1,131 @@
+{
+    "stage_info": {
+        "date": "2025-07-16",
+        "distance": 156.8,
+        "departure_city": "Toulouse",
+        "arrival_city": "Toulouse",
+        "stage_type_category": "RR",
+        "stage_difficulty": "Flat",
+        "won_how": "Sprint à deux"
+    },
+    "dnf_riders": [],
+    "top_20_finishers": [
+        {
+            "rider_name": "Jonas Abrahamsen",
+            "rank": 1,
+            "time": "3:15:56"
+        },
+        {
+            "rider_name": "Mauro Schmid",
+            "rank": 2,
+            "time": "3:15:56"
+        },
+        {
+            "rider_name": "Mathieu van der Poel",
+            "rank": 3,
+            "time": "3:16:03"
+        },
+        {
+            "rider_name": "Arnaud de Lie",
+            "rank": 4,
+            "time": "3:16:49"
+        },
+        {
+            "rider_name": "Wout van Aert",
+            "rank": 5,
+            "time": "3:16:49"
+        },
+        {
+            "rider_name": "Axel Laurance",
+            "rank": 6,
+            "time": "3:16:49"
+        },
+        {
+            "rider_name": "Fred Wright",
+            "rank": 7,
+            "time": "3:16:49"
+        },
+        {
+            "rider_name": "Mathieu Burgaudeau",
+            "rank": 8,
+            "time": "3:16:49"
+        },
+        {
+            "rider_name": "Quinn Simmons",
+            "rank": 9,
+            "time": "3:16:49"
+        },
+        {
+            "rider_name": "Davide Ballerini",
+            "rank": 10,
+            "time": "3:17:07"
+        },
+        {
+            "rider_name": "Kaden Groves",
+            "rank": 11,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Alberto Dainese",
+            "rank": 12,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Jordan Jegat",
+            "rank": 13,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Romain Gregoire",
+            "rank": 14,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Simone Velasco",
+            "rank": 15,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Quentin Pacher",
+            "rank": 16,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Louis Barre",
+            "rank": 17,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Clement Champoussin",
+            "rank": 18,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Alex Aranburu",
+            "rank": 19,
+            "time": "3:19:24"
+        },
+        {
+            "rider_name": "Jhonatan Narvaez",
+            "rank": 20,
+            "time": "3:19:24"
+        }
+    ],
+    "top_gc_rider": {
+        "rider_name": "Ben Healy",
+        "rank": 1
+    },
+    "top_kom_rider": {
+        "rider_name": "Lenny Martinez",
+        "rank": 1
+    },
+    "top_points_rider": {
+        "rider_name": "Jonathan Milan",
+        "rank": 1
+    },
+    "top_youth_rider": {
+        "rider_name": "Ben Healy",
+        "rank": 1
+    },
+    "combative_rider": null
+}
