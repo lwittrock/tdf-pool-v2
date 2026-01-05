@@ -4,12 +4,14 @@ import HomePage from './pages/Klassement';
 import RennerPunten from './pages/RennerPunten';
 import TeamSelectie from './pages/TeamSelectie';
 import OverDezePoule from './pages/OverDezePoule';
+import EtappeBeheer from './pages/EtappeBeheer';
 
 // Navigation items
 const navItems = [
   { path: '/Klassement', label: 'Klassement' },
   { path: '/RennerPunten', label: 'Renner Punten' },
   { path: '/TeamSelectie', label: 'Team Selectie' },
+  { path: '/EtappeBeheer', label: 'Etappe Beheer' },
   { path: '/OverDezePoule', label: 'Over deze Poule' },
 ];
 
@@ -58,7 +60,7 @@ function Navigation() {
         </div>
 
         {/* Desktop Links */}
-        <ul className="hidden lg:flex justify-center space-x-24">
+        <ul className="hidden lg:flex justify-center space-x-12">
           {navItems.map((item) => (
             <li key={item.path}>
               <Link to={item.path} className={linkClass(item.path)}>
@@ -96,6 +98,7 @@ function App() {
           <Route path="/Klassement" element={<HomePage />} />
           <Route path="/RennerPunten" element={<RennerPunten />} />
           <Route path="/TeamSelectie" element={<TeamSelectie />} />
+          <Route path="/EtappeBeheer" element={<EtappeBeheer />} />
           <Route path="/OverDezePoule" element={<OverDezePoule />} />
         </Routes>
       </main>

@@ -324,4 +324,86 @@ async function generateStaticJSON() {
   writeFileSync(outputPath, JSON.stringify(tdfData, null, 2));
   
   console.log('[Generate JSON] Written to:', outputPath);
+
+  // Also generate stages_data.json
+  await generateStagesJSON();
+}
+
+async function generateStagesJSON() {
+  console.log('[Generate Stages JSON] Starting...');
+
+  // Get all stages
+  const { data: allStages } = await supabase
+    .from('stages')
+    .select('*')
+    .order('stage_number');
+
+  if (!allStages) return;
+
+  // Get all riders for lookups
+  const { data: allRiders } = await supabase.from('riders').select('id, name, team');
+  const riderMap = new Map(allRiders?.map(r => [r.id, r.name]) || []);
+
+  const stagesData = [];
+
+  for (const stage of allStages) {
+    // Get stage results
+    const { data: results } = await supabase
+      .from('stage_results')
+      .select('position, time_gap, rider_id')
+      .eq('stage_id', stage.id)
+      .order('position')
+      .limit(20);
+
+    // Get jerseys
+    const { data: jerseys } = await supabase
+      .from('stage_jerseys')
+      .select('jersey_type, rider_id')
+      .eq('stage_id', stage.id);
+
+    // Get combativity
+    const { data: combativity } = await supabase
+      .from('stage_combativity')
+      .select('rider_id')
+      .eq('stage_id', stage.id)
+      .single();
+
+    // Get DNF/DNS
+    const { data: dnf } = await supabase
+      .from('stage_dnf')
+      .select('status, rider_id')
+      .eq('stage_id', stage.id);
+
+    stagesData.push({
+      stage_number: stage.stage_number,
+      date: stage.date,
+      distance: stage.distance,
+      departure_city: stage.departure_city,
+      arrival_city: stage.arrival_city,
+      stage_type: stage.stage_type,
+      difficulty: stage.difficulty,
+      won_how: stage.won_how,
+      is_complete: stage.is_complete,
+      top_20_finishers: results?.map(r => ({
+        position: r.position,
+        rider_name: riderMap.get(r.rider_id) || '',
+        time_gap: r.time_gap
+      })) || [],
+      jerseys: {
+        yellow: riderMap.get(jerseys?.find(j => j.jersey_type === 'yellow')?.rider_id || '') || '',
+        green: riderMap.get(jerseys?.find(j => j.jersey_type === 'green')?.rider_id || '') || '',
+        polka_dot: riderMap.get(jerseys?.find(j => j.jersey_type === 'polka_dot')?.rider_id || '') || '',
+        white: riderMap.get(jerseys?.find(j => j.jersey_type === 'white')?.rider_id || '') || '',
+      },
+      combativity: riderMap.get(combativity?.rider_id || '') || '',
+      dnf_riders: dnf?.filter(d => d.status === 'DNF').map(d => riderMap.get(d.rider_id) || '') || [],
+      dns_riders: dnf?.filter(d => d.status === 'DNS').map(d => riderMap.get(d.rider_id) || '') || [],
+    });
+  }
+
+  // Write to public/data/stages_data.json
+  const stagesOutputPath = join(process.cwd(), 'public', 'data', 'stages_data.json');
+  writeFileSync(stagesOutputPath, JSON.stringify(stagesData, null, 2));
+  
+  console.log('[Generate Stages JSON] Written to:', stagesOutputPath);
 }
