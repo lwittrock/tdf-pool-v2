@@ -4,10 +4,10 @@ import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { SearchInput } from '../components/Button';
 
 // Import jersey icons
-import yellowIcon from '/assets/jersey_yellow.svg';
-import greenIcon from '/assets/jersey_green.svg';
-import polkaDotIcon from '/assets/jersey_polka_dot.svg';
-import whiteIcon from '/assets/jersey_white.svg';
+const yellowIcon = '/assets/jersey_yellow.svg';
+const greenIcon = '/assets/jersey_green.svg';
+const polkaDotIcon = '/assets/jersey_polka_dot.svg';
+const whiteIcon = '/assets/jersey_white.svg';
 
 // Reference the imported variables in your object
 const jerseyIcons: Record<string, string> = {
@@ -18,7 +18,7 @@ const jerseyIcons: Record<string, string> = {
 };
 
 // Import your data
-import tdfData from '../data/tdf_data.json';
+import { useTdfData } from '../hooks/useTdfData';
 
 interface RiderStageData {
   date: string;
@@ -65,6 +65,26 @@ interface StageInfo {
 function TeamSelectionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
+
+  const { data: tdfData, loading, error } = useTdfData();
+
+  if (loading) {
+    return (
+      <Layout title="Team Selecties">
+        <div className="text-center py-12">Loading...</div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout title="Team Selecties">
+        <div className="text-center py-12 text-red-600">Error: {error.message}</div>
+      </Layout>
+    );
+  }
+
+  if (!tdfData) return null;
 
   const data = tdfData;
 

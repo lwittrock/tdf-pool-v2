@@ -1,15 +1,15 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { TabButton, SearchInput } from '../components/Button';
+import { useTdfData } from '../hooks/useTdfData';
 
-// Import jersey icons
+// Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
 const greenIcon = '/assets/jersey_green.svg';
 const polkaDotIcon = '/assets/jersey_polka_dot.svg';
 const whiteIcon = '/assets/jersey_white.svg';
 
-// Reference the imported variables in your object
 const jerseyIcons: Record<string, string> = {
   yellow: yellowIcon,
   green: greenIcon,
@@ -51,9 +51,6 @@ const CombativeIcon = ({ size = 'sm', riderNumber }: CombativeIconProps) => {
     </svg>
   );
 };
-
-// Import your data
-import { useTdfData } from '../context/TdfDataContext';
 
 interface RiderStageData {
   date: string;
@@ -110,67 +107,78 @@ function RidersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
-  const { data: mainData, ridersData, ridersLoading, ridersError, fetchRiders } = useTdfData();
+  const { data: tdfData, loading, error } = useTdfData();
 
-  useEffect(() => {
-    fetchRiders();
-  }, [fetchRiders]);
-
-  if (ridersLoading && !ridersData) {
-    return <Layout title="Renner Punten"><div className="text-center py-12">Loading...</div></Layout>;
+  if (loading) {
+    return (
+      <Layout title="Renner Punten">
+        <div className="text-center py-12">Loading...</div>
+      </Layout>
+    );
   }
-  if (ridersError) {
-    return <Layout title="Renner Punten"><div className="text-center py-12 text-red-600">Error: {ridersError.message}</div></Layout>;
-  }
-  if (!ridersData || !mainData) return null;
 
-  const data = { metadata: mainData.metadata, riders: ridersData };
+  if (error) {
+    return (
+      <Layout title="Renner Punten">
+        <div className="text-center py-12 text-red-600">Error: {error.message}</div>
+      </Layout>
+    );
+  }
+
+  if (!tdfData) return null;
+
+  const data = tdfData;
   const currentStageNum = data.metadata.current_stage;
   const currentStageKey = `stage_${currentStageNum}`;
 
-  // Transform riders data into array format
-  const ridersArray: RiderData[] = useMemo(() => {
-    const ridersRecord = data.riders as Record<string, {
-      team?: string;
-      total_points: number;
-      stages: Record<string, RiderStageData>;
-    }>;
+  // Transform riders data
+  const ridersRecord = data.riders as Record<string, {
+    team?: string;
+    total_points: number;
+    stages: Record<string, RiderStageData>;
+  }>;
 
-    return Object.entries(ridersRecord).map(([name, riderData]) => ({
+  const ridersArray: RiderData[] = Object.entries(ridersRecord)
+    .map(([name, riderData]) => ({
       name,
       team: riderData.team || 'Onbekend Team',
       total_points: riderData.total_points,
       stages: riderData.stages
-    })).filter(rider => rider.total_points > 0);
-  }, [data.riders]);
+    }))
+    .filter(rider => rider.total_points > 0);
 
-  // Calculate stage rankings (Sorted by Points)
-  const stageRankings = useMemo(() => {
-    const ridersWithStagePoints = ridersArray
-      .map(rider => {
-        const stageData = rider.stages[currentStageKey];
-        return {
-          ...rider,
-          stage_points: stageData?.stage_total || 0,
-          stage_data: stageData
-        };
-      })
-      .filter(rider => rider.stage_points > 0)
-      .sort((a, b) => b.stage_points - a.stage_points);
+  // Stage rankings
+  const stageRankings = ridersArray
+    .map(rider => {
+      const stageData = rider.stages[currentStageKey];
+      return {
+        ...rider,
+        stage_points: stageData?.stage_total || 0,
+        stage_data: stageData
+      };
+    })
+    .filter(rider => rider.stage_points > 0)
+    .sort((a, b) => b.stage_points - a.stage_points);
 
-    return ridersWithStagePoints;
-  }, [ridersArray, currentStageKey]);
-
-  // Calculate total rankings
-  const totalRankings = useMemo(() => {
-    const sorted = [...ridersArray].sort((a, b) => b.total_points - a.total_points);
-    return sorted.map((rider, index) => ({
+  // Total rankings
+  const totalRankings = [...ridersArray]
+    .sort((a, b) => b.total_points - a.total_points)
+    .map((rider, index) => ({
       ...rider,
       overall_rank: index + 1
     }));
-  }, [ridersArray]);
 
-  // Helper to render medal emoji
+  // Filter based on search
+  const searchLower = searchTerm.toLowerCase().trim();
+  const dataToFilter = activeView === 'stage' ? stageRankings : totalRankings;
+  const filteredResults = !searchLower 
+    ? dataToFilter
+    : dataToFilter.filter(rider => 
+        rider.name.toLowerCase().includes(searchLower) ||
+        rider.team.toLowerCase().includes(searchLower)
+      );
+
+  // Helper functions
   const renderMedal = (position: number) => {
     if (position === 1) return '🥇';
     if (position === 2) return '🥈';
@@ -178,14 +186,8 @@ function RidersPage() {
     return '';
   };
 
-  // Get medals for a rider across all stages based on stage_finish_position
   const getRiderMedals = (riderName: string) => {
     let goldCount = 0, silverCount = 0, bronzeCount = 0;
-    
-    const ridersRecord = data.riders as Record<string, {
-      stages: Record<string, RiderStageData>;
-    }>;
-    
     const riderStages = ridersRecord[riderName]?.stages || {};
 
     Object.values(riderStages).forEach(stageData => {
@@ -202,7 +204,6 @@ function RidersPage() {
     return medals.join('');
   };
 
-  // Get jerseys and combative earned in a specific stage
   const getStageAwards = (stageData: RiderStageData | undefined) => {
     if (!stageData?.jersey_points) return { jerseys: [], hasCombative: false };
     
@@ -217,25 +218,7 @@ function RidersPage() {
     return { jerseys, hasCombative };
   };
 
-  // Filter based on search
-  const filteredResults = useMemo(() => {
-    const searchLower = searchTerm.toLowerCase().trim();
-    const dataToFilter = activeView === 'stage' ? stageRankings : totalRankings;
-    
-    if (!searchLower) return dataToFilter;
-    
-    return dataToFilter.filter(rider => 
-      rider.name.toLowerCase().includes(searchLower) ||
-      rider.team.toLowerCase().includes(searchLower)
-    );
-  }, [activeView, searchTerm, stageRankings, totalRankings]);
-
-  // Get all stages for a rider in chronological order
   const getRiderStages = (riderName: string): StageInfo[] => {
-    const ridersRecord = data.riders as Record<string, {
-      stages: Record<string, RiderStageData>;
-    }>;
-    
     const rider = ridersRecord[riderName];
     if (!rider) return [];
 
@@ -249,9 +232,7 @@ function RidersPage() {
   };
 
   return (
-    <Layout 
-      title="Renner Punten" 
-    >
+    <Layout title="Renner Punten">
       <main>
         {/* Navigation Tabs */}
         <div className="flex gap-2 mb-4">
@@ -278,9 +259,9 @@ function RidersPage() {
         {/* STAGE VIEW */}
         {activeView === 'stage' && (
           <>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Etappe {currentStageNum} Punten
-          </h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
+              Etappe {currentStageNum} Punten
+            </h2>
 
             {/* Mobile Card View */}
             <div className="block lg:hidden space-y-2">
@@ -395,9 +376,10 @@ function RidersPage() {
         {/* TOTAL VIEW */}
         {activeView === 'total' && (
           <>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Totaal Punten
-          </h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
+              Totaal Punten
+            </h2>
+            
             {/* Mobile Card View */}
             <div className="block lg:hidden space-y-2">
               {(filteredResults as TotalRankedRider[]).map((rider) => {
@@ -439,36 +421,36 @@ function RidersPage() {
                     >
                       {getRiderStages(rider.name).map((stage) => {
                         const { jerseys, hasCombative } = getStageAwards(stage);
-                          return (
-                            <div key={stage.stageKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-table-header">
-                              <div className="flex items-center">
-                                <span className="text-sm text-tdf-text-highlight w-20">
-                                  Etappe {stage.stageNum}: 
-                                </span>
-                                
-                                <span className="text-xs text-tdf-text-secondary w-10">
-                                  {stage.stage_finish_position > 0 ? `# ${stage.stage_finish_position}` : ''}
-                                </span>
+                        return (
+                          <div key={stage.stageKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-table-header">
+                            <div className="flex items-center">
+                              <span className="text-sm text-tdf-text-highlight w-20">
+                                Etappe {stage.stageNum}: 
+                              </span>
+                              
+                              <span className="text-xs text-tdf-text-secondary w-10">
+                                {stage.stage_finish_position > 0 ? `# ${stage.stage_finish_position}` : ''}
+                              </span>
 
-                                {(jerseys.length > 0 || hasCombative) && (
-                                  <div className="flex gap-1 items-center">
-                                    {jerseys.map(jersey => (
-                                      <img 
-                                        key={jersey}
-                                        src={jerseyIcons[jersey]}
-                                        alt={`${jersey} jersey`}
-                                        className="w-4 h-4"
-                                      />
-                                    ))}
-                                    {hasCombative && <CombativeIcon size="sm" />}
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="text-sm font-bold">{stage.stage_total}</span>
-                              </div>
+                              {(jerseys.length > 0 || hasCombative) && (
+                                <div className="flex gap-1 items-center">
+                                  {jerseys.map(jersey => (
+                                    <img 
+                                      key={jersey}
+                                      src={jerseyIcons[jersey]}
+                                      alt={`${jersey} jersey`}
+                                      className="w-4 h-4"
+                                    />
+                                  ))}
+                                  {hasCombative && <CombativeIcon size="sm" />}
+                                </div>
+                              )}
                             </div>
-                          );
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-bold">{stage.stage_total}</span>
+                            </div>
+                          </div>
+                        );
                       })}
                     </CardExpandedSection>
                   </Card>

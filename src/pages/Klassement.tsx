@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from 'react'
-
-// Data Import
-import { useTdfData } from '../context/TdfDataContext';
+import { useTdfData } from '../hooks/useTdfData';
 
 interface LeaderboardEntry {
   participant_name: string;
@@ -34,7 +32,7 @@ function HomePage() {
 
   const { data: tdfData, loading, error } = useTdfData();
 
-  // ALL HOOKS MUST COME BEFORE ANY CONDITIONAL RETURNS
+  // ALL HOOKS BEFORE RETURNS
   const currentLeaderboard = useMemo(() => {
     if (!tdfData) return [];
     const currentStageKey = `stage_${tdfData.metadata.current_stage}`;
@@ -80,7 +78,6 @@ function HomePage() {
     }
   }, [activeView, searchTerm, stageResults, currentDirectieLeaderboard, currentLeaderboard]);
 
-  // NOW THE EARLY RETURNS (after all hooks)
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-tdf-bg">
@@ -111,7 +108,6 @@ function HomePage() {
 
   if (!tdfData) return null;
 
-  // Now safely destructure after null check
   const { metadata, leaderboard_by_stage } = tdfData;
   const currentStageNum = metadata.current_stage;
 

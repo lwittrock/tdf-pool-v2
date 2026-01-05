@@ -21,7 +21,7 @@ const JERSEY_POINTS = {
 };
 
 const COMBATIVITY_POINTS = 5;
-const TOP_N_FOR_DIRECTIE = 3;
+const TOP_N_FOR_DIRECTIE = 5;
 
 interface CalculatePointsRequest {
   stage_number: number;
