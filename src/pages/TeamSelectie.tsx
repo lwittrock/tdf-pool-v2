@@ -1,24 +1,21 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { SearchInput } from '../components/Button';
+import { useTdfData } from '../hooks/useTdfData';
 
-// Import jersey icons
+// Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
 const greenIcon = '/assets/jersey_green.svg';
 const polkaDotIcon = '/assets/jersey_polka_dot.svg';
 const whiteIcon = '/assets/jersey_white.svg';
 
-// Reference the imported variables in your object
 const jerseyIcons: Record<string, string> = {
   yellow: yellowIcon,
   green: greenIcon,
   polka_dot: polkaDotIcon,
   white: whiteIcon
 };
-
-// Import your data
-import { useTdfData } from '../hooks/useTdfData';
 
 interface RiderStageData {
   date: string;
@@ -89,108 +86,80 @@ function TeamSelectionsPage() {
   const data = tdfData;
 
   // Count total participants
-  const totalParticipants = useMemo(() => {
-    const allStages = data.leaderboard_by_stage as Record<string, LeaderboardEntry[]>;
-    const firstStage = Object.values(allStages)[0] || [];
-    return firstStage.length;
-  }, [data.leaderboard_by_stage]);
+  const allStages = data.leaderboard_by_stage as Record<string, LeaderboardEntry[]>;
+  const firstStage = Object.values(allStages)[0] || [];
+  const totalParticipants = firstStage.length;
 
-  // Calculate rider selection counts from leaderboard data
-  const riderSelectionCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    
-    const allStages = data.leaderboard_by_stage as Record<string, LeaderboardEntry[]>;
-    const firstStage = Object.values(allStages)[0] || [];
-    
-    firstStage.forEach(participant => {
-      const contributions = participant.stage_rider_contributions;
-      Object.keys(contributions).forEach(riderName => {
-        counts[riderName] = (counts[riderName] || 0) + 1;
-      });
+  // Calculate rider selection counts
+  const riderSelectionCounts: Record<string, number> = {};
+  firstStage.forEach(participant => {
+    const contributions = participant.stage_rider_contributions;
+    Object.keys(contributions).forEach(riderName => {
+      riderSelectionCounts[riderName] = (riderSelectionCounts[riderName] || 0) + 1;
     });
-    
-    return counts;
-  }, [data.leaderboard_by_stage]);
+  });
 
   // Get selected participant's team
-  const selectedParticipant = useMemo(() => {
-    const searchLower = searchTerm.toLowerCase().trim();
-    if (!searchLower) return null;
-    
-    const allStages = data.leaderboard_by_stage as Record<string, LeaderboardEntry[]>;
-    const firstStage = Object.values(allStages)[0] || [];
-    
+  const searchLower = searchTerm.toLowerCase().trim();
+  let selectedParticipant = null;
+  
+  if (searchLower) {
     const participant = firstStage.find(p => 
       p.participant_name.toLowerCase().includes(searchLower) ||
       p.directie_name.toLowerCase().includes(searchLower)
     );
     
-    if (!participant) return null;
-    
-    const team = Object.keys(participant.stage_rider_contributions);
-    
-    return {
-      name: participant.participant_name,
-      team: team
-    };
-  }, [searchTerm, data.leaderboard_by_stage]);
+    if (participant) {
+      const team = Object.keys(participant.stage_rider_contributions);
+      selectedParticipant = {
+        name: participant.participant_name,
+        team: team
+      };
+    }
+  }
 
   // Calculate overall rankings for riders
-  const riderOverallRanks = useMemo(() => {
-    const ridersRecord = data.riders as Record<string, RiderDataFromJson>;
-    const rankedRiders = Object.entries(ridersRecord)
-      .map(([name, rider]) => ({ name, total_points: rider.total_points }))
-      .sort((a, b) => b.total_points - a.total_points);
-    
-    const ranks: Record<string, number> = {};
-    rankedRiders.forEach((rider, index) => {
-      ranks[rider.name] = index + 1;
-    });
-    return ranks;
-  }, [data.riders]);
+  const ridersRecord = data.riders as Record<string, RiderDataFromJson>;
+  const rankedRiders = Object.entries(ridersRecord)
+    .map(([name, rider]) => ({ name, total_points: rider.total_points }))
+    .sort((a, b) => b.total_points - a.total_points);
+  
+  const riderOverallRanks: Record<string, number> = {};
+  rankedRiders.forEach((rider, index) => {
+    riderOverallRanks[rider.name] = index + 1;
+  });
 
   // Popularity view: all riders sorted by selection count
-  const popularityRankings = useMemo(() => {
-    const ridersRecord = data.riders as Record<string, RiderDataFromJson>;
-    
-    return Object.entries(ridersRecord)
-      .map(([name, riderData]) => ({
-        name,
-        team: riderData.team || 'Onbekend Team',
-        total_points: riderData.total_points,
-        stages: riderData.stages,
-        selection_count: riderSelectionCounts[name] || 0,
-        selection_percentage: totalParticipants > 0 
-          ? Math.round((riderSelectionCounts[name] || 0) / totalParticipants * 100)
-          : 0
-      }))
-      .filter(rider => rider.selection_count > 0)
-      .sort((a, b) => b.selection_count - a.selection_count);
-  }, [data.riders, riderSelectionCounts, totalParticipants]);
+  const popularityRankings = Object.entries(ridersRecord)
+    .map(([name, riderData]) => ({
+      name,
+      team: riderData.team || 'Onbekend Team',
+      total_points: riderData.total_points,
+      stages: riderData.stages,
+      selection_count: riderSelectionCounts[name] || 0,
+      selection_percentage: totalParticipants > 0 
+        ? Math.round((riderSelectionCounts[name] || 0) / totalParticipants * 100)
+        : 0
+    }))
+    .filter(rider => rider.selection_count > 0)
+    .sort((a, b) => b.selection_count - a.selection_count);
 
   // Participant view: selected team sorted by popularity
-  const participantTeamRankings = useMemo(() => {
-    if (!selectedParticipant) return [];
-    
-    const ridersRecord = data.riders as Record<string, RiderDataFromJson>;
-    
-    return selectedParticipant.team
-      .map(riderName => ({
-        name: riderName,
-        team: ridersRecord[riderName]?.team || 'Onbekend Team',
-        total_points: ridersRecord[riderName]?.total_points || 0,
-        stages: ridersRecord[riderName]?.stages || {},
-        selection_count: riderSelectionCounts[riderName] || 0,
-        selection_percentage: totalParticipants > 0 
-          ? Math.round((riderSelectionCounts[riderName] || 0) / totalParticipants * 100)
-          : 0
-      }))
-      .sort((a, b) => b.selection_count - a.selection_count);
-  }, [selectedParticipant, data.riders, riderSelectionCounts, totalParticipants]);
+  const participantTeamRankings = !selectedParticipant ? [] : selectedParticipant.team
+    .map(riderName => ({
+      name: riderName,
+      team: ridersRecord[riderName]?.team || 'Onbekend Team',
+      total_points: ridersRecord[riderName]?.total_points || 0,
+      stages: ridersRecord[riderName]?.stages || {},
+      selection_count: riderSelectionCounts[riderName] || 0,
+      selection_percentage: totalParticipants > 0 
+        ? Math.round((riderSelectionCounts[riderName] || 0) / totalParticipants * 100)
+        : 0
+    }))
+    .sort((a, b) => b.selection_count - a.selection_count);
 
-  // Get all stages for a rider
+  // Helper functions
   const getRiderStages = (riderName: string): StageInfo[] => {
-    const ridersRecord = data.riders as Record<string, RiderDataFromJson>;
     const rider = ridersRecord[riderName];
     if (!rider) return [];
 
@@ -203,7 +172,6 @@ function TeamSelectionsPage() {
       .sort((a, b) => a.stageNum - b.stageNum);
   };
 
-  // Get jerseys earned in a specific stage
   const getStageJerseys = (stageData: RiderStageData | undefined) => {
     if (!stageData?.jersey_points) return [];
     
@@ -246,9 +214,9 @@ function TeamSelectionsPage() {
               Renner Populariteit
             </h2>
           )}
-            <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
-              Alleen actieve renners worden meegeteld (dus maximaal 10 per deelnemer).
-            </p>
+          <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
+            Alleen actieve renners worden meegeteld (dus maximaal 10 per deelnemer).
+          </p>
         </>
 
         {/* Mobile Card View */}
@@ -386,9 +354,9 @@ function TeamSelectionsPage() {
                           )}
                         </div>                        
                         <div className="w-12 text-right"> 
-                            <span className="font-semibold text-tdf-text-primary">
-                              {rider.total_points}
-                            </span>
+                          <span className="font-semibold text-tdf-text-primary">
+                            {rider.total_points}
+                          </span>
                         </div>
                       </div>
                     </td>

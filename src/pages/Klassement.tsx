@@ -32,7 +32,6 @@ function HomePage() {
 
   const { data: tdfData, loading, error } = useTdfData();
 
-  // ALL HOOKS BEFORE RETURNS
   const currentLeaderboard = useMemo(() => {
     if (!tdfData) return [];
     const currentStageKey = `stage_${tdfData.metadata.current_stage}`;
