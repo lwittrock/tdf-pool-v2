@@ -12,14 +12,14 @@ import { useState, useEffect } from 'react';
  * - Or set environment variables for the blob URLs
  */
 
-const USE_BLOB_STORAGE = import.meta.env.VITE_USE_BLOB_STORAGE === 'true';
+//const USE_BLOB_STORAGE = import.meta.env.VITE_USE_BLOB_STORAGE === 'true';
 
-const BLOB_BASE_URL = import.meta.env.VITE_BLOB_BASE_URL || '';
+//const BLOB_BASE_URL = import.meta.env.VITE_BLOB_BASE_URL || '';
 
 function getDataUrl(filename: string): string {
-  if (USE_BLOB_STORAGE && BLOB_BASE_URL) {
-    return `${BLOB_BASE_URL}/${filename}`;
-  }
+  //if (USE_BLOB_STORAGE && BLOB_BASE_URL) {
+  //  return `${BLOB_BASE_URL}/${filename}`;
+  //}
   // Fallback to local public/data directory
   return `/data/${filename}`;
 }
@@ -268,6 +268,50 @@ export function useTdfData() {
     metadata && leaderboards && riders
       ? { metadata, leaderboards, riders }
       : null;
+
+  return { data, loading, error };
+}
+
+// ============================================================================
+// Team Selections Hook
+// ============================================================================
+
+interface TeamSelection {
+  participant_name: string;
+  directie_name: string;
+  riders: string[];
+}
+
+type TeamSelectionsData = Record<string, TeamSelection>;
+
+export function useTeamSelections() {
+  const [data, setData] = useState<TeamSelectionsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const response = await fetch(getDataUrl('team_selections.json'));
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load team selections: ${response.status}`);
+        }
+        
+        const json = await response.json();
+        setData(json);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to fetch team selections:', err);
+        setError(err as Error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return { data, loading, error };
 }

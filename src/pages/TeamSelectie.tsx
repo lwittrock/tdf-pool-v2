@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { SearchInput } from '../components/Button';
-import { useMetadata, useLeaderboards, useRiders } from '../hooks/useTdfData';
+import { useRiders, useTeamSelections } from '../hooks/useTdfData';
 
 // Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
@@ -37,12 +37,6 @@ interface RiderDataFromJson {
   stages: Record<string, RiderStageData>;
 }
 
-interface LeaderboardEntry {
-  participant_name: string;
-  directie_name: string;
-  stage_rider_contributions: Record<string, number | undefined | null>;
-}
-
 interface StageInfo {
   stageNum: number;
   stageKey: string;
@@ -63,13 +57,12 @@ function TeamSelectionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
-  // Fetch split data
-  const { data: metadata, loading: metadataLoading, error: metadataError } = useMetadata();
-  const { data: leaderboardsData, loading: leaderboardsLoading, error: leaderboardsError } = useLeaderboards();
+  // Fetch data
   const { data: ridersData, loading: ridersLoading, error: ridersError } = useRiders();
+  const { data: teamSelectionsData, loading: selectionsLoading, error: selectionsError } = useTeamSelections();
 
-  const loading = metadataLoading || leaderboardsLoading || ridersLoading;
-  const error = metadataError || leaderboardsError || ridersError;
+  const loading = ridersLoading || selectionsLoading;
+  const error = ridersError || selectionsError;
 
   if (loading) {
     return (
@@ -87,18 +80,14 @@ function TeamSelectionsPage() {
     );
   }
 
-  if (!metadata || !leaderboardsData || !ridersData) return null;
+  if (!ridersData || !teamSelectionsData) return null;
 
-  // Count total participants
-  const allStages = leaderboardsData.leaderboard_by_stage as Record<string, LeaderboardEntry[]>;
-  const firstStage = Object.values(allStages)[0] || [];
-  const totalParticipants = firstStage.length;
+  const totalParticipants = Object.keys(teamSelectionsData).length;
 
-  // Calculate rider selection counts
+  // Calculate rider selection counts from team_selections.json
   const riderSelectionCounts: Record<string, number> = {};
-  firstStage.forEach(participant => {
-    const contributions = participant.stage_rider_contributions;
-    Object.keys(contributions).forEach(riderName => {
+  Object.values(teamSelectionsData).forEach(team => {
+    team.riders.forEach(riderName => {
       riderSelectionCounts[riderName] = (riderSelectionCounts[riderName] || 0) + 1;
     });
   });
@@ -108,16 +97,16 @@ function TeamSelectionsPage() {
   let selectedParticipant = null;
   
   if (searchLower) {
-    const participant = firstStage.find(p => 
-      p.participant_name.toLowerCase().includes(searchLower) ||
-      p.directie_name.toLowerCase().includes(searchLower)
+    const participantEntry = Object.entries(teamSelectionsData).find(([name, data]) => 
+      name.toLowerCase().includes(searchLower) ||
+      data.directie_name.toLowerCase().includes(searchLower)
     );
     
-    if (participant) {
-      const team = Object.keys(participant.stage_rider_contributions);
+    if (participantEntry) {
+      const [name, data] = participantEntry;
       selectedParticipant = {
-        name: participant.participant_name,
-        team: team
+        name: name,
+        team: data.riders
       };
     }
   }
@@ -219,7 +208,7 @@ function TeamSelectionsPage() {
             </h2>
           )}
           <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
-            Alleen actieve renners worden meegeteld (dus maximaal 10 per deelnemer).
+            Gebaseerd op {totalParticipants} deelnemers met elk 10 renners.
           </p>
         </>
 
