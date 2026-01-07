@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { TabButton, SearchInput } from '../components/Button';
-import { useTdfData } from '../hooks/useTdfData';
+import { useMetadata, useRiders } from '../hooks/useTdfData';
 
 // Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
@@ -107,7 +107,12 @@ function RidersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
-  const { data: tdfData, loading, error } = useTdfData();
+  // Fetch split data
+  const { data: metadata, loading: metadataLoading, error: metadataError } = useMetadata();
+  const { data: ridersData, loading: ridersLoading, error: ridersError } = useRiders();
+
+  const loading = metadataLoading || ridersLoading;
+  const error = metadataError || ridersError;
 
   if (loading) {
     return (
@@ -125,14 +130,13 @@ function RidersPage() {
     );
   }
 
-  if (!tdfData) return null;
+  if (!metadata || !ridersData) return null;
 
-  const data = tdfData;
-  const currentStageNum = data.metadata.current_stage;
+  const currentStageNum = metadata.current_stage;
   const currentStageKey = `stage_${currentStageNum}`;
 
   // Transform riders data
-  const ridersRecord = data.riders as Record<string, {
+  const ridersRecord = ridersData as Record<string, {
     team?: string;
     total_points: number;
     stages: Record<string, RiderStageData>;

@@ -1,0 +1,3402 @@
+{
+  "Tadej Pogacar": {
+    "team": "UAE Team Emirates",
+    "total_points": 242,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 10,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 29,
+        "cumulative_total": 29
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 10,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 35,
+        "cumulative_total": 64
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 10,
+          "polka_dot": 10,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 54,
+        "cumulative_total": 118
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 130
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 10,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 50,
+        "cumulative_total": 180
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 192
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 0,
+          "polka_dot": 10,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 50,
+        "cumulative_total": 242
+      }
+    }
+  },
+  "Joao Almeida": {
+    "team": "UAE Team Emirates",
+    "total_points": 34,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 6
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 21
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 13,
+        "cumulative_total": 34
+      }
+    }
+  },
+  "Jhonatan Narvaez": {
+    "team": "UAE Team Emirates",
+    "total_points": 24,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 7
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 13,
+        "cumulative_total": 20
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 21
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 24
+      }
+    }
+  },
+  "Nils Politt": {
+    "team": "UAE Team Emirates",
+    "total_points": 5,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 5
+      }
+    }
+  },
+  "Jonas Vingegaard": {
+    "team": "Team Visma | Lease a Bike",
+    "total_points": 104,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 18
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 36
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 44
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 55
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 74
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 85
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 104
+      }
+    }
+  },
+  "Edoardo Affini": {
+    "team": "Team Visma | Lease a Bike",
+    "total_points": 18,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 18
+      }
+    }
+  },
+  "Tiesj Benoot": {
+    "team": "Team Visma | Lease a Bike",
+    "total_points": 5,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 5
+      }
+    }
+  },
+  "Matteo Jorgenson": {
+    "team": "Team Visma | Lease a Bike",
+    "total_points": 67,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 3
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 13,
+        "cumulative_total": 16
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 26
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 36
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 52
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 61
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 67
+      }
+    }
+  },
+  "Wout van Aert": {
+    "team": "Team Visma | Lease a Bike",
+    "total_points": 45,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 10
+      },
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 29
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 45
+      }
+    }
+  },
+  "Simon Yates": {
+    "team": "Team Visma | Lease a Bike",
+    "total_points": 41,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 16
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 25,
+        "cumulative_total": 41
+      }
+    }
+  },
+  "Remco Evenepoel": {
+    "team": "Soudal Quick-Step",
+    "total_points": 129,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 4
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 18
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 10,
+          "combative": 0
+        },
+        "stage_total": 35,
+        "cumulative_total": 53
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 10,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 72
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 10,
+          "combative": 0
+        },
+        "stage_total": 25,
+        "cumulative_total": 97
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 105
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 10,
+          "combative": 0
+        },
+        "stage_total": 24,
+        "cumulative_total": 129
+      }
+    }
+  },
+  "Tim Merlier": {
+    "team": "Soudal Quick-Step",
+    "total_points": 50,
+    "stages": {
+      "stage_3": {
+        "date": "2025-07-07",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 25,
+        "cumulative_total": 25
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 25,
+        "cumulative_total": 50
+      }
+    }
+  },
+  "Ben Healy": {
+    "team": "EF Education - EasyPost",
+    "total_points": 68,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 25,
+        "cumulative_total": 25
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 10,
+          "combative": 0
+        },
+        "stage_total": 43,
+        "cumulative_total": 68
+      }
+    }
+  },
+  "Vincenzo Albanese": {
+    "team": "EF Education - EasyPost",
+    "total_points": 12,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 12
+      }
+    }
+  },
+  "Alex Baudin": {
+    "team": "EF Education - EasyPost",
+    "total_points": 8,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 8
+      }
+    }
+  },
+  "Neilson Powless": {
+    "team": "EF Education - EasyPost",
+    "total_points": 2,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 2
+      }
+    }
+  },
+  "Biniam Girmay": {
+    "team": "Intermarche - Wanty",
+    "total_points": 36,
+    "stages": {
+      "stage_1": {
+        "date": "2025-07-05",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 19
+      },
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 21
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 36
+      }
+    }
+  },
+  "Louis Barre": {
+    "team": "Intermarche - Wanty",
+    "total_points": 4,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 4
+      }
+    }
+  },
+  "Santiago Buitrago": {
+    "team": "Bahrain - Victorious",
+    "total_points": 12,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 8
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 12
+      }
+    }
+  },
+  "Phil Bauhaus": {
+    "team": "Bahrain - Victorious",
+    "total_points": 41,
+    "stages": {
+      "stage_3": {
+        "date": "2025-07-07",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 18
+      },
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 27
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 41
+      }
+    }
+  },
+  "Lenny Martinez": {
+    "team": "Bahrain - Victorious",
+    "total_points": 23,
+    "stages": {
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 10,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 23,
+        "cumulative_total": 23
+      }
+    }
+  },
+  "Fred Wright": {
+    "team": "Bahrain - Victorious",
+    "total_points": 14,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 14
+      }
+    }
+  },
+  "Thymen Arensman": {
+    "team": "INEOS Grenadiers",
+    "total_points": 19,
+    "stages": {
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 19
+      }
+    }
+  },
+  "Tobias Foss": {
+    "team": "INEOS Grenadiers",
+    "total_points": 7,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 7
+      }
+    }
+  },
+  "Axel Laurance": {
+    "team": "INEOS Grenadiers",
+    "total_points": 27,
+    "stages": {
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 12
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 27
+      }
+    }
+  },
+  "Carlos Rodriguez": {
+    "team": "INEOS Grenadiers",
+    "total_points": 9,
+    "stages": {
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 6
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 9
+      }
+    }
+  },
+  "Samuel Watson": {
+    "team": "INEOS Grenadiers",
+    "total_points": 6,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 6
+      }
+    }
+  },
+  "Primoz Roglic": {
+    "team": "Red Bull - BORA - hansgrohe",
+    "total_points": 36,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 3
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 12
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 14
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 19
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 24
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 36
+      }
+    }
+  },
+  "Florian Lipowitz": {
+    "team": "Red Bull - BORA - hansgrohe",
+    "total_points": 56,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 15
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 21
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 28
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 38
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 56
+      }
+    }
+  },
+  "Jordi Meeus": {
+    "team": "Red Bull - BORA - hansgrohe",
+    "total_points": 13,
+    "stages": {
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 13,
+        "cumulative_total": 13
+      }
+    }
+  },
+  "Danny van Poppel": {
+    "team": "Red Bull - BORA - hansgrohe",
+    "total_points": 12,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 10
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 12
+      }
+    }
+  },
+  "Jonathan Milan": {
+    "team": "Lidl - Trek",
+    "total_points": 93,
+    "stages": {
+      "stage_3": {
+        "date": "2025-07-07",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 10,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 29,
+        "cumulative_total": 29
+      },
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 10,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 35,
+        "cumulative_total": 64
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 10,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 29,
+        "cumulative_total": 93
+      }
+    }
+  },
+  "Quinn Simmons": {
+    "team": "Lidl - Trek",
+    "total_points": 31,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 19
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 31
+      }
+    }
+  },
+  "Mattias Skjelmose": {
+    "team": "Lidl - Trek",
+    "total_points": 23,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 12
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 14
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 23
+      }
+    }
+  },
+  "Guillaume Martin": {
+    "team": "Groupama - FDJ",
+    "total_points": 13,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 5
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 13
+      }
+    }
+  },
+  "Lewis Askey": {
+    "team": "Groupama - FDJ",
+    "total_points": 8,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 8
+      }
+    }
+  },
+  "Romain Gregoire": {
+    "team": "Groupama - FDJ",
+    "total_points": 48,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 17
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 33
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 41
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 48
+      }
+    }
+  },
+  "Quentin Pacher": {
+    "team": "Groupama - FDJ",
+    "total_points": 5,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 5
+      }
+    }
+  },
+  "Paul Penhoet": {
+    "team": "Groupama - FDJ",
+    "total_points": 16,
+    "stages": {
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 16
+      }
+    }
+  },
+  "Jasper Philipsen": {
+    "team": "Alpecin - Deceuninck",
+    "total_points": 50,
+    "stages": {
+      "stage_1": {
+        "date": "2025-07-05",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 10,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 50,
+        "cumulative_total": 50
+      }
+    }
+  },
+  "Kaden Groves": {
+    "team": "Alpecin - Deceuninck",
+    "total_points": 39,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 18
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 29
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 39
+      }
+    }
+  },
+  "Xandro Meurisse": {
+    "team": "Alpecin - Deceuninck",
+    "total_points": 3,
+    "stages": {
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 3
+      }
+    }
+  },
+  "Mathieu van der Poel": {
+    "team": "Alpecin - Deceuninck",
+    "total_points": 123,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 40,
+        "cumulative_total": 40
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 34,
+        "cumulative_total": 74
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 77
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 15,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 28,
+        "cumulative_total": 105
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 123
+      }
+    }
+  },
+  "Julian Alaphilippe": {
+    "team": "Tudor Pro Cycling Team",
+    "total_points": 16,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 16
+      }
+    }
+  },
+  "Alberto Dainese": {
+    "team": "Tudor Pro Cycling Team",
+    "total_points": 27,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 13,
+        "cumulative_total": 13
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 18
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 27
+      }
+    }
+  },
+  "Marc Hirschi": {
+    "team": "Tudor Pro Cycling Team",
+    "total_points": 8,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 7
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 8
+      }
+    }
+  },
+  "Michael Storer": {
+    "team": "Tudor Pro Cycling Team",
+    "total_points": 34,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 18
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 34
+      }
+    }
+  },
+  "Matteo Trentin": {
+    "team": "Tudor Pro Cycling Team",
+    "total_points": 3,
+    "stages": {
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 3
+      }
+    }
+  },
+  "Ben O'Connor": {
+    "team": "Team Jayco AlUla",
+    "total_points": 22,
+    "stages": {
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 17
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 22
+      }
+    }
+  },
+  "Eddie Dunbar": {
+    "team": "Team Jayco AlUla",
+    "total_points": 17,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 17
+      }
+    }
+  },
+  "Dylan Groenewegen": {
+    "team": "Team Jayco AlUla",
+    "total_points": 11,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 5
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 11
+      }
+    }
+  },
+  "Luke Plapp": {
+    "team": "Team Jayco AlUla",
+    "total_points": 12,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 12
+      }
+    }
+  },
+  "Mauro Schmid": {
+    "team": "Team Jayco AlUla",
+    "total_points": 20,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 1
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 19,
+        "stage_finish_position": 2,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 19,
+        "cumulative_total": 20
+      }
+    }
+  },
+  "Kevin Vauquelin": {
+    "team": "Arkea - B&B Hotels",
+    "total_points": 96,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 10,
+          "combative": 0
+        },
+        "stage_total": 23,
+        "cumulative_total": 23
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 10,
+          "combative": 0
+        },
+        "stage_total": 21,
+        "cumulative_total": 44
+      },
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 60
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 67
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 81
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 96
+      }
+    }
+  },
+  "Arnaud Demare": {
+    "team": "Arkea - B&B Hotels",
+    "total_points": 9,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 1
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 9
+      }
+    }
+  },
+  "Raul Garcia Pierna": {
+    "team": "Arkea - B&B Hotels",
+    "total_points": 13,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 4
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 13
+      }
+    }
+  },
+  "Cristian Rodriguez": {
+    "team": "Arkea - B&B Hotels",
+    "total_points": 15,
+    "stages": {
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 4
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 15
+      }
+    }
+  },
+  "Enric Mas": {
+    "team": "Movistar Team",
+    "total_points": 18,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 9
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 13
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 16
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 18
+      }
+    }
+  },
+  "Will Barta": {
+    "team": "Movistar Team",
+    "total_points": 15,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 15
+      }
+    }
+  },
+  "Pablo Castrillo": {
+    "team": "Movistar Team",
+    "total_points": 11,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 11
+      }
+    }
+  },
+  "Nelson Oliveira": {
+    "team": "Movistar Team",
+    "total_points": 6,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 6
+      }
+    }
+  },
+  "Ivan Romeo": {
+    "team": "Movistar Team",
+    "total_points": 14,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 14
+      }
+    }
+  },
+  "Einer Rubio": {
+    "team": "Movistar Team",
+    "total_points": 10,
+    "stages": {
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 10
+      }
+    }
+  },
+  "Felix Gall": {
+    "team": "Decathlon AG2R La Mondiale Team",
+    "total_points": 39,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 5,
+        "stage_finish_position": 16,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 5,
+        "cumulative_total": 5
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 22
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 26
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 13,
+        "cumulative_total": 39
+      }
+    }
+  },
+  "Bruno Armirail": {
+    "team": "Decathlon AG2R La Mondiale Team",
+    "total_points": 21,
+    "stages": {
+      "stage_5": {
+        "date": "2025-07-09",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 17
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 21
+      }
+    }
+  },
+  "Aurelien Paret-Peintre": {
+    "team": "Decathlon AG2R La Mondiale Team",
+    "total_points": 24,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 14
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 23
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 24
+      }
+    }
+  },
+  "Bastien Tronchon": {
+    "team": "Decathlon AG2R La Mondiale Team",
+    "total_points": 11,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 7
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 11
+      }
+    }
+  },
+  "Emanuel Buchmann": {
+    "team": "Cofidis",
+    "total_points": 1,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 1
+      }
+    }
+  },
+  "Alex Aranburu": {
+    "team": "Cofidis",
+    "total_points": 2,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 2
+      }
+    }
+  },
+  "Bryan Coquard": {
+    "team": "Cofidis",
+    "total_points": 14,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 14
+      }
+    }
+  },
+  "Alexis Renard": {
+    "team": "Cofidis",
+    "total_points": 10,
+    "stages": {
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 10
+      }
+    }
+  },
+  "Harold Tejada": {
+    "team": "XDS Astana Team",
+    "total_points": 14,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 14
+      }
+    }
+  },
+  "Davide Ballerini": {
+    "team": "XDS Astana Team",
+    "total_points": 11,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 11
+      }
+    }
+  },
+  "Cees Bol": {
+    "team": "XDS Astana Team",
+    "total_points": 4,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 3
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 4
+      }
+    }
+  },
+  "Clement Champoussin": {
+    "team": "XDS Astana Team",
+    "total_points": 3,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 3,
+        "stage_finish_position": 18,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 3,
+        "cumulative_total": 3
+      }
+    }
+  },
+  "Sergio Higuita": {
+    "team": "XDS Astana Team",
+    "total_points": 9,
+    "stages": {
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 1
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 2
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 9
+      }
+    }
+  },
+  "Simone Velasco": {
+    "team": "XDS Astana Team",
+    "total_points": 18,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 12
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 18
+      }
+    }
+  },
+  "Mathieu Burgaudeau": {
+    "team": "Team TotalEnergies",
+    "total_points": 13,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 13,
+        "stage_finish_position": 8,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 13,
+        "cumulative_total": 13
+      }
+    }
+  },
+  "Alexandre Delettre": {
+    "team": "Team TotalEnergies",
+    "total_points": 10,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 10
+      }
+    }
+  },
+  "Jordan Jegat": {
+    "team": "Team TotalEnergies",
+    "total_points": 23,
+    "stages": {
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 1,
+        "stage_finish_position": 20,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 1,
+        "cumulative_total": 1
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 10,
+        "stage_finish_position": 11,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 10,
+        "cumulative_total": 11
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 13
+      },
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 21
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 23
+      }
+    }
+  },
+  "Anthony Turgis": {
+    "team": "Team TotalEnergies",
+    "total_points": 11,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 4,
+        "stage_finish_position": 17,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 4,
+        "cumulative_total": 4
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 11
+      }
+    }
+  },
+  "Oscar Onley": {
+    "team": "Team Picnic PostNL",
+    "total_points": 81,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 15
+      },
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 32
+      },
+      "stage_6": {
+        "date": "2025-07-10",
+        "stage_finish_points": 8,
+        "stage_finish_position": 13,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 8,
+        "cumulative_total": 40
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 58
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 7,
+        "stage_finish_position": 14,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 7,
+        "cumulative_total": 65
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 16,
+        "stage_finish_position": 5,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 16,
+        "cumulative_total": 81
+      }
+    }
+  },
+  "Pavel Bittner": {
+    "team": "Team Picnic PostNL",
+    "total_points": 17,
+    "stages": {
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 17
+      }
+    }
+  },
+  "Tobias Lund Andresen": {
+    "team": "Team Picnic PostNL",
+    "total_points": 15,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 15
+      }
+    }
+  },
+  "Pascal Ackermann": {
+    "team": "Israel - Premier Tech",
+    "total_points": 26,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 17
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 9,
+        "stage_finish_position": 12,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 9,
+        "cumulative_total": 26
+      }
+    }
+  },
+  "Joseph Blackmore": {
+    "team": "Israel - Premier Tech",
+    "total_points": 15,
+    "stages": {
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 15,
+        "stage_finish_position": 6,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 15,
+        "cumulative_total": 15
+      }
+    }
+  },
+  "Alexey Lutsenko": {
+    "team": "Israel - Premier Tech",
+    "total_points": 2,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 2,
+        "stage_finish_position": 19,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 2,
+        "cumulative_total": 2
+      }
+    }
+  },
+  "Jenno Berckmoes": {
+    "team": "Lotto",
+    "total_points": 11,
+    "stages": {
+      "stage_2": {
+        "date": "2025-07-06",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 11
+      }
+    }
+  },
+  "Tobias Halland Johannessen": {
+    "team": "Uno-X Mobility",
+    "total_points": 40,
+    "stages": {
+      "stage_4": {
+        "date": "2025-07-08",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 6
+      },
+      "stage_7": {
+        "date": "2025-07-11",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 17
+      },
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 6,
+        "stage_finish_position": 15,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 6,
+        "cumulative_total": 23
+      },
+      "stage_12": {
+        "date": "2025-07-17",
+        "stage_finish_points": 17,
+        "stage_finish_position": 4,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 17,
+        "cumulative_total": 40
+      }
+    }
+  },
+  "Jonas Abrahamsen": {
+    "team": "Uno-X Mobility",
+    "total_points": 25,
+    "stages": {
+      "stage_11": {
+        "date": "2025-07-16",
+        "stage_finish_points": 25,
+        "stage_finish_position": 1,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 25,
+        "cumulative_total": 25
+      }
+    }
+  },
+  "Stian Fredheim": {
+    "team": "Uno-X Mobility",
+    "total_points": 23,
+    "stages": {
+      "stage_8": {
+        "date": "2025-07-12",
+        "stage_finish_points": 11,
+        "stage_finish_position": 10,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 11,
+        "cumulative_total": 11
+      },
+      "stage_9": {
+        "date": "2025-07-13",
+        "stage_finish_points": 12,
+        "stage_finish_position": 9,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 12,
+        "cumulative_total": 23
+      }
+    }
+  },
+  "Anders Halland Johannessen": {
+    "team": "Uno-X Mobility",
+    "total_points": 14,
+    "stages": {
+      "stage_10": {
+        "date": "2025-07-14",
+        "stage_finish_points": 14,
+        "stage_finish_position": 7,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 14,
+        "cumulative_total": 14
+      }
+    }
+  },
+  "Soren Waerenskjold": {
+    "team": "Uno-X Mobility",
+    "total_points": 18,
+    "stages": {
+      "stage_1": {
+        "date": "2025-07-05",
+        "stage_finish_points": 18,
+        "stage_finish_position": 3,
+        "jersey_points": {
+          "yellow": 0,
+          "green": 0,
+          "polka_dot": 0,
+          "white": 0,
+          "combative": 0
+        },
+        "stage_total": 18,
+        "cumulative_total": 18
+      }
+    }
+  }
+}

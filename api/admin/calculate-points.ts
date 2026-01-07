@@ -1,30 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import {
+  POINTS_FOR_RANK,
+  JERSEY_POINTS,
+  COMBATIVITY_POINTS,
+  TOP_N_FOR_DIRECTIE,
+  type JerseyType,
+} from '../../lib/scoring-constants.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Point scoring rules
-const POINTS_FOR_RANK: Record<number, number> = {
-  1: 25, 2: 19, 3: 18, 4: 17, 5: 16, 6: 15, 7: 14, 8: 13,
-  9: 12, 10: 11, 11: 10, 12: 9, 13: 8, 14: 7, 15: 6,
-  16: 5, 17: 4, 18: 3, 19: 2, 20: 1,
-};
-
-const JERSEY_POINTS = {
-  yellow: 15,
-  green: 10,
-  polka_dot: 10,
-  white: 10,
-};
-
-const COMBATIVITY_POINTS = 5;
-const TOP_N_FOR_DIRECTIE = 5;
-
 interface CalculatePointsRequest {
   stage_number: number;
+  force?: boolean;
 }
 
 export default async function handler(
@@ -36,11 +27,13 @@ export default async function handler(
   }
 
   try {
-    const { stage_number }: CalculatePointsRequest = req.body;
+    const { stage_number, force }: CalculatePointsRequest = req.body;
 
     if (!stage_number) {
       return res.status(400).json({ error: 'stage_number is required' });
     }
+
+    console.log(`[Calculate Points] Starting for stage ${stage_number}`);
 
     // Get the stage
     const { data: stage, error: stageError } = await supabase
@@ -56,9 +49,9 @@ export default async function handler(
       });
     }
 
-    if (stage.is_complete) {
+    if (stage.is_complete && !force) {
       return res.status(400).json({
-        error: `Stage ${stage_number} is already marked as complete.`,
+        error: `Stage ${stage_number} is already marked as complete. Use force=true to reprocess.`,
       });
     }
 
@@ -110,7 +103,7 @@ export default async function handler(
 
     // Jerseys
     for (const jersey of jerseysData.data || []) {
-      const points = JERSEY_POINTS[jersey.jersey_type as keyof typeof JERSEY_POINTS] || 0;
+      const points = JERSEY_POINTS[jersey.jersey_type as JerseyType] || 0;
       if (points > 0) {
         riderPoints.set(jersey.rider_id, (riderPoints.get(jersey.rider_id) || 0) + points);
       }
@@ -121,6 +114,8 @@ export default async function handler(
       const riderId = combativityData.data.rider_id;
       riderPoints.set(riderId, (riderPoints.get(riderId) || 0) + COMBATIVITY_POINTS);
     }
+
+    console.log(`[Calculate Points] Calculated points for ${riderPoints.size} riders`);
 
     // Get all participants with active riders
     const { data: participants } = await supabase
@@ -160,6 +155,8 @@ export default async function handler(
         stage_points: stageTotal,
       });
     }
+
+    console.log(`[Calculate Points] Calculated points for ${participantScores.length} participants`);
 
     // Get previous stage cumulative points
     const previousStageNumber = stage_number - 1;
@@ -244,18 +241,27 @@ export default async function handler(
       });
     }
 
-    // Calculate directie points
-    const directieScores = new Map<string, { stage_points: number; participants: Array<{ id: string; name: string; stage_points: number; cumulative_points: number }> }>();
+    // ========================================================================
+    // DIRECTIE POINTS CALCULATION
+    // ========================================================================
+    
+    // Group participants by directie
+    const directieScores = new Map<string, Array<{
+      id: string;
+      name: string;
+      stage_points: number;
+      cumulative_points: number;
+    }>>();
 
     for (const score of participantScores) {
       if (!score.directie_id) continue;
 
       if (!directieScores.has(score.directie_id)) {
-        directieScores.set(score.directie_id, { stage_points: 0, participants: [] });
+        directieScores.set(score.directie_id, []);
       }
 
       const participant = participants.find(p => p.id === score.participant_id);
-      directieScores.get(score.directie_id)!.participants.push({
+      directieScores.get(score.directie_id)!.push({
         id: score.participant_id,
         name: participant?.name || '',
         stage_points: score.stage_points,
@@ -263,22 +269,47 @@ export default async function handler(
       });
     }
 
-    // Sort participants within each directie and take top N
+    // Calculate directie scores
     const directiePointsToInsert = [];
-    for (const [directieId, data] of directieScores.entries()) {
-      // Sort by stage points descending, take top N
-      const topParticipantsStage = data.participants
+    
+    // Get previous directie cumulative scores for rank change
+    const previousDirectieCumulatives = new Map<string, { cumulative: number; rank: number }>();
+    if (previousStageNumber > 0) {
+      const { data: prevStage } = await supabase
+        .from('stages')
+        .select('id')
+        .eq('stage_number', previousStageNumber)
+        .single();
+
+      if (prevStage) {
+        const { data: prevDirectiePoints } = await supabase
+          .from('directie_stage_points')
+          .select('directie_id, cumulative_points, overall_rank')
+          .eq('stage_id', prevStage.id);
+
+        if (prevDirectiePoints) {
+          for (const d of prevDirectiePoints) {
+            previousDirectieCumulatives.set(d.directie_id, {
+              cumulative: d.cumulative_points,
+              rank: d.overall_rank,
+            });
+          }
+        }
+      }
+    }
+
+    for (const [directieId, participants] of directieScores.entries()) {
+      // FIXED: For STAGE score, take top N by STAGE points
+      const topParticipantsStage = [...participants]
         .sort((a, b) => b.stage_points - a.stage_points)
         .slice(0, TOP_N_FOR_DIRECTIE);
 
       const stageTotal = topParticipantsStage.reduce((sum, p) => sum + p.stage_points, 0);
 
-      // Sort by cumulative points descending, take top N
-      const topParticipantsOverall = data.participants
-        .sort((a, b) => b.cumulative_points - a.cumulative_points)
-        .slice(0, TOP_N_FOR_DIRECTIE);
-
-      const cumulativeTotal = topParticipantsOverall.reduce((sum, p) => sum + p.cumulative_points, 0);
+      // FIXED: For CUMULATIVE score, it's the sum of previous cumulative + this stage's top N
+      // This means we need to take the cumulative from previous stage and ADD this stage's top N
+      const prevCumulative = previousDirectieCumulatives.get(directieId)?.cumulative || 0;
+      const cumulativeTotal = prevCumulative + stageTotal;
 
       directiePointsToInsert.push({
         directie_id: directieId,
@@ -286,23 +317,46 @@ export default async function handler(
         stage_points: stageTotal,
         cumulative_points: cumulativeTotal,
         top_contributors: {
-          stage: topParticipantsStage.map(p => ({ participant_name: p.name, stage_score: p.stage_points })),
-          overall: topParticipantsOverall.map(p => ({ participant_name: p.name, overall_score: p.cumulative_points })),
+          stage: topParticipantsStage.map(p => ({ 
+            participant_name: p.name, 
+            stage_score: p.stage_points 
+          })),
+          // For overall contributors, we show top N by cumulative
+          overall: [...participants]
+            .sort((a, b) => b.cumulative_points - a.cumulative_points)
+            .slice(0, TOP_N_FOR_DIRECTIE)
+            .map(p => ({ 
+              participant_name: p.name, 
+              overall_score: p.cumulative_points 
+            })),
         },
       });
     }
 
-    // Rank directies
-    const directieStageRanked = [...directiePointsToInsert].sort((a, b) => b.stage_points - a.stage_points);
-    const directieOverallRanked = [...directiePointsToInsert].sort((a, b) => b.cumulative_points - a.cumulative_points);
+    // Rank directies by stage and overall
+    const directieStageRanked = [...directiePointsToInsert]
+      .sort((a, b) => b.stage_points - a.stage_points);
+    
+    const directieOverallRanked = [...directiePointsToInsert]
+      .sort((a, b) => b.cumulative_points - a.cumulative_points);
 
     for (const d of directiePointsToInsert) {
-      (d as any).stage_rank = directieStageRanked.findIndex(x => x.directie_id === d.directie_id) + 1;
-      (d as any).overall_rank = directieOverallRanked.findIndex(x => x.directie_id === d.directie_id) + 1;
-      (d as any).overall_rank_change = 0; // TODO: calculate from previous stage
+      (d as any).stage_rank = directieStageRanked.findIndex(
+        x => x.directie_id === d.directie_id
+      ) + 1;
+      
+      (d as any).overall_rank = directieOverallRanked.findIndex(
+        x => x.directie_id === d.directie_id
+      ) + 1;
+      
+      // Calculate rank change
+      const prevRank = previousDirectieCumulatives.get(d.directie_id)?.rank || (d as any).overall_rank;
+      (d as any).overall_rank_change = prevRank - (d as any).overall_rank;
     }
 
-    // Clear existing data
+    console.log(`[Calculate Points] Calculated directie scores for ${directiePointsToInsert.length} directies`);
+
+    // Clear existing data for this stage
     await supabase.from('participant_stage_points').delete().eq('stage_id', stageId);
     await supabase.from('directie_stage_points').delete().eq('stage_id', stageId);
 
@@ -313,7 +367,7 @@ export default async function handler(
         .insert(pointsToInsert);
 
       if (error) {
-        console.error('Insert error:', error);
+        console.error('[Calculate Points] Insert error:', error);
         return res.status(500).json({
           error: 'Failed to insert participant points',
           details: error,
@@ -327,7 +381,11 @@ export default async function handler(
         .insert(directiePointsToInsert);
 
       if (error) {
-        console.error('Directie insert error:', error);
+        console.error('[Calculate Points] Directie insert error:', error);
+        return res.status(500).json({
+          error: 'Failed to insert directie points',
+          details: error,
+        });
       }
     }
 
@@ -337,15 +395,18 @@ export default async function handler(
       .update({ is_complete: true })
       .eq('id', stageId);
 
+    console.log(`[Calculate Points] Successfully completed stage ${stage_number}`);
+
     return res.status(200).json({
       success: true,
       stage_number,
       participants_calculated: participants.length,
+      directies_calculated: directiePointsToInsert.length,
       total_points_awarded: participantScores.reduce((sum, s) => sum + s.stage_points, 0),
     });
 
   } catch (error: any) {
-    console.error('Calculate points error:', error);
+    console.error('[Calculate Points] Error:', error);
     return res.status(500).json({
       error: 'Internal server error',
       details: error.message,

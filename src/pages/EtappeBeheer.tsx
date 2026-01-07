@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Autocomplete, MultiAutocomplete } from '../components/Autocomplete';
+import { refreshTdfData } from '../hooks/useTdfData';
 
 // Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
@@ -91,9 +92,10 @@ function StageManagementPage() {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Fetch both riders list and stages data from static JSON
       const [ridersRes, stagesRes] = await Promise.all([
-        fetch('/api/admin/riders-list'),
-        fetch('/data/stages_data.json'),
+        fetch('/api/admin/riders-list'),  // Still from API for live rider list
+        fetch('/data/stages_data.json'),  // From static JSON
       ]);
 
       if (ridersRes.ok) {
@@ -201,19 +203,52 @@ function StageManagementPage() {
     setErrorMessage('');
 
     try {
-      // Step 1: Submit stage data
-      const response = await fetch('/api/admin/manual-stage-entry', {
+      // First attempt - without force
+      let response = await fetch('/api/admin/manual-entry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           top_20_finishers: validFinishers,
+          force: false,
         }),
       });
 
+      // If stage is already complete, ask for confirmation
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to save stage');
+        const errorData = await response.json();
+        
+        if (errorData.error?.includes('already marked as complete')) {
+          const confirmReprocess = window.confirm(
+            `⚠️ Etappe ${formData.stage_number} is al verwerkt.\n\n` +
+            `Wil je deze etappe opnieuw invoeren en verwerken?\n\n` +
+            `Dit zal de bestaande resultaten overschrijven.`
+          );
+          
+          if (!confirmReprocess) {
+            setSubmitting(false);
+            setErrorMessage('Bewerking geannuleerd');
+            return;
+          }
+          
+          // User confirmed - try again with force=true
+          response = await fetch('/api/admin/manual-entry', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...formData,
+              top_20_finishers: validFinishers,
+              force: true,
+            }),
+          });
+          
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to save stage');
+          }
+        } else {
+          throw new Error(errorData.error || 'Failed to save stage');
+        }
       }
 
       // Step 2: Process stage (calculate points)
@@ -230,16 +265,16 @@ function StageManagementPage() {
 
       setSuccessMessage(`Etappe ${formData.stage_number} succesvol opgeslagen en verwerkt!`);
       
-      // Reload and go back to list after 2 seconds
+      // Show success with refresh option
       setTimeout(() => {
-        loadData();
         setViewMode('list');
         setSuccessMessage('');
+        refreshTdfData();
       }, 2000);
 
     } catch (error: any) {
       console.error('Submit error:', error);
-      setErrorMessage(error.message || 'Er is iets misgegaan');
+      setErrorMessage(error.message || 'Er is een fout opgetreden');
     } finally {
       setSubmitting(false);
     }

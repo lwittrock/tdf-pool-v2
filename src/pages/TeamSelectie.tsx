@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { SearchInput } from '../components/Button';
-import { useTdfData } from '../hooks/useTdfData';
+import { useMetadata, useLeaderboards, useRiders } from '../hooks/useTdfData';
 
 // Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
@@ -63,7 +63,13 @@ function TeamSelectionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
-  const { data: tdfData, loading, error } = useTdfData();
+  // Fetch split data
+  const { data: metadata, loading: metadataLoading, error: metadataError } = useMetadata();
+  const { data: leaderboardsData, loading: leaderboardsLoading, error: leaderboardsError } = useLeaderboards();
+  const { data: ridersData, loading: ridersLoading, error: ridersError } = useRiders();
+
+  const loading = metadataLoading || leaderboardsLoading || ridersLoading;
+  const error = metadataError || leaderboardsError || ridersError;
 
   if (loading) {
     return (
@@ -81,12 +87,10 @@ function TeamSelectionsPage() {
     );
   }
 
-  if (!tdfData) return null;
-
-  const data = tdfData;
+  if (!metadata || !leaderboardsData || !ridersData) return null;
 
   // Count total participants
-  const allStages = data.leaderboard_by_stage as Record<string, LeaderboardEntry[]>;
+  const allStages = leaderboardsData.leaderboard_by_stage as Record<string, LeaderboardEntry[]>;
   const firstStage = Object.values(allStages)[0] || [];
   const totalParticipants = firstStage.length;
 
@@ -119,7 +123,7 @@ function TeamSelectionsPage() {
   }
 
   // Calculate overall rankings for riders
-  const ridersRecord = data.riders as Record<string, RiderDataFromJson>;
+  const ridersRecord = ridersData as Record<string, RiderDataFromJson>;
   const rankedRiders = Object.entries(ridersRecord)
     .map(([name, rider]) => ({ name, total_points: rider.total_points }))
     .sort((a, b) => b.total_points - a.total_points);

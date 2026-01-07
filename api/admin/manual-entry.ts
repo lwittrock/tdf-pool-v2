@@ -53,6 +53,7 @@ export default async function handler(
   try {
     const stageData: StageData = req.body;
     const warnings: string[] = [];
+    const forceEdit = (req.body as any).force === true;
 
     // Validate required fields
     if (!stageData.stage_number) {

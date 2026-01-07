@@ -1,21 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { put } from '@vercel/blob';
+import {
+  generateMetadataJSON,
+  generateLeaderboardsJSON,
+  generateRidersJSON,
+  generateStagesDataJSON,
+  generateTeamSelectionsJSON,
+} from '../../lib/json-generators.js';
+
+// Temporary addition for manual testing
 import { writeFileSync } from 'fs';
 import { join } from 'path';
+
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const POINTS_FOR_RANK: Record<number, number> = {
-  1: 25, 2: 19, 3: 18, 4: 17, 5: 16, 6: 15, 7: 14, 8: 13,
-  9: 12, 10: 11, 11: 10, 12: 9, 13: 8, 14: 7, 15: 6,
-  16: 5, 17: 4, 18: 3, 19: 2, 20: 1,
-};
-
 interface ProcessStageRequest {
   stage_number: number;
+  force?: boolean;
 }
 
 export default async function handler(
@@ -27,44 +33,40 @@ export default async function handler(
   }
 
   try {
-    const { stage_number }: ProcessStageRequest = req.body;
+    const { stage_number, force }: ProcessStageRequest = req.body;
 
     if (!stage_number) {
       return res.status(400).json({ error: 'stage_number is required' });
     }
 
-    console.log(`[Process Stage] Starting stage ${stage_number}`);
+    console.log(`[Process Stage] Starting stage ${stage_number}${force ? ' (forced reprocess)' : ''}`);
+
+    // IDEMPOTENCY CHECK: Prevent reprocessing completed stages
+    const { data: existingStage } = await supabase
+      .from('stages')
+      .select('is_complete')
+      .eq('stage_number', stage_number)
+      .single();
+
+    if (existingStage?.is_complete && !force) {
+      return res.status(400).json({
+        error: `Stage ${stage_number} is already complete. Use force=true to reprocess.`,
+      });
+    }
 
     // Step 1: Update active selections (handle DNS substitutions)
-    const updateResponse = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/admin/update-active-selections`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ stage_number }),
-    });
-
-    if (!updateResponse.ok) {
-      throw new Error('Failed to update active selections');
-    }
-
-    const updateResult = await updateResponse.json();
+    console.log('[Process Stage] Step 1: Updating active selections...');
+    const updateResult = await updateActiveSelections(stage_number);
 
     // Step 2: Calculate points
-    const calculateResponse = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/admin/calculate-points`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ stage_number }),
-    });
+    console.log('[Process Stage] Step 2: Calculating points...');
+    const calculateResult = await calculatePoints(stage_number, force);
 
-    if (!calculateResponse.ok) {
-      const errorData = await calculateResponse.json();
-      throw new Error(`Points calculation failed: ${errorData.error}`);
-    }
+    // Step 3: Generate and upload static JSON files to Vercel Blob
+    console.log('[Process Stage] Step 3: Generating JSON files...');
+    const blobUrls = await generateAndUploadJSON();
 
-    const calculateResult = await calculateResponse.json();
-
-    // Step 3: Generate static JSON file
-    console.log('[Process Stage] Generating static JSON...');
-    await generateStaticJSON();
+    console.log('[Process Stage] ✅ Successfully processed stage', stage_number);
 
     return res.status(200).json({
       success: true,
@@ -79,6 +81,7 @@ export default async function handler(
         participants_calculated: calculateResult.participants_calculated,
         total_points_awarded: calculateResult.total_points_awarded,
       },
+      blob_urls: blobUrls,
     });
 
   } catch (error: any) {
@@ -90,320 +93,267 @@ export default async function handler(
   }
 }
 
-async function generateStaticJSON() {
-  // Get current stage
-  const { data: currentStageData } = await supabase
+/**
+ * Step 1: Update active selections (handle DNS substitutions)
+ * Extracted logic to avoid HTTP calls within the same function
+ */
+async function updateActiveSelections(stageNumber: number) {
+  console.log('[Update Selections] Starting...');
+
+  // Get the stage
+  const { data: stage, error: stageError } = await supabase
     .from('stages')
-    .select('stage_number')
-    .eq('is_complete', true)
-    .order('stage_number', { ascending: false })
-    .limit(1)
+    .select('id')
+    .eq('stage_number', stageNumber)
     .single();
 
-  const currentStage = currentStageData?.stage_number || 0;
+  if (stageError || !stage) {
+    throw new Error(`Stage ${stageNumber} not found: ${stageError?.message}`);
+  }
 
-  // Get all completed stages
-  const { data: stagesData } = await supabase
-    .from('stages')
-    .select('id, stage_number, date')
-    .eq('is_complete', true)
-    .order('stage_number');
+  const stageId = stage.id;
 
-  if (!stagesData) throw new Error('Failed to fetch stages');
-
-  const stageIdToNumber = new Map(stagesData.map(s => [s.id, s.stage_number]));
-  const stageIdToDate = new Map(stagesData.map(s => [s.id, s.date]));
-
-  // Get all participant points
-  const { data: participantPointsData } = await supabase
-    .from('participant_stage_points')
+  // Get all DNS riders for this stage
+  const { data: dnsRecords } = await supabase
+    .from('stage_dnf')
     .select(`
-      participant_id,
-      stage_id,
-      stage_points,
-      stage_rank,
-      cumulative_points,
-      overall_rank,
-      overall_rank_change,
-      participants:participant_id (
-        name,
-        directie:directie_id (name)
-      )
-    `)
-    .order('stage_id');
-
-  // Get all directie points
-  const { data: directiePointsData } = await supabase
-    .from('directie_stage_points')
-    .select(`
-      directie_id,
-      stage_id,
-      stage_points,
-      stage_rank,
-      cumulative_points,
-      overall_rank,
-      overall_rank_change,
-      top_contributors,
-      directie:directie_id (name)
-    `)
-    .order('stage_id');
-
-  // Get all breakdowns
-  const { data: breakdownData } = await supabase
-    .from('participant_stage_points_breakdown')
-    .select(`
-      participant_id,
-      stage_id,
       rider_id,
-      points_value,
-      riders:rider_id (name)
-    `);
+      riders:rider_id (id, name)
+    `)
+    .eq('stage_id', stageId)
+    .eq('status', 'DNS');
 
-  // Build leaderboard_by_stage
-  const leaderboardByStage: Record<string, any[]> = {};
+  if (!dnsRecords || dnsRecords.length === 0) {
+    console.log('[Update Selections] No DNS riders this stage');
+    return {
+      dns_riders: [],
+      substitutions_made: [],
+      participants_affected: 0,
+    };
+  }
+
+  const dnsRiderIds = dnsRecords.map(r => r.rider_id);
+  const dnsRiderNames = dnsRecords
+    .map((r: any) => r.riders?.name)
+    .filter(Boolean);
+
+  console.log('[Update Selections] Found DNS riders:', dnsRiderNames);
+
+  // Find affected participants
+  const { data: affectedSelections } = await supabase
+    .from('participant_rider_selections')
+    .select(`
+      id,
+      participant_id,
+      rider_id,
+      position,
+      is_active,
+      replaced_at_stage,
+      participants:participant_id (id, name),
+      riders:rider_id (id, name)
+    `)
+    .in('rider_id', dnsRiderIds)
+    .eq('is_active', true);
+
+  if (!affectedSelections || affectedSelections.length === 0) {
+    console.log('[Update Selections] No active selections affected');
+    return {
+      dns_riders: dnsRiderNames,
+      substitutions_made: [],
+      participants_affected: 0,
+    };
+  }
+
+  const substitutionsMade: Array<{
+    participant_name: string;
+    rider_out: string;
+    rider_in: string;
+  }> = [];
   
-  if (participantPointsData) {
-    for (const p of participantPointsData) {
-      const stageNum = stageIdToNumber.get(p.stage_id);
-      if (!stageNum) continue;
-      
-      const stageKey = `stage_${stageNum}`;
-      if (!leaderboardByStage[stageKey]) {
-        leaderboardByStage[stageKey] = [];
-      }
+  const participantsProcessed = new Set<string>();
 
-      const participant = (p as any).participants;
-      leaderboardByStage[stageKey].push({
-        participant_name: participant.name,
-        directie_name: participant.directie?.name || 'Unknown',
-        overall_score: p.cumulative_points,
-        overall_rank: p.overall_rank,
-        overall_rank_change: p.overall_rank_change || 0,
-        stage_score: p.stage_points,
-        stage_rank: p.stage_rank,
-        stage_rider_contributions: {},
-      });
+  for (const selection of affectedSelections) {
+    const participantId = selection.participant_id;
+    const participantName = (selection as any).participants?.name || 'Unknown';
+    const dnsRiderName = (selection as any).riders?.name || 'Unknown';
+
+    // Skip if already processed this participant
+    if (participantsProcessed.has(participantId)) {
+      continue;
     }
+
+    // IDEMPOTENCY CHECK: Don't re-substitute if already done for this stage
+    if ((selection as any).replaced_at_stage === stageNumber) {
+      console.log(`[Update Selections] Already substituted for ${participantName} at stage ${stageNumber}`);
+      participantsProcessed.add(participantId);
+      continue;
+    }
+
+    participantsProcessed.add(participantId);
+
+    // Check if backup already used
+    const { data: existingBackupUse } = await supabase
+      .from('participant_rider_selections')
+      .select('id')
+      .eq('participant_id', participantId)
+      .eq('position', 11)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (existingBackupUse) {
+      // Backup already activated - just deactivate DNS rider
+      await supabase
+        .from('participant_rider_selections')
+        .update({ is_active: false })
+        .eq('id', selection.id);
+
+      console.log(`[Update Selections] ${participantName} lost ${dnsRiderName}, backup already used`);
+      continue;
+    }
+
+    // Get backup rider (position 11, not yet active)
+    const { data: backup } = await supabase
+      .from('participant_rider_selections')
+      .select(`
+        id,
+        rider_id,
+        riders:rider_id (name)
+      `)
+      .eq('participant_id', participantId)
+      .eq('position', 11)
+      .eq('is_active', false)
+      .maybeSingle();
+
+    if (!backup) {
+      // No backup available
+      await supabase
+        .from('participant_rider_selections')
+        .update({ is_active: false })
+        .eq('id', selection.id);
+
+      console.log(`[Update Selections] ${participantName} lost ${dnsRiderName}, no backup available`);
+      continue;
+    }
+
+    const backupRiderName = (backup as any).riders?.name || 'Unknown';
+
+    // Perform substitution
+    await supabase
+      .from('participant_rider_selections')
+      .update({ is_active: false })
+      .eq('id', selection.id);
+
+    await supabase
+      .from('participant_rider_selections')
+      .update({
+        is_active: true,
+        replaced_at_stage: stageNumber,
+        replacement_for_rider_id: selection.rider_id,
+      })
+      .eq('id', backup.id);
+
+    substitutionsMade.push({
+      participant_name: participantName,
+      rider_out: dnsRiderName,
+      rider_in: backupRiderName,
+    });
+
+    console.log(`[Update Selections] ✓ ${participantName}: ${dnsRiderName} → ${backupRiderName}`);
   }
 
-  // Add rider contributions
-  if (breakdownData) {
-    for (const b of breakdownData) {
-      const stageNum = stageIdToNumber.get(b.stage_id);
-      if (!stageNum) continue;
-      
-      const stageKey = `stage_${stageNum}`;
-      const stageLeaderboard = leaderboardByStage[stageKey];
-      if (!stageLeaderboard) continue;
-
-      const participantEntry = stageLeaderboard.find(
-        p => p.participant_name === (participantPointsData?.find(
-          pp => pp.participant_id === b.participant_id
-        ) as any)?.participants?.name
-      );
-
-      if (participantEntry) {
-        const riderName = (b as any).riders?.name;
-        if (riderName) {
-          participantEntry.stage_rider_contributions[riderName] = 
-            (participantEntry.stage_rider_contributions[riderName] || 0) + b.points_value;
-        }
-      }
-    }
-  }
-
-  // Build directie_leaderboard_by_stage
-  const directieLeaderboardByStage: Record<string, any[]> = {};
-  
-  if (directiePointsData) {
-    for (const d of directiePointsData) {
-      const stageNum = stageIdToNumber.get(d.stage_id);
-      if (!stageNum) continue;
-      
-      const stageKey = `stage_${stageNum}`;
-      if (!directieLeaderboardByStage[stageKey]) {
-        directieLeaderboardByStage[stageKey] = [];
-      }
-
-      directieLeaderboardByStage[stageKey].push({
-        directie_name: (d as any).directie?.name || 'Unknown',
-        overall_score: d.cumulative_points,
-        overall_rank: d.overall_rank,
-        overall_rank_change: d.overall_rank_change || 0,
-        stage_score: d.stage_points,
-        stage_rank: d.stage_rank,
-        stage_participant_contributions: d.top_contributors?.stage || [],
-        overall_participant_contributions: d.top_contributors?.overall || [],
-      });
-    }
-  }
-
-  // Build riders object
-  const { data: ridersData } = await supabase.from('riders').select('id, name, team');
-  const { data: resultsData } = await supabase.from('stage_results').select('rider_id, stage_id, position');
-  const { data: jerseysData } = await supabase.from('stage_jerseys').select('rider_id, stage_id, jersey_type');
-  const { data: combativityData } = await supabase.from('stage_combativity').select('rider_id, stage_id');
-
-  const ridersObject: Record<string, any> = {};
-
-  if (ridersData) {
-    for (const rider of ridersData) {
-      const stagesObj: Record<string, any> = {};
-      let totalPoints = 0;
-
-      const riderResults = resultsData?.filter(r => r.rider_id === rider.id) || [];
-      
-      for (const result of riderResults) {
-        const stageNum = stageIdToNumber.get(result.stage_id);
-        if (!stageNum) continue;
-
-        const stageKey = `stage_${stageNum}`;
-        const finishPoints = POINTS_FOR_RANK[result.position] || 0;
-
-        const jerseyPoints: any = {
-          yellow: 0,
-          green: 0,
-          polka_dot: 0,
-          white: 0,
-          combative: 0,
-        };
-
-        const stageJerseys = jerseysData?.filter(
-          j => j.rider_id === rider.id && j.stage_id === result.stage_id
-        ) || [];
-
-        for (const j of stageJerseys) {
-          if (j.jersey_type === 'yellow') jerseyPoints.yellow = 15;
-          if (j.jersey_type === 'green') jerseyPoints.green = 10;
-          if (j.jersey_type === 'polka_dot') jerseyPoints.polka_dot = 10;
-          if (j.jersey_type === 'white') jerseyPoints.white = 10;
-        }
-
-        const hasCombativity = combativityData?.some(
-          c => c.rider_id === rider.id && c.stage_id === result.stage_id
-        );
-        if (hasCombativity) {
-          jerseyPoints.combative = 5;
-        }
-
-        const jerseyTotal = Object.values(jerseyPoints).reduce((a, b) => (a as number) + (b as number), 0) as number;
-        const stageTotal = finishPoints + jerseyTotal;
-        totalPoints += stageTotal;
-
-        stagesObj[stageKey] = {
-          date: stageIdToDate.get(result.stage_id),
-          stage_finish_points: finishPoints,
-          stage_finish_position: result.position,
-          jersey_points: jerseyPoints,
-          stage_total: stageTotal,
-          cumulative_total: totalPoints,
-        };
-      }
-
-      ridersObject[rider.name] = {
-        team: rider.team,
-        total_points: totalPoints,
-        stages: stagesObj,
-      };
-    }
-  }
-
-  // Build final JSON
-  const tdfData = {
-    metadata: {
-      current_stage: currentStage,
-      top_n_participants_for_directie: 3,
-    },
-    leaderboard_by_stage: leaderboardByStage,
-    directie_leaderboard_by_stage: directieLeaderboardByStage,
-    riders: ridersObject,
+  return {
+    dns_riders: dnsRiderNames,
+    substitutions_made: substitutionsMade,
+    participants_affected: participantsProcessed.size,
   };
-
-  // Write to public/data/tdf_data.json
-  const outputPath = join(process.cwd(), 'public', 'data', 'tdf_data.json');
-  writeFileSync(outputPath, JSON.stringify(tdfData, null, 2));
-  
-  console.log('[Generate JSON] Written to:', outputPath);
-
-  // Also generate stages_data.json
-  await generateStagesJSON();
 }
 
-async function generateStagesJSON() {
-  console.log('[Generate Stages JSON] Starting...');
+/**
+ * Step 2: Calculate points
+ * Extracted logic to avoid HTTP calls within the same function
+ */
+async function calculatePoints(stageNumber: number, force: boolean = false) {
+  console.log('[Calculate Points] Starting...');
 
-  // Get all stages
-  const { data: allStages } = await supabase
-    .from('stages')
-    .select('*')
-    .order('stage_number');
+  // Import the handler dynamically to avoid circular dependencies
+  const calculatePointsModule = await import('./calculate-points.js');
+  
+  // Create mock request/response objects
+  const mockReq = {
+    method: 'POST',
+    body: { stage_number: stageNumber, force },
+  } as VercelRequest;
 
-  if (!allStages) return;
+  let result: any = null;
+  let statusCode = 200;
 
-  // Get all riders for lookups
-  const { data: allRiders } = await supabase.from('riders').select('id, name, team');
-  const riderMap = new Map(allRiders?.map(r => [r.id, r.name]) || []);
+  const mockRes = {
+    status: (code: number) => {
+      statusCode = code;
+      return {
+        json: (data: any) => {
+          result = data;
+          return data;
+        },
+      };
+    },
+  } as any as VercelResponse;
 
-  const stagesData = [];
+  await calculatePointsModule.default(mockReq, mockRes);
 
-  for (const stage of allStages) {
-    // Get stage results
-    const { data: results } = await supabase
-      .from('stage_results')
-      .select('position, time_gap, rider_id')
-      .eq('stage_id', stage.id)
-      .order('position')
-      .limit(20);
-
-    // Get jerseys
-    const { data: jerseys } = await supabase
-      .from('stage_jerseys')
-      .select('jersey_type, rider_id')
-      .eq('stage_id', stage.id);
-
-    // Get combativity
-    const { data: combativity } = await supabase
-      .from('stage_combativity')
-      .select('rider_id')
-      .eq('stage_id', stage.id)
-      .single();
-
-    // Get DNF/DNS
-    const { data: dnf } = await supabase
-      .from('stage_dnf')
-      .select('status, rider_id')
-      .eq('stage_id', stage.id);
-
-    stagesData.push({
-      stage_number: stage.stage_number,
-      date: stage.date,
-      distance: stage.distance,
-      departure_city: stage.departure_city,
-      arrival_city: stage.arrival_city,
-      stage_type: stage.stage_type,
-      difficulty: stage.difficulty,
-      won_how: stage.won_how,
-      is_complete: stage.is_complete,
-      top_20_finishers: results?.map(r => ({
-        position: r.position,
-        rider_name: riderMap.get(r.rider_id) || '',
-        time_gap: r.time_gap
-      })) || [],
-      jerseys: {
-        yellow: riderMap.get(jerseys?.find(j => j.jersey_type === 'yellow')?.rider_id || '') || '',
-        green: riderMap.get(jerseys?.find(j => j.jersey_type === 'green')?.rider_id || '') || '',
-        polka_dot: riderMap.get(jerseys?.find(j => j.jersey_type === 'polka_dot')?.rider_id || '') || '',
-        white: riderMap.get(jerseys?.find(j => j.jersey_type === 'white')?.rider_id || '') || '',
-      },
-      combativity: riderMap.get(combativity?.rider_id || '') || '',
-      dnf_riders: dnf?.filter(d => d.status === 'DNF').map(d => riderMap.get(d.rider_id) || '') || [],
-      dns_riders: dnf?.filter(d => d.status === 'DNS').map(d => riderMap.get(d.rider_id) || '') || [],
-    });
+  if (statusCode !== 200) {
+    throw new Error(`Calculate points failed: ${result?.error || 'Unknown error'}`);
   }
 
-  // Write to public/data/stages_data.json
-  const stagesOutputPath = join(process.cwd(), 'public', 'data', 'stages_data.json');
-  writeFileSync(stagesOutputPath, JSON.stringify(stagesData, null, 2));
+  console.log('[Calculate Points] ✓ Completed');
+  return result;
+}
+
+/**
+ * Step 3: Generate and upload JSON files to Vercel Blob Storage
+ */
+async function generateAndUploadJSON() {
+  console.log('[Generate JSON] Generating all JSON files...');
+
+  const [metadata, leaderboards, riders, stages, teamSelections] = await Promise.all([
+    generateMetadataJSON(),
+    generateLeaderboardsJSON(),
+    generateRidersJSON(),
+    generateStagesDataJSON(),
+    generateTeamSelectionsJSON(),
+  ]);
+
+  // TEMPORARY: Write to local files instead of blob
+  const outputDir = join(process.cwd(), 'public', 'data');
   
-  console.log('[Generate Stages JSON] Written to:', stagesOutputPath);
+  writeFileSync(
+    join(outputDir, 'metadata.json'),
+    JSON.stringify(metadata, null, 2)
+  );
+  writeFileSync(
+    join(outputDir, 'leaderboards.json'),
+    JSON.stringify(leaderboards, null, 2)
+  );
+  writeFileSync(
+    join(outputDir, 'riders.json'),
+    JSON.stringify(riders, null, 2)
+  );
+  writeFileSync(
+    join(outputDir, 'stages_data.json'),
+    JSON.stringify(stages, null, 2)
+  );
+
+  writeFileSync(
+    join(outputDir, 'team_selections.json'),
+    JSON.stringify(teamSelections, null, 2)
+  );
+
+  console.log('[Generate JSON] ✓ Written to local files');
+  
+  return {
+    metadata: '/data/metadata.json',
+    leaderboards: '/data/leaderboards.json',
+    riders: '/data/riders.json',
+    stages: '/data/stages_data.json',
+  };
 }

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { useTdfData } from '../hooks/useTdfData';
+import { useMetadata, useLeaderboards } from '../hooks/useTdfData';
 
 interface LeaderboardEntry {
   participant_name: string;
@@ -30,19 +30,24 @@ function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
-  const { data: tdfData, loading, error } = useTdfData();
+  // Fetch split data
+  const { data: metadata, loading: metadataLoading, error: metadataError } = useMetadata();
+  const { data: leaderboardsData, loading: leaderboardsLoading, error: leaderboardsError } = useLeaderboards();
+
+  const loading = metadataLoading || leaderboardsLoading;
+  const error = metadataError || leaderboardsError;
 
   const currentLeaderboard = useMemo(() => {
-    if (!tdfData) return [];
-    const currentStageKey = `stage_${tdfData.metadata.current_stage}`;
-    return tdfData.leaderboard_by_stage[currentStageKey] || [];
-  }, [tdfData]);
+    if (!metadata || !leaderboardsData) return [];
+    const currentStageKey = `stage_${metadata.current_stage}`;
+    return leaderboardsData.leaderboard_by_stage[currentStageKey] || [];
+  }, [metadata, leaderboardsData]);
   
   const currentDirectieLeaderboard = useMemo(() => {
-    if (!tdfData) return [];
-    const currentStageKey = `stage_${tdfData.metadata.current_stage}`;
-    return tdfData.directie_leaderboard_by_stage[currentStageKey] || [];
-  }, [tdfData]);
+    if (!metadata || !leaderboardsData) return [];
+    const currentStageKey = `stage_${metadata.current_stage}`;
+    return leaderboardsData.directie_leaderboard_by_stage[currentStageKey] || [];
+  }, [metadata, leaderboardsData]);
 
   const stageResults = useMemo(() => {
     return [...currentLeaderboard].sort((a, b) => a.stage_rank - b.stage_rank);
@@ -105,9 +110,8 @@ function HomePage() {
     );
   }
 
-  if (!tdfData) return null;
+  if (!metadata || !leaderboardsData) return null;
 
-  const { metadata, leaderboard_by_stage } = tdfData;
   const currentStageNum = metadata.current_stage;
 
   const renderRankChange = (rankChange: number) => {
@@ -132,8 +136,10 @@ function HomePage() {
   };
 
   const getParticipantStages = (participantName: string) => {
+    if (!leaderboardsData) return [];
+    
     const allStages: Array<{ stageNum: number; stageKey: string; stage_score: number; stage_rank: number }> = [];
-    Object.entries(leaderboard_by_stage).forEach(([stageKey, stageData]) => {
+    Object.entries(leaderboardsData.leaderboard_by_stage).forEach(([stageKey, stageData]) => {
       const participantEntry = stageData.find(p => p.participant_name === participantName);
       if (participantEntry) {
         allStages.push({
@@ -148,8 +154,10 @@ function HomePage() {
   };
 
   const getParticipantMedals = (participantName: string) => {
+    if (!leaderboardsData) return '';
+    
     let goldCount = 0, silverCount = 0, bronzeCount = 0;
-    Object.values(leaderboard_by_stage).forEach((stageData) => {
+    Object.values(leaderboardsData.leaderboard_by_stage).forEach((stageData) => {
       const participantEntry = stageData.find(p => p.participant_name === participantName);
       if (participantEntry) {
         if (participantEntry.stage_rank === 1) goldCount++;
