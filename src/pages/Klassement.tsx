@@ -31,8 +31,8 @@ function HomePage() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
   // Fetch split data
-  const { data: metadata, loading: metadataLoading, error: metadataError } = useMetadata();
-  const { data: leaderboardsData, loading: leaderboardsLoading, error: leaderboardsError } = useLeaderboards();
+  const { data: metadata, isLoading: metadataLoading, error: metadataError } = useMetadata();
+  const { data: leaderboardsData, isLoading: leaderboardsLoading, error: leaderboardsError } = useLeaderboards();
 
   const loading = metadataLoading || leaderboardsLoading;
   const error = metadataError || leaderboardsError;

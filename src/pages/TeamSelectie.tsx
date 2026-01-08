@@ -58,8 +58,8 @@ function TeamSelectionsPage() {
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
   // Fetch data
-  const { data: ridersData, loading: ridersLoading, error: ridersError } = useRiders();
-  const { data: teamSelectionsData, loading: selectionsLoading, error: selectionsError } = useTeamSelections();
+  const { data: ridersData, isLoading: ridersLoading, error: ridersError } = useRiders();
+  const { data: teamSelectionsData, isLoading: selectionsLoading, error: selectionsError } = useTeamSelections();
 
   const loading = ridersLoading || selectionsLoading;
   const error = ridersError || selectionsError;

@@ -108,8 +108,8 @@ function RidersPage() {
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
   // Fetch split data
-  const { data: metadata, loading: metadataLoading, error: metadataError } = useMetadata();
-  const { data: ridersData, loading: ridersLoading, error: ridersError } = useRiders();
+  const { data: metadata, isLoading: metadataLoading, error: metadataError } = useMetadata();
+  const { data: ridersData, isLoading: ridersLoading, error: ridersError } = useRiders();
 
   const loading = metadataLoading || ridersLoading;
   const error = metadataError || ridersError;

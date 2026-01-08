@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Autocomplete, MultiAutocomplete } from '../components/Autocomplete';
-import { refreshTdfData } from '../hooks/useTdfData';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
@@ -68,6 +68,7 @@ function StageManagementPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState<StageFormData>({
     stage_number: 1,
@@ -266,10 +267,17 @@ function StageManagementPage() {
       setSuccessMessage(`Etappe ${formData.stage_number} succesvol opgeslagen en verwerkt!`);
       
       // Show success with refresh option
-      setTimeout(() => {
+      setTimeout(async () => {
         setViewMode('list');
-        setSuccessMessage('');
-        refreshTdfData();
+        setSuccessMessage('Data wordt vernieuwd...');
+        
+        // Refetch all data
+        await queryClient.invalidateQueries();
+        
+        setSuccessMessage('✅ Data succesvol bijgewerkt!');
+        
+        // Clear success message after 2 more seconds
+        setTimeout(() => setSuccessMessage(''), 2000);
       }, 2000);
 
     } catch (error: any) {
