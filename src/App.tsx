@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter , Routes, Route, Link, useLocation } from 'react-router-dom';
 import HomePage from './pages/Klassement';
 import RennerPunten from './pages/RennerPunten';
 import TeamSelectie from './pages/TeamSelectie';
@@ -90,7 +90,7 @@ function Navigation() {
 // App component
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter >
       <Navigation />
       <main className="max-w-7xl mx-auto">
         <Routes>
@@ -102,7 +102,7 @@ function App() {
           <Route path="/OverDezePoule" element={<OverDezePoule />} />
         </Routes>
       </main>
-    </HashRouter>
+    </BrowserRouter >
   );
 }
 

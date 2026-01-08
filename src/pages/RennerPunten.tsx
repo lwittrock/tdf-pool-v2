@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { TabButton, SearchInput } from '../components/Button';
@@ -479,9 +479,8 @@ function RidersPage() {
                     const medals = getRiderMedals(rider.name);
                     
                     return (
-                      <>
+                      <React.Fragment key={rider.name}>
                         <tr
-                          key={rider.name}
                           className={`cursor-pointer hover:bg-gray-100 ${
                             idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'
                           }`}
@@ -544,7 +543,7 @@ function RidersPage() {
                             </td>
                           </tr>
                         )}
-                      </>
+                      </React.Fragment>
                     );
                   })}
                 </tbody>

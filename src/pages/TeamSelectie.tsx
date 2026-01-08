@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { SearchInput } from '../components/Button';
@@ -315,9 +315,8 @@ function TeamSelectionsPage() {
             </thead>
             <tbody>
               {displayData.map((rider, idx) => (
-                <>
+                <React.Fragment key={rider.name}>
                   <tr
-                    key={rider.name}
                     className={`cursor-pointer hover:bg-gray-100 ${
                       idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'
                     }`}
@@ -397,7 +396,7 @@ function TeamSelectionsPage() {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
