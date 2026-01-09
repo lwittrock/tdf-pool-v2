@@ -94,7 +94,7 @@ export interface RiderData {
 export type RidersData = Record<string, RiderData>;
 
 // ============================================================================
-// NEW: Rider Rankings Types (for simplified rider_rankings.json)
+// Rider Rankings Types (for simplified rider_rankings.json)
 // ============================================================================
 
 export interface RiderMedalCounts {
