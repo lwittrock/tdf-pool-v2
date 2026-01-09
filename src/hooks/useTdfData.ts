@@ -13,6 +13,7 @@ import type {
   RidersData,
   TeamSelectionsData,
   StageData,
+  RiderRankingsData,
 } from '../../lib/types';
 
 // ============================================================================
@@ -133,6 +134,32 @@ export function useTeamSelections() {
       const response = await fetch(DATA_PATHS.TEAM_SELECTIONS);
       if (!response.ok) {
         throw new Error(`Failed to load team selections: ${response.status}`);
+      }
+      return response.json();
+    },
+    staleTime: CACHE_CONFIG.STALE_TIME,
+    gcTime: CACHE_CONFIG.GC_TIME,
+    refetchOnWindowFocus: CACHE_CONFIG.REFETCH_ON_WINDOW_FOCUS,
+    refetchOnMount: CACHE_CONFIG.REFETCH_ON_MOUNT,
+    refetchOnReconnect: CACHE_CONFIG.REFETCH_ON_RECONNECT,
+    retry: CACHE_CONFIG.RETRY,
+  });
+}
+
+// ============================================================================
+// Rider Rankings Hook
+// ============================================================================
+
+/**
+ * Fetch pre-computed rider rankings (stage and total)
+ */
+export function useRiderRankings() {
+  return useQuery<RiderRankingsData>({
+    queryKey: ['riderRankings'],
+    queryFn: async () => {
+      const response = await fetch(DATA_PATHS.RIDER_RANKINGS);
+      if (!response.ok) {
+        throw new Error(`Failed to load rider rankings: ${response.status}`);
       }
       return response.json();
     },

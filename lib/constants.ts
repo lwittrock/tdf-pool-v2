@@ -141,6 +141,7 @@ export const DATA_PATHS = {
   RIDERS: '/data/riders.json',
   STAGES: '/data/stages_data.json',
   TEAM_SELECTIONS: '/data/team_selections.json',
+  RIDER_RANKINGS: '/data/rider_rankings.json',
 } as const;
 
 // ============================================================================

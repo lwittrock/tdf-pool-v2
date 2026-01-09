@@ -66,6 +66,7 @@ export interface RiderStageData {
   date: string;
   stage_finish_points: number;
   stage_finish_position: number;
+  stage_rank?: number;  // ← ADDED: Rank among all riders for this stage
   jersey_points: {
     yellow: number;
     green: number;
@@ -80,10 +81,61 @@ export interface RiderStageData {
 export interface RiderData {
   team: string;
   total_points: number;
+  overall_rank?: number;  // ← ADDED: Overall rank by total points
+  medal_counts?: {        // ← ADDED: Medal counts across all stages
+    gold: number;
+    silver: number;
+    bronze: number;
+    display: string;
+  };
   stages: Record<string, RiderStageData>;
 }
 
 export type RidersData = Record<string, RiderData>;
+
+// ============================================================================
+// NEW: Rider Rankings Types (for simplified rider_rankings.json)
+// ============================================================================
+
+export interface RiderMedalCounts {
+  gold: number;
+  silver: number;
+  bronze: number;
+  display: string;
+}
+
+export interface RiderRankingsStageEntry {
+  name: string;
+  team: string;
+  stage_rank: number;
+  stage_points: number;
+  stage_finish_position: number;
+  stage_finish_points: number;
+  jersey_points: {
+    yellow: number;
+    green: number;
+    polka_dot: number;
+    white: number;
+    combative: number;
+  };
+}
+
+export interface RiderRankingsTotalEntry {
+  name: string;
+  team: string;
+  overall_rank: number;
+  total_points: number;
+  medal_counts: RiderMedalCounts;
+}
+
+export interface RiderRankingsData {
+  stage_rankings: Record<string, RiderRankingsStageEntry[]>;
+  total_rankings: RiderRankingsTotalEntry[];
+}
+
+// ============================================================================
+// Team Selections
+// ============================================================================
 
 export interface TeamSelection {
   participant_name: string;
@@ -92,6 +144,10 @@ export interface TeamSelection {
 }
 
 export type TeamSelectionsData = Record<string, TeamSelection>;
+
+// ============================================================================
+// Stage Data (for admin panel)
+// ============================================================================
 
 export interface StageData {
   stage_number: number;
@@ -106,7 +162,7 @@ export interface StageData {
   top_20_finishers: Array<{
     position: number;
     rider_name: string;
-    time_gap?: string;
+    time_gap: string | null;
   }>;
   jerseys: {
     yellow: string;
@@ -120,7 +176,7 @@ export interface StageData {
 }
 
 // ============================================================================
-// Computed/Derived Types (used in UI)
+// Utility Types for Frontend Components
 // ============================================================================
 
 export interface StageInfo {
@@ -129,32 +185,16 @@ export interface StageInfo {
   date: string;
   stage_finish_points: number;
   stage_finish_position: number;
-  jersey_points: {
-    yellow: number;
-    green: number;
-    polka_dot: number;
-    white: number;
-    combative: number;
+  stage_rank?: number;
+  jersey_points?: {
+    yellow?: number;
+    green?: number;
+    polka_dot?: number;
+    white?: number;
+    combative?: number;
   };
   stage_total: number;
   cumulative_total: number;
-}
-
-export interface RiderWithRank extends RiderData {
-  name: string;
-  overall_rank: number;
-}
-
-export interface RiderWithStagePoints extends RiderData {
-  name: string;
-  stage_points: number;
-  stage_data: RiderStageData | undefined;
-}
-
-export interface RiderWithSelectionStats extends RiderData {
-  name: string;
-  selection_count: number;
-  selection_percentage: number;
 }
 
 export interface MedalCounts {
@@ -164,58 +204,7 @@ export interface MedalCounts {
   display: string;
 }
 
-// ============================================================================
-// View Types
-// ============================================================================
-
-export type LeaderboardViewType = 'stage_individual' | 'standings_individual' | 'standings_directie';
-export type RiderViewType = 'stage' | 'total' | 'team';
-
-// ============================================================================
-// Admin API Types
-// ============================================================================
-
-export interface ProcessStageRequest {
-  stage_number: number;
-  force?: boolean;
-}
-
-export interface CalculatePointsRequest {
-  stage_number: number;
-  force?: boolean;
-}
-
-export interface ManualStageEntry {
-  stage_number: number;
-  date?: string;
-  distance?: string;
-  departure_city?: string;
-  arrival_city?: string;
-  stage_type?: string;
-  difficulty?: string;
-  won_how?: string;
-  top_20_finishers: Array<{
-    rider_name: string;
-    position: number;
-    time_gap?: string;
-  }>;
-  jerseys: {
-    yellow?: string;
-    green?: string;
-    polka_dot?: string;
-    white?: string;
-  };
-  combativity?: string;
-  dnf_riders?: string[];
-  dns_riders?: string[];
-}
-
-export interface ApiError {
-  error: string;
-  details?: any;
-}
-
-export interface ApiSuccess {
-  success: true;
-  [key: string]: any;
+export interface JerseyAwards {
+  jerseys: Array<'yellow' | 'green' | 'polka_dot' | 'white'>;
+  hasCombative: boolean;
 }

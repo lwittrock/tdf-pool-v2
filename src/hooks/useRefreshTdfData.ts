@@ -41,6 +41,7 @@ export function useRefreshTdfData() {
     await queryClient.invalidateQueries({ queryKey: ['riders'] });
     await queryClient.invalidateQueries({ queryKey: ['stagesData'] });
     await queryClient.invalidateQueries({ queryKey: ['teamSelections'] });
+    await queryClient.invalidateQueries({ queryKey: ['riderRankings'] });
   }, [queryClient]);
 
   /**

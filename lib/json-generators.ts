@@ -41,25 +41,64 @@ interface DirectieLeaderboardEntry {
   overall_participant_contributions: Array<{ participant_name: string; overall_score: number }>;
 }
 
+interface JerseyPoints {
+  yellow: number;
+  green: number;
+  polka_dot: number;
+  white: number;
+  combative: number;
+}
+
 interface RiderStageData {
   date: string;
   stage_finish_points: number;
   stage_finish_position: number;
-  jersey_points: {
-    yellow: number;
-    green: number;
-    polka_dot: number;
-    white: number;
-    combative: number;
-  };
+  stage_rank: number;
+  jersey_points: JerseyPoints;
   stage_total: number;
   cumulative_total: number;
+}
+
+interface RiderMedalCounts {
+  gold: number;
+  silver: number;
+  bronze: number;
+  display: string;
 }
 
 interface RiderData {
   team: string;
   total_points: number;
+  overall_rank: number;
+  medal_counts: RiderMedalCounts;
   stages: Record<string, RiderStageData>;
+}
+
+interface RidersJSON {
+  [riderName: string]: RiderData;
+}
+
+interface RiderRankingsStageEntry {
+  name: string;
+  team: string;
+  stage_rank: number;
+  stage_points: number;
+  stage_finish_position: number;
+  stage_finish_points: number;
+  jersey_points: JerseyPoints;
+}
+
+interface RiderRankingsTotalEntry {
+  name: string;
+  team: string;
+  overall_rank: number;
+  total_points: number;
+  medal_counts: RiderMedalCounts;
+}
+
+interface RiderRankingsData {
+  stage_rankings: Record<string, RiderRankingsStageEntry[]>;
+  total_rankings: RiderRankingsTotalEntry[];
 }
 
 /**
@@ -131,7 +170,6 @@ export async function generateLeaderboardsJSON(): Promise<{
     .order('stage_id');
 
   // Get rider contributions per participant per stage
-  // We'll calculate this from active rider selections and rider results
   const riderContributions = await calculateRiderContributions(stagesData);
 
   // Build leaderboard_by_stage
@@ -212,118 +250,286 @@ export async function generateLeaderboardsJSON(): Promise<{
 }
 
 /**
- * Generate riders.json (all rider details and stage-by-stage breakdown)
+ * Calculate medal counts for a rider across all stages
  */
-export async function generateRidersJSON(): Promise<Record<string, RiderData>> {
+function calculateRiderMedals(stages: Record<string, RiderStageData>): RiderMedalCounts {
+  let gold = 0, silver = 0, bronze = 0;
+  
+  for (const stageData of Object.values(stages)) {
+    const pos = stageData.stage_finish_position;
+    if (pos === 1) gold++;
+    else if (pos === 2) silver++;
+    else if (pos === 3) bronze++;
+  }
+  
+  const medals: string[] = [];
+  if (gold > 0) medals.push('🥇'.repeat(gold));
+  if (silver > 0) medals.push('🥈'.repeat(silver));
+  if (bronze > 0) medals.push('🥉'.repeat(bronze));
+  
+  return {
+    gold,
+    silver,
+    bronze,
+    display: medals.join(' ')
+  };
+}
+
+/**
+ * Generate riders.json with rankings and medals
+ */
+export async function generateRidersJSON(): Promise<RidersJSON> {
   console.log('[Generate JSON] Building riders data...');
 
-  // Get all stages
-  const { data: stagesData } = await supabase
-    .from('stages')
-    .select('id, stage_number, date')
-    .eq('is_complete', true)
-    .order('stage_number');
-
-  if (!stagesData) {
-    throw new Error('Failed to fetch stages');
-  }
-
-  const stageIdToNumber = new Map(stagesData.map(s => [s.id, s.stage_number]));
-  const stageIdToDate = new Map(stagesData.map(s => [s.id, s.date]));
-
-  // Get all riders
-  const { data: ridersData } = await supabase
+  const { data: riders } = await supabase
     .from('riders')
-    .select('id, name, team');
+    .select('id, name, team')
+    .eq('is_active', true)
+    .order('name');
 
-  if (!ridersData) {
-    throw new Error('Failed to fetch riders');
-  }
+  if (!riders) return {};
 
-  // Get all stage results
-  const { data: resultsData } = await supabase
-    .from('stage_results')
-    .select('rider_id, stage_id, position');
+  const ridersJSON: RidersJSON = {};
 
-  // Get all jerseys
-  const { data: jerseysData } = await supabase
-    .from('stage_jerseys')
-    .select('rider_id, stage_id, jersey_type');
+  // Jersey point values
+  const JERSEY_POINTS_MAP: Record<string, number> = {
+    yellow: 20,
+    green: 15,
+    polka_dot: 15,
+    white: 15
+  };
 
-  // Get all combativity awards
-  const { data: combativityData } = await supabase
-    .from('stage_combativity')
-    .select('rider_id, stage_id');
+  const COMBATIVITY_POINTS = 10;
 
-  // Build riders object
-  const ridersObject: Record<string, RiderData> = {};
+  // Position points mapping
+  const POSITION_POINTS: Record<number, number> = {
+    1: 50, 2: 40, 3: 35, 4: 30, 5: 27, 6: 25, 7: 23, 8: 21, 9: 19, 10: 17,
+    11: 15, 12: 14, 13: 13, 14: 12, 15: 11, 16: 10, 17: 9, 18: 8, 19: 7, 20: 6
+  };
 
-  for (const rider of ridersData) {
-    const stagesObj: Record<string, RiderStageData> = {};
+  // First pass: Build basic rider data
+  for (const rider of riders) {
+    // Get all stage results for this rider
+    const { data: stageResults } = await supabase
+      .from('stage_results')
+      .select(`
+        stage_id,
+        position,
+        stages!inner(stage_number, date)
+      `)
+      .eq('rider_id', rider.id)
+      .order('stages(stage_number)');
+
+    // Get jersey points per stage
+    const { data: jerseyData } = await supabase
+      .from('stage_jerseys')
+      .select(`
+        stage_id,
+        jersey_type,
+        stages!inner(stage_number)
+      `)
+      .eq('rider_id', rider.id);
+
+    // Get combativity awards
+    const { data: combativityData } = await supabase
+      .from('stage_combativity')
+      .select(`
+        stage_id,
+        stages!inner(stage_number)
+      `)
+      .eq('rider_id', rider.id);
+
+    // Build stages object
+    const stages: Record<string, RiderStageData> = {};
     let totalPoints = 0;
 
-    const riderResults = resultsData?.filter(r => r.rider_id === rider.id) || [];
-    
-    for (const result of riderResults) {
-      const stageNum = stageIdToNumber.get(result.stage_id);
-      if (!stageNum) continue;
-
-      const stageKey = `stage_${stageNum}`;
-      const finishPoints = POINTS_FOR_RANK[result.position] || 0;
-
-      const jerseyPoints = {
-        yellow: 0,
-        green: 0,
-        polka_dot: 0,
-        white: 0,
-        combative: 0,
-      };
-
-      // Check for jerseys
-      const stageJerseys = jerseysData?.filter(
-        j => j.rider_id === rider.id && j.stage_id === result.stage_id
-      ) || [];
-
-      for (const j of stageJerseys) {
-        if (j.jersey_type === 'yellow') jerseyPoints.yellow = 15;
-        if (j.jersey_type === 'green') jerseyPoints.green = 10;
-        if (j.jersey_type === 'polka_dot') jerseyPoints.polka_dot = 10;
-        if (j.jersey_type === 'white') jerseyPoints.white = 10;
+    // Group jersey points by stage number
+    const jerseyPointsByStage: Record<number, JerseyPoints> = {};
+    if (jerseyData) {
+      for (const jp of jerseyData) {
+        const stageNum = (jp.stages as any).stage_number;
+        if (!jerseyPointsByStage[stageNum]) {
+          jerseyPointsByStage[stageNum] = {
+            yellow: 0,
+            green: 0,
+            polka_dot: 0,
+            white: 0,
+            combative: 0
+          };
+        }
+        
+        const jerseyType = jp.jersey_type as keyof typeof JERSEY_POINTS_MAP;
+        jerseyPointsByStage[stageNum][jerseyType] = JERSEY_POINTS_MAP[jerseyType] || 0;
       }
-
-      // Check for combativity
-      const hasCombativity = combativityData?.some(
-        c => c.rider_id === rider.id && c.stage_id === result.stage_id
-      );
-      if (hasCombativity) {
-        jerseyPoints.combative = 5;
-      }
-
-      const jerseyTotal = Object.values(jerseyPoints).reduce((a, b) => a + b, 0);
-      const stageTotal = finishPoints + jerseyTotal;
-      totalPoints += stageTotal;
-
-      stagesObj[stageKey] = {
-        date: stageIdToDate.get(result.stage_id) || '',
-        stage_finish_points: finishPoints,
-        stage_finish_position: result.position,
-        jersey_points: jerseyPoints,
-        stage_total: stageTotal,
-        cumulative_total: totalPoints,
-      };
     }
 
-    // Only include riders who scored points
-    if (totalPoints > 0) {
-      ridersObject[rider.name] = {
-        team: rider.team,
-        total_points: totalPoints,
-        stages: stagesObj,
-      };
+    // Add combativity points
+    if (combativityData) {
+      for (const ca of combativityData) {
+        const stageNum = (ca.stages as any).stage_number;
+        if (!jerseyPointsByStage[stageNum]) {
+          jerseyPointsByStage[stageNum] = {
+            yellow: 0,
+            green: 0,
+            polka_dot: 0,
+            white: 0,
+            combative: 0
+          };
+        }
+        jerseyPointsByStage[stageNum].combative = COMBATIVITY_POINTS;
+      }
+    }
+
+    // Build stage entries
+    if (stageResults) {
+      let cumulativeTotal = 0;
+      
+      for (const result of stageResults) {
+        const stageNum = (result.stages as any).stage_number;
+        const stageDate = (result.stages as any).date;
+        const stageKey = `stage_${stageNum}`;
+        
+        const stageFinishPoints = POSITION_POINTS[result.position] || 0;
+        const jerseys: JerseyPoints = jerseyPointsByStage[stageNum] || {
+          yellow: 0, green: 0, polka_dot: 0, white: 0, combative: 0
+        };
+        
+        const jerseyTotal = Object.values(jerseys).reduce((sum: number, p: number) => sum + p, 0);
+        const stageTotal = stageFinishPoints + jerseyTotal;
+        cumulativeTotal += stageTotal;
+        totalPoints += stageTotal;
+        
+        stages[stageKey] = {
+          date: stageDate,
+          stage_finish_position: result.position,
+          stage_finish_points: stageFinishPoints,
+          stage_rank: 0, // Will be calculated in third pass
+          jersey_points: jerseys,
+          stage_total: stageTotal,
+          cumulative_total: cumulativeTotal
+        };
+      }
+    }
+
+    ridersJSON[rider.name] = {
+      team: rider.team,
+      total_points: totalPoints,
+      overall_rank: 0, // Will be calculated in second pass
+      medal_counts: { gold: 0, silver: 0, bronze: 0, display: '' }, // Will be calculated in second pass
+      stages: stages
+    };
+  }
+
+  // Second pass: Calculate overall rankings and medals
+  const ridersArray = Object.entries(ridersJSON).map(([name, data]) => ({
+    name,
+    ...data
+  }));
+
+  // Sort by total points to get overall ranks
+  ridersArray.sort((a, b) => b.total_points - a.total_points);
+  
+  // Add overall ranks and medals
+  ridersArray.forEach((rider, index) => {
+    const medals = calculateRiderMedals(rider.stages);
+    
+    ridersJSON[rider.name].overall_rank = index + 1;
+    ridersJSON[rider.name].medal_counts = medals;
+  });
+
+  // Third pass: Calculate stage ranks for each stage
+  const stageNumbers = new Set<number>();
+  for (const riderData of Object.values(ridersJSON)) {
+    for (const stageKey of Object.keys(riderData.stages)) {
+      const stageNum = parseInt(stageKey.replace('stage_', ''));
+      stageNumbers.add(stageNum);
     }
   }
 
-  return ridersObject;
+  // For each stage, rank the riders
+  for (const stageNum of Array.from(stageNumbers).sort((a, b) => a - b)) {
+    const stageKey = `stage_${stageNum}`;
+    
+    // Get all riders who participated in this stage
+    const stageParticipants: Array<{ name: string; stageTotal: number }> = [];
+    for (const [name, riderData] of Object.entries(ridersJSON)) {
+      if (riderData.stages[stageKey]) {
+        stageParticipants.push({
+          name,
+          stageTotal: riderData.stages[stageKey].stage_total
+        });
+      }
+    }
+    
+    // Sort by stage total (highest first)
+    stageParticipants.sort((a, b) => b.stageTotal - a.stageTotal);
+    
+    // Assign stage ranks
+    stageParticipants.forEach((participant, index) => {
+      ridersJSON[participant.name].stages[stageKey].stage_rank = index + 1;
+    });
+  }
+
+  return ridersJSON;
+}
+
+/**
+ * Generate rider_rankings.json (simplified view for quick lookups)
+ */
+export async function generateRiderRankingsJSON(): Promise<RiderRankingsData> {
+  console.log('[Generate JSON] Building rider rankings...');
+
+  const ridersData = await generateRidersJSON();
+  
+  if (!ridersData || Object.keys(ridersData).length === 0) {
+    return {
+      stage_rankings: {},
+      total_rankings: []
+    };
+  }
+
+  // Get current stage
+  const currentStage = await getCurrentStage();
+  const currentStageKey = `stage_${currentStage}`;
+
+  // Build stage rankings for current stage
+  const stageRankings: RiderRankingsStageEntry[] = [];
+  for (const [name, riderData] of Object.entries(ridersData)) {
+    const stageData = riderData.stages[currentStageKey];
+    if (stageData) {
+      stageRankings.push({
+        name,
+        team: riderData.team,
+        stage_rank: stageData.stage_rank,
+        stage_points: stageData.stage_total,
+        stage_finish_position: stageData.stage_finish_position,
+        stage_finish_points: stageData.stage_finish_points,
+        jersey_points: stageData.jersey_points
+      });
+    }
+  }
+
+  // Sort by stage rank
+  stageRankings.sort((a, b) => a.stage_rank - b.stage_rank);
+
+  // Build total rankings
+  const totalRankings: RiderRankingsTotalEntry[] = Object.entries(ridersData).map(([name, riderData]) => ({
+    name,
+    team: riderData.team,
+    overall_rank: riderData.overall_rank,
+    total_points: riderData.total_points,
+    medal_counts: riderData.medal_counts
+  }));
+
+  // Sort by overall rank
+  totalRankings.sort((a, b) => a.overall_rank - b.overall_rank);
+
+  return {
+    stage_rankings: {
+      [currentStageKey]: stageRankings
+    },
+    total_rankings: totalRankings
+  };
 }
 
 /**
@@ -383,10 +589,10 @@ async function calculateRiderContributions(
 
     for (const jersey of jerseys || []) {
       let points = 0;
-      if (jersey.jersey_type === 'yellow') points = 15;
-      if (jersey.jersey_type === 'green') points = 10;
-      if (jersey.jersey_type === 'polka_dot') points = 10;
-      if (jersey.jersey_type === 'white') points = 10;
+      if (jersey.jersey_type === 'yellow') points = 20;
+      if (jersey.jersey_type === 'green') points = 15;
+      if (jersey.jersey_type === 'polka_dot') points = 15;
+      if (jersey.jersey_type === 'white') points = 15;
       
       if (points > 0) {
         riderPoints.set(jersey.rider_id, (riderPoints.get(jersey.rider_id) || 0) + points);
@@ -396,7 +602,7 @@ async function calculateRiderContributions(
     if (combativity?.rider_id) {
       riderPoints.set(
         combativity.rider_id, 
-        (riderPoints.get(combativity.rider_id) || 0) + 5
+        (riderPoints.get(combativity.rider_id) || 0) + 10
       );
     }
 
@@ -462,7 +668,7 @@ export async function generateStagesDataJSON() {
       .from('stage_combativity')
       .select('rider_id')
       .eq('stage_id', stage.id)
-      .single();
+      .maybeSingle();
 
     // Get DNF/DNS
     const { data: dnf } = await supabase

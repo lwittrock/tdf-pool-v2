@@ -1,18 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { put } from '@vercel/blob';
 import {
   generateMetadataJSON,
   generateLeaderboardsJSON,
   generateRidersJSON,
   generateStagesDataJSON,
   generateTeamSelectionsJSON,
+  generateRiderRankingsJSON,
 } from '../../lib/json-generators.js';
 
 // Temporary addition for manual testing
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -62,9 +61,9 @@ export default async function handler(
     console.log('[Process Stage] Step 2: Calculating points...');
     const calculateResult = await calculatePoints(stage_number, force);
 
-    // Step 3: Generate and upload static JSON files to Vercel Blob
+    // Step 3: Generate and upload static JSON files
     console.log('[Process Stage] Step 3: Generating JSON files...');
-    const blobUrls = await generateAndUploadJSON();
+    const fileUrls = await generateAndUploadJSON();
 
     console.log('[Process Stage] ✅ Successfully processed stage', stage_number);
 
@@ -81,7 +80,7 @@ export default async function handler(
         participants_calculated: calculateResult.participants_calculated,
         total_points_awarded: calculateResult.total_points_awarded,
       },
-      blob_urls: blobUrls,
+      file_urls: fileUrls,
     });
 
   } catch (error: any) {
@@ -95,12 +94,10 @@ export default async function handler(
 
 /**
  * Step 1: Update active selections (handle DNS substitutions)
- * Extracted logic to avoid HTTP calls within the same function
  */
 async function updateActiveSelections(stageNumber: number) {
   console.log('[Update Selections] Starting...');
 
-  // Get the stage
   const { data: stage, error: stageError } = await supabase
     .from('stages')
     .select('id')
@@ -113,7 +110,6 @@ async function updateActiveSelections(stageNumber: number) {
 
   const stageId = stage.id;
 
-  // Get all DNS riders for this stage
   const { data: dnsRecords } = await supabase
     .from('stage_dnf')
     .select(`
@@ -139,7 +135,6 @@ async function updateActiveSelections(stageNumber: number) {
 
   console.log('[Update Selections] Found DNS riders:', dnsRiderNames);
 
-  // Find affected participants
   const { data: affectedSelections } = await supabase
     .from('participant_rider_selections')
     .select(`
@@ -177,12 +172,10 @@ async function updateActiveSelections(stageNumber: number) {
     const participantName = (selection as any).participants?.name || 'Unknown';
     const dnsRiderName = (selection as any).riders?.name || 'Unknown';
 
-    // Skip if already processed this participant
     if (participantsProcessed.has(participantId)) {
       continue;
     }
 
-    // IDEMPOTENCY CHECK: Don't re-substitute if already done for this stage
     if ((selection as any).replaced_at_stage === stageNumber) {
       console.log(`[Update Selections] Already substituted for ${participantName} at stage ${stageNumber}`);
       participantsProcessed.add(participantId);
@@ -191,7 +184,6 @@ async function updateActiveSelections(stageNumber: number) {
 
     participantsProcessed.add(participantId);
 
-    // Check if backup already used
     const { data: existingBackupUse } = await supabase
       .from('participant_rider_selections')
       .select('id')
@@ -201,7 +193,6 @@ async function updateActiveSelections(stageNumber: number) {
       .maybeSingle();
 
     if (existingBackupUse) {
-      // Backup already activated - just deactivate DNS rider
       await supabase
         .from('participant_rider_selections')
         .update({ is_active: false })
@@ -211,7 +202,6 @@ async function updateActiveSelections(stageNumber: number) {
       continue;
     }
 
-    // Get backup rider (position 11, not yet active)
     const { data: backup } = await supabase
       .from('participant_rider_selections')
       .select(`
@@ -225,7 +215,6 @@ async function updateActiveSelections(stageNumber: number) {
       .maybeSingle();
 
     if (!backup) {
-      // No backup available
       await supabase
         .from('participant_rider_selections')
         .update({ is_active: false })
@@ -237,7 +226,6 @@ async function updateActiveSelections(stageNumber: number) {
 
     const backupRiderName = (backup as any).riders?.name || 'Unknown';
 
-    // Perform substitution
     await supabase
       .from('participant_rider_selections')
       .update({ is_active: false })
@@ -270,15 +258,12 @@ async function updateActiveSelections(stageNumber: number) {
 
 /**
  * Step 2: Calculate points
- * Extracted logic to avoid HTTP calls within the same function
  */
 async function calculatePoints(stageNumber: number, force: boolean = false) {
   console.log('[Calculate Points] Starting...');
 
-  // Import the handler dynamically to avoid circular dependencies
   const calculatePointsModule = await import('./calculate-points.js');
   
-  // Create mock request/response objects
   const mockReq = {
     method: 'POST',
     body: { stage_number: stageNumber, force },
@@ -310,20 +295,21 @@ async function calculatePoints(stageNumber: number, force: boolean = false) {
 }
 
 /**
- * Step 3: Generate and upload JSON files to Vercel Blob Storage
+ * Step 3: Generate and upload JSON files
  */
 async function generateAndUploadJSON() {
   console.log('[Generate JSON] Generating all JSON files...');
 
-  const [metadata, leaderboards, riders, stages, teamSelections] = await Promise.all([
+  const [metadata, leaderboards, riders, stages, teamSelections, riderRankings] = await Promise.all([
     generateMetadataJSON(),
     generateLeaderboardsJSON(),
     generateRidersJSON(),
     generateStagesDataJSON(),
     generateTeamSelectionsJSON(),
+    generateRiderRankingsJSON(),  // ← NEW: Generate rider rankings
   ]);
 
-  // TEMPORARY: Write to local files instead of blob
+  // Write to local files in public/data directory
   const outputDir = join(process.cwd(), 'public', 'data');
   
   writeFileSync(
@@ -342,10 +328,13 @@ async function generateAndUploadJSON() {
     join(outputDir, 'stages_data.json'),
     JSON.stringify(stages, null, 2)
   );
-
   writeFileSync(
     join(outputDir, 'team_selections.json'),
     JSON.stringify(teamSelections, null, 2)
+  );
+  writeFileSync(
+    join(outputDir, 'rider_rankings.json'),  // ← NEW: Write rider rankings
+    JSON.stringify(riderRankings, null, 2)
   );
 
   console.log('[Generate JSON] ✓ Written to local files');
@@ -355,5 +344,7 @@ async function generateAndUploadJSON() {
     leaderboards: '/data/leaderboards.json',
     riders: '/data/riders.json',
     stages: '/data/stages_data.json',
+    teamSelections: '/data/team_selections.json',
+    riderRankings: '/data/rider_rankings.json',  // ← NEW: Return path
   };
 }
