@@ -7,8 +7,8 @@
 import React from 'react';
 import { JerseyList } from './JerseyIcons';
 import { CombativityIcon } from './CombativityIcon';
-import { getStageAwards } from '../../lib/data-transforms';
-import type { StageInfo } from '../../lib/types';
+import { getStageAwards } from '../../../lib/data-transforms';
+import type { StageInfo } from '../../../lib/types';
 
 interface StageBreakdownProps {
   stages: StageInfo[];

@@ -4,8 +4,7 @@
  * Renders medal emoji for positions (gold/silver/bronze).
  */
 
-import React from 'react';
-import { MEDALS, MEDAL_POSITIONS } from '../lib/constants';
+import { MEDALS, MEDAL_POSITIONS } from '../../../lib/constants';
 
 interface MedalDisplayProps {
   position?: number;

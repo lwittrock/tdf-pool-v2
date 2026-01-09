@@ -4,9 +4,8 @@
  * Displays jersey icons for different classifications.
  */
 
-import React from 'react';
-import { JERSEY_ICONS } from '../lib/constants';
-import type { JerseyType } from '../lib/types';
+import { JERSEY_ICONS } from '../../../lib/constants';
+import type { JerseyType } from '../../../lib/types';
 
 interface JerseyIconProps {
   type: JerseyType;

@@ -4,8 +4,6 @@
  * Red square icon for most combative rider award.
  */
 
-import React from 'react';
-
 interface CombativityIconProps {
   size?: 'sm' | 'md';
   riderNumber?: string | number;

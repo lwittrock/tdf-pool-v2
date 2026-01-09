@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { RANK_ARROWS, RANK_COLORS } from '../lib/constants';
+import { RANK_ARROWS, RANK_COLORS } from '../../../lib/constants';
 
 interface RankChangeProps {
   change: number;
