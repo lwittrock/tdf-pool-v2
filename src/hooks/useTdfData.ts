@@ -1,109 +1,43 @@
+/**
+ * TdF Data Fetching Hooks
+ * 
+ * React Query hooks for fetching static JSON data.
+ * Updated to use shared types from lib/types.ts
+ */
+
 import { useQuery } from '@tanstack/react-query';
-
-// ============================================================================
-// Type Definitions
-// ============================================================================
-
-interface Metadata {
-  current_stage: number;
-  top_n_participants_for_directie: number;
-  last_updated: string;
-}
-
-interface LeaderboardEntry {
-  participant_name: string;
-  directie_name: string;
-  overall_score: number;
-  overall_rank: number;
-  overall_rank_change: number;
-  stage_score: number;
-  stage_rank: number;
-  stage_rider_contributions: Record<string, number>;
-}
-
-interface DirectieLeaderboardEntry {
-  directie_name: string;
-  overall_score: number;
-  overall_rank: number;
-  overall_rank_change: number;
-  stage_score: number;
-  stage_rank: number;
-  stage_participant_contributions: Array<{ participant_name: string; stage_score: number }>;
-  overall_participant_contributions: Array<{ participant_name: string; overall_score: number }>;
-}
-
-interface LeaderboardsData {
-  leaderboard_by_stage: Record<string, LeaderboardEntry[]>;
-  directie_leaderboard_by_stage: Record<string, DirectieLeaderboardEntry[]>;
-}
-
-interface RiderStageData {
-  date: string;
-  stage_finish_points: number;
-  stage_finish_position: number;
-  jersey_points: {
-    yellow: number;
-    green: number;
-    polka_dot: number;
-    white: number;
-    combative: number;
-  };
-  stage_total: number;
-  cumulative_total: number;
-}
-
-interface RiderData {
-  team: string;
-  total_points: number;
-  stages: Record<string, RiderStageData>;
-}
-
-type RidersData = Record<string, RiderData>;
-
-interface StageData {
-  stage_number: number;
-  date: string | null;
-  distance: string | null;
-  departure_city: string | null;
-  arrival_city: string | null;
-  stage_type: string | null;
-  difficulty: string | null;
-  won_how: string | null;
-  is_complete: boolean;
-  top_20_finishers: Array<{ position: number; rider_name: string; time_gap?: string }>;
-  jerseys: {
-    yellow: string;
-    green: string;
-    polka_dot: string;
-    white: string;
-  };
-  combativity: string;
-  dnf_riders: string[];
-  dns_riders: string[];
-}
-
-interface TeamSelection {
-  participant_name: string;
-  directie_name: string;
-  riders: string[];
-}
-
-type TeamSelectionsData = Record<string, TeamSelection>;
+import { DATA_PATHS, CACHE_CONFIG } from '../../lib/constants';
+import type {
+  Metadata,
+  LeaderboardsData,
+  RidersData,
+  TeamSelectionsData,
+  StageData,
+} from '../../lib/types';
 
 // ============================================================================
 // Metadata Hook
 // ============================================================================
 
+/**
+ * Fetch metadata (current stage, last updated, etc.)
+ */
 export function useMetadata() {
   return useQuery<Metadata>({
     queryKey: ['metadata'],
     queryFn: async () => {
-      const response = await fetch('/data/metadata.json');
+      const response = await fetch(DATA_PATHS.METADATA);
       if (!response.ok) {
         throw new Error(`Failed to load metadata: ${response.status}`);
       }
       return response.json();
     },
+    staleTime: CACHE_CONFIG.STALE_TIME,
+    gcTime: CACHE_CONFIG.GC_TIME,
+    refetchOnWindowFocus: CACHE_CONFIG.REFETCH_ON_WINDOW_FOCUS,
+    refetchOnMount: CACHE_CONFIG.REFETCH_ON_MOUNT,
+    refetchOnReconnect: CACHE_CONFIG.REFETCH_ON_RECONNECT,
+    retry: CACHE_CONFIG.RETRY,
   });
 }
 
@@ -111,16 +45,25 @@ export function useMetadata() {
 // Leaderboards Hook
 // ============================================================================
 
+/**
+ * Fetch leaderboards (participant and directie rankings by stage)
+ */
 export function useLeaderboards() {
   return useQuery<LeaderboardsData>({
     queryKey: ['leaderboards'],
     queryFn: async () => {
-      const response = await fetch('/data/leaderboards.json');
+      const response = await fetch(DATA_PATHS.LEADERBOARDS);
       if (!response.ok) {
         throw new Error(`Failed to load leaderboards: ${response.status}`);
       }
       return response.json();
     },
+    staleTime: CACHE_CONFIG.STALE_TIME,
+    gcTime: CACHE_CONFIG.GC_TIME,
+    refetchOnWindowFocus: CACHE_CONFIG.REFETCH_ON_WINDOW_FOCUS,
+    refetchOnMount: CACHE_CONFIG.REFETCH_ON_MOUNT,
+    refetchOnReconnect: CACHE_CONFIG.REFETCH_ON_RECONNECT,
+    retry: CACHE_CONFIG.RETRY,
   });
 }
 
@@ -128,16 +71,25 @@ export function useLeaderboards() {
 // Riders Hook
 // ============================================================================
 
+/**
+ * Fetch riders data (all riders with their points and stage breakdowns)
+ */
 export function useRiders() {
   return useQuery<RidersData>({
     queryKey: ['riders'],
     queryFn: async () => {
-      const response = await fetch('/data/riders.json');
+      const response = await fetch(DATA_PATHS.RIDERS);
       if (!response.ok) {
         throw new Error(`Failed to load riders: ${response.status}`);
       }
       return response.json();
     },
+    staleTime: CACHE_CONFIG.STALE_TIME,
+    gcTime: CACHE_CONFIG.GC_TIME,
+    refetchOnWindowFocus: CACHE_CONFIG.REFETCH_ON_WINDOW_FOCUS,
+    refetchOnMount: CACHE_CONFIG.REFETCH_ON_MOUNT,
+    refetchOnReconnect: CACHE_CONFIG.REFETCH_ON_RECONNECT,
+    retry: CACHE_CONFIG.RETRY,
   });
 }
 
@@ -145,16 +97,25 @@ export function useRiders() {
 // Stages Data Hook (for admin panel)
 // ============================================================================
 
+/**
+ * Fetch complete stage data (for admin/management interface)
+ */
 export function useStagesData() {
   return useQuery<StageData[]>({
     queryKey: ['stagesData'],
     queryFn: async () => {
-      const response = await fetch('/data/stages_data.json');
+      const response = await fetch(DATA_PATHS.STAGES);
       if (!response.ok) {
         throw new Error(`Failed to load stages data: ${response.status}`);
       }
       return response.json();
     },
+    staleTime: CACHE_CONFIG.STALE_TIME,
+    gcTime: CACHE_CONFIG.GC_TIME,
+    refetchOnWindowFocus: CACHE_CONFIG.REFETCH_ON_WINDOW_FOCUS,
+    refetchOnMount: CACHE_CONFIG.REFETCH_ON_MOUNT,
+    refetchOnReconnect: CACHE_CONFIG.REFETCH_ON_RECONNECT,
+    retry: CACHE_CONFIG.RETRY,
   });
 }
 
@@ -162,16 +123,25 @@ export function useStagesData() {
 // Team Selections Hook
 // ============================================================================
 
+/**
+ * Fetch team selections (which riders each participant selected)
+ */
 export function useTeamSelections() {
   return useQuery<TeamSelectionsData>({
     queryKey: ['teamSelections'],
     queryFn: async () => {
-      const response = await fetch('/data/team_selections.json');
+      const response = await fetch(DATA_PATHS.TEAM_SELECTIONS);
       if (!response.ok) {
         throw new Error(`Failed to load team selections: ${response.status}`);
       }
       return response.json();
     },
+    staleTime: CACHE_CONFIG.STALE_TIME,
+    gcTime: CACHE_CONFIG.GC_TIME,
+    refetchOnWindowFocus: CACHE_CONFIG.REFETCH_ON_WINDOW_FOCUS,
+    refetchOnMount: CACHE_CONFIG.REFETCH_ON_MOUNT,
+    refetchOnReconnect: CACHE_CONFIG.REFETCH_ON_RECONNECT,
+    retry: CACHE_CONFIG.RETRY,
   });
 }
 
@@ -180,9 +150,9 @@ export function useTeamSelections() {
 // ============================================================================
 
 /**
- * Use queryClient.invalidateQueries() in components instead
- * This is kept for backwards compatibility
+ * Force refresh all data
  */
+
 export function refreshTdfData() {
   window.location.reload();
 }

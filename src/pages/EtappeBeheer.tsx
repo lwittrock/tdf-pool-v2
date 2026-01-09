@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Autocomplete, MultiAutocomplete } from '../components/Autocomplete';
-import { useQueryClient } from '@tanstack/react-query';
+import { useRefreshTdfData } from '../hooks/useRefreshTdfData';
+import { useStagesData, useRiders } from '../hooks/useTdfData';
 
 // Jersey icons
 const yellowIcon = '/assets/jersey_yellow.svg';
@@ -61,14 +62,11 @@ interface StageFormData {
 type ViewMode = 'list' | 'entry' | 'view';
 
 function StageManagementPage() {
-  const [riders, setRiders] = useState<Rider[]>([]);
-  const [stages, setStages] = useState<Stage[]>([]);
-  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const queryClient = useQueryClient();
+  const { refreshAll, isRefreshing } = useRefreshTdfData();
 
   const [formData, setFormData] = useState<StageFormData>({
     stage_number: 1,
@@ -86,35 +84,15 @@ function StageManagementPage() {
     dns_riders: [],
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // Use React Query hooks instead
+  const { data: ridersData, isLoading: ridersLoading } = useRiders();
+  const { data: stagesData, isLoading: stagesLoading } = useStagesData();
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      // Fetch both riders list and stages data from static JSON
-      const [ridersRes, stagesRes] = await Promise.all([
-        fetch('/api/admin/riders-list'),  // Still from API for live rider list
-        fetch('/data/stages_data.json'),  // From static JSON
-      ]);
+  // Convert riders data to the format the component expects
+  const riders = ridersData ? Object.keys(ridersData).map(name => ({ name })) : [];
+  const stages = stagesData || [];
 
-      if (ridersRes.ok) {
-        const ridersData = await ridersRes.json();
-        setRiders(ridersData);
-      }
-
-      if (stagesRes.ok) {
-        const stagesData = await stagesRes.json();
-        setStages(stagesData);
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-      setErrorMessage('Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loading = ridersLoading || stagesLoading;
 
   const getNextStageNumber = () => {
     if (stages.length === 0) return 1;
@@ -272,7 +250,7 @@ function StageManagementPage() {
         setSuccessMessage('Data wordt vernieuwd...');
         
         // Refetch all data
-        await queryClient.invalidateQueries();
+        await refreshAll();
         
         setSuccessMessage('✅ Data succesvol bijgewerkt!');
         
