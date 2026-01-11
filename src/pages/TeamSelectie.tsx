@@ -1,57 +1,30 @@
-import React, { useState } from 'react';
+/**
+ * TeamSelectie Page (Optimized)
+ * 
+ * Optimizations:
+ * - Uses shared types from lib/types.ts
+ * - Uses utility functions from lib/data-transforms.ts
+ * - Uses constants from lib/constants.ts
+ * - Removed duplicate type definitions
+ * - Removed duplicate helper functions
+ * - Proper memoization
+ * - Type-safe throughout
+ */
+
+import React, { useState, useMemo } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { SearchInput } from '../components/Button';
 import { useRiders, useTeamSelections } from '../hooks/useTdfData';
-
-// Jersey icons
-const yellowIcon = '/assets/jersey_yellow.svg';
-const greenIcon = '/assets/jersey_green.svg';
-const polkaDotIcon = '/assets/jersey_polka_dot.svg';
-const whiteIcon = '/assets/jersey_white.svg';
-
-const jerseyIcons: Record<string, string> = {
-  yellow: yellowIcon,
-  green: greenIcon,
-  polka_dot: polkaDotIcon,
-  white: whiteIcon
-};
-
-interface RiderStageData {
-  date: string;
-  stage_finish_points: number;
-  stage_finish_position: number;
-  jersey_points?: {
-    yellow?: number;
-    green?: number;
-    polka_dot?: number;
-    white?: number;
-  };
-  stage_total: number;
-  cumulative_total: number;
-}
-
-interface RiderDataFromJson {
-  team?: string;
-  total_points: number;
-  stages: Record<string, RiderStageData>;
-}
-
-interface StageInfo {
-  stageNum: number;
-  stageKey: string;
-  date: string;
-  stage_finish_points: number;
-  stage_finish_position: number;
-  jersey_points?: {
-    yellow?: number;
-    green?: number;
-    polka_dot?: number;
-    white?: number;
-  };
-  stage_total: number;
-  cumulative_total: number;
-}
+import { 
+  getRiderStages, 
+  calculateSelectionCounts,
+  calculateSelectionPercentage,
+  matchesSearch,
+  createRiderRankMap
+} from '../../lib/data-transforms';
+import { JERSEY_ICONS } from '../../lib/constants';
+import type { RidersData, RiderStageData, StageInfo } from '../../lib/types';
 
 function TeamSelectionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -64,6 +37,105 @@ function TeamSelectionsPage() {
   const loading = ridersLoading || selectionsLoading;
   const error = ridersError || selectionsError;
 
+  // Memoized calculations
+  const totalParticipants = useMemo(() => {
+    return teamSelectionsData ? Object.keys(teamSelectionsData).length : 0;
+  }, [teamSelectionsData]);
+
+  // Calculate rider selection counts using shared utility
+  const riderSelectionCounts = useMemo(() => {
+    if (!teamSelectionsData) return {};
+    return calculateSelectionCounts(teamSelectionsData);
+  }, [teamSelectionsData]);
+
+  // Calculate rider rank map using shared utility
+  const riderRankMap = useMemo(() => {
+    if (!ridersData) return {};
+    return createRiderRankMap(ridersData as RidersData);
+  }, [ridersData]);
+
+  // Get selected participant's team
+  const selectedParticipant = useMemo(() => {
+    if (!teamSelectionsData || !searchTerm) return null;
+
+    const participantEntry = Object.entries(teamSelectionsData).find(([name, data]) => 
+      matchesSearch(name, searchTerm) ||
+      matchesSearch(data.directie_name, searchTerm)
+    );
+    
+    if (!participantEntry) return null;
+    
+    const [name, data] = participantEntry;
+    return {
+      name,
+      team: data.riders
+    };
+  }, [teamSelectionsData, searchTerm]);
+
+  // Popularity rankings (all riders sorted by selection count)
+  const popularityRankings = useMemo(() => {
+    if (!ridersData) return [];
+
+    const ridersRecord = ridersData as RidersData;
+    return Object.entries(ridersRecord)
+      .map(([name, riderData]) => ({
+        name,
+        team: riderData.team || 'Onbekend Team',
+        total_points: riderData.total_points,
+        stages: riderData.stages,
+        selection_count: riderSelectionCounts[name] || 0,
+        selection_percentage: calculateSelectionPercentage(
+          riderSelectionCounts[name] || 0,
+          totalParticipants
+        )
+      }))
+      .filter(rider => rider.selection_count > 0)
+      .sort((a, b) => b.selection_count - a.selection_count);
+  }, [ridersData, riderSelectionCounts, totalParticipants]);
+
+  // Participant team rankings (selected team sorted by popularity)
+  const participantTeamRankings = useMemo(() => {
+    if (!selectedParticipant || !ridersData) return [];
+
+    const ridersRecord = ridersData as RidersData;
+    return selectedParticipant.team
+      .map(riderName => ({
+        name: riderName,
+        team: ridersRecord[riderName]?.team || 'Onbekend Team',
+        total_points: ridersRecord[riderName]?.total_points || 0,
+        stages: ridersRecord[riderName]?.stages || {},
+        selection_count: riderSelectionCounts[riderName] || 0,
+        selection_percentage: calculateSelectionPercentage(
+          riderSelectionCounts[riderName] || 0,
+          totalParticipants
+        )
+      }))
+      .sort((a, b) => b.selection_count - a.selection_count);
+  }, [selectedParticipant, ridersData, riderSelectionCounts, totalParticipants]);
+
+  // Display data (either selected participant's team or all riders)
+  const displayData = selectedParticipant ? participantTeamRankings : popularityRankings;
+
+  // Helper: Get stage jerseys with null safety
+  const getStageJerseys = (stageData: RiderStageData | StageInfo | undefined): string[] => {
+    if (!stageData?.jersey_points) return [];
+    
+    const jerseys: string[] = [];
+    if ((stageData.jersey_points.yellow ?? 0) > 0) jerseys.push('yellow');
+    if ((stageData.jersey_points.green ?? 0) > 0) jerseys.push('green');
+    if ((stageData.jersey_points.polka_dot ?? 0) > 0) jerseys.push('polka_dot');
+    if ((stageData.jersey_points.white ?? 0) > 0) jerseys.push('white');
+    
+    return jerseys;
+  };
+
+  // Helper: Check if rider is in top 10
+  const isTop10 = (riderName: string) => {
+    const rank = riderRankMap[riderName];
+    return rank !== undefined && rank <= 10;
+  };
+
+  // Loading state
   if (loading) {
     return (
       <Layout title="Team Selecties">
@@ -72,6 +144,7 @@ function TeamSelectionsPage() {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <Layout title="Team Selecties">
@@ -81,108 +154,6 @@ function TeamSelectionsPage() {
   }
 
   if (!ridersData || !teamSelectionsData) return null;
-
-  const totalParticipants = Object.keys(teamSelectionsData).length;
-
-  // Calculate rider selection counts from team_selections.json
-  const riderSelectionCounts: Record<string, number> = {};
-  Object.values(teamSelectionsData).forEach(team => {
-    team.riders.forEach(riderName => {
-      riderSelectionCounts[riderName] = (riderSelectionCounts[riderName] || 0) + 1;
-    });
-  });
-
-  // Get selected participant's team
-  const searchLower = searchTerm.toLowerCase().trim();
-  let selectedParticipant = null;
-  
-  if (searchLower) {
-    const participantEntry = Object.entries(teamSelectionsData).find(([name, data]) => 
-      name.toLowerCase().includes(searchLower) ||
-      data.directie_name.toLowerCase().includes(searchLower)
-    );
-    
-    if (participantEntry) {
-      const [name, data] = participantEntry;
-      selectedParticipant = {
-        name: name,
-        team: data.riders
-      };
-    }
-  }
-
-  // Calculate overall rankings for riders
-  const ridersRecord = ridersData as Record<string, RiderDataFromJson>;
-  const rankedRiders = Object.entries(ridersRecord)
-    .map(([name, rider]) => ({ name, total_points: rider.total_points }))
-    .sort((a, b) => b.total_points - a.total_points);
-  
-  const riderOverallRanks: Record<string, number> = {};
-  rankedRiders.forEach((rider, index) => {
-    riderOverallRanks[rider.name] = index + 1;
-  });
-
-  // Popularity view: all riders sorted by selection count
-  const popularityRankings = Object.entries(ridersRecord)
-    .map(([name, riderData]) => ({
-      name,
-      team: riderData.team || 'Onbekend Team',
-      total_points: riderData.total_points,
-      stages: riderData.stages,
-      selection_count: riderSelectionCounts[name] || 0,
-      selection_percentage: totalParticipants > 0 
-        ? Math.round((riderSelectionCounts[name] || 0) / totalParticipants * 100)
-        : 0
-    }))
-    .filter(rider => rider.selection_count > 0)
-    .sort((a, b) => b.selection_count - a.selection_count);
-
-  // Participant view: selected team sorted by popularity
-  const participantTeamRankings = !selectedParticipant ? [] : selectedParticipant.team
-    .map(riderName => ({
-      name: riderName,
-      team: ridersRecord[riderName]?.team || 'Onbekend Team',
-      total_points: ridersRecord[riderName]?.total_points || 0,
-      stages: ridersRecord[riderName]?.stages || {},
-      selection_count: riderSelectionCounts[riderName] || 0,
-      selection_percentage: totalParticipants > 0 
-        ? Math.round((riderSelectionCounts[riderName] || 0) / totalParticipants * 100)
-        : 0
-    }))
-    .sort((a, b) => b.selection_count - a.selection_count);
-
-  // Helper functions
-  const getRiderStages = (riderName: string): StageInfo[] => {
-    const rider = ridersRecord[riderName];
-    if (!rider) return [];
-
-    return Object.entries(rider.stages)
-      .map(([stageKey, stageData]) => ({
-        stageNum: parseInt(stageKey.replace('stage_', '')),
-        stageKey,
-        ...stageData
-      }))
-      .sort((a, b) => a.stageNum - b.stageNum);
-  };
-
-  const getStageJerseys = (stageData: RiderStageData | undefined) => {
-    if (!stageData?.jersey_points) return [];
-    
-    const jerseys = [];
-    if (stageData.jersey_points.yellow) jerseys.push('yellow');
-    if (stageData.jersey_points.green) jerseys.push('green');
-    if (stageData.jersey_points.polka_dot) jerseys.push('polka_dot');
-    if (stageData.jersey_points.white) jerseys.push('white');
-    
-    return jerseys;
-  };
-
-  const isTop10 = (riderName: string) => {
-    const rank = riderOverallRanks[riderName];
-    return rank !== undefined && rank <= 10;
-  };
-
-  const displayData = selectedParticipant ? participantTeamRankings : popularityRankings;
 
   return (
     <Layout title="Team Selecties">
@@ -197,20 +168,18 @@ function TeamSelectionsPage() {
         </div>
 
         {/* Header */}
-        <>
-          {selectedParticipant ? (
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-              Team van {selectedParticipant.name}
-            </h2>
-          ) : (
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-              Renner Populariteit
-            </h2>
-          )}
-          <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
-            Gebaseerd op {totalParticipants} deelnemers met elk 10 renners.
-          </p>
-        </>
+        {selectedParticipant ? (
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
+            Team van {selectedParticipant.name}
+          </h2>
+        ) : (
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
+            Renner Populariteit
+          </h2>
+        )}
+        <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
+          Gebaseerd op {totalParticipants} deelnemers met elk 10 renners.
+        </p>
 
         {/* Mobile Card View */}
         <div className="block lg:hidden space-y-2">
@@ -221,16 +190,14 @@ function TeamSelectionsPage() {
               )}>
                 <CardRow
                   left={
-                    <>
-                      <div className="flex flex-col items-center min-w-[50px]">
-                        <div className="text-lg font-bold text-tdf-text-primary">
-                          {rider.selection_percentage}%
-                        </div>
-                        <div className="text-xs text-tdf-text-secondary">
-                          {rider.selection_count}/{totalParticipants}
-                        </div>
+                    <div className="flex flex-col items-center min-w-[50px]">
+                      <div className="text-lg font-bold text-tdf-text-primary">
+                        {rider.selection_percentage}%
                       </div>
-                    </>
+                      <div className="text-xs text-tdf-text-secondary">
+                        {rider.selection_count}/{totalParticipants}
+                      </div>
+                    </div>
                   }
                   middle={
                     <>
@@ -243,20 +210,18 @@ function TeamSelectionsPage() {
                     </>
                   }
                   right={
-                    <>
-                      <div className="flex items-center gap-2">                        
-                        <div className="text-xl w-6 flex items-center justify-center">
-                          {isTop10(rider.name) && (
-                            <span className="leading-none">
-                              {rider.selection_percentage >= 50 ? '⭐' : '💎'}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-lg font-bold text-tdf-score w-8 text-right">
-                          {rider.total_points}
-                        </div>
+                    <div className="flex items-center gap-2">                        
+                      <div className="text-xl w-6 flex items-center justify-center">
+                        {isTop10(rider.name) && (
+                          <span className="leading-none">
+                            {rider.selection_percentage >= 50 ? '⭐' : '💎'}
+                          </span>
+                        )}
                       </div>
-                    </>
+                      <div className="text-lg font-bold text-tdf-score w-8 text-right">
+                        {rider.total_points}
+                      </div>
+                    </div>
                   }
                 />
               </div>
@@ -265,7 +230,7 @@ function TeamSelectionsPage() {
                 title="Punten per Etappe"
                 isExpanded={expandedRider === rider.name}
               >
-                {getRiderStages(rider.name).map((stage) => {
+                {getRiderStages(ridersData as RidersData, rider.name).map((stage) => {
                   const stageJerseys = getStageJerseys(stage);
                   return (
                     <div key={stage.stageKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-table-header">
@@ -283,7 +248,7 @@ function TeamSelectionsPage() {
                             {stageJerseys.map(jersey => (
                               <img 
                                 key={jersey}
-                                src={jerseyIcons[jersey]}
+                                src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
                                 alt={`${jersey} jersey`}
                                 className="w-4 h-4"
                               />
@@ -359,7 +324,7 @@ function TeamSelectionsPage() {
                         <div className="ml-8 max-w-md">
                           <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Etappe</h3>
                           <div className="space-y-1">
-                            {getRiderStages(rider.name).map((stage) => {
+                            {getRiderStages(ridersData as RidersData, rider.name).map((stage) => {
                               const stageJerseys = getStageJerseys(stage);
                               return (
                                 <div key={stage.stageKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-table-header">
@@ -377,7 +342,7 @@ function TeamSelectionsPage() {
                                         {stageJerseys.map(jersey => (
                                           <img 
                                             key={jersey}
-                                            src={jerseyIcons[jersey]}
+                                            src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
                                             alt={`${jersey} jersey`}
                                             className="w-4 h-4"
                                           />
