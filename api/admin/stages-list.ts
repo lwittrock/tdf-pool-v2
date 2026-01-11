@@ -1,17 +1,34 @@
+/**
+ * Stages List API (Optimized)
+ */
+
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiError, ApiSuccess } from '../../lib/types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+interface StageListItem {
+  id: string;
+  stage_number: number;
+  date: string | null;
+  departure_city: string | null;
+  arrival_city: string | null;
+  is_complete: boolean;
+}
+
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false,
+      error: 'Method not allowed' 
+    });
   }
 
   try {
@@ -24,13 +41,24 @@ export default async function handler(
 
     if (error) {
       console.error('[API] Error fetching stages:', error);
-      return res.status(500).json({ error: 'Failed to fetch stages', details: error });
+      return res.status(500).json({ 
+        success: false,
+        error: 'Failed to fetch stages', 
+        details: error 
+      });
     }
 
     console.log('[API] Found stages:', stages?.length);
-    return res.status(200).json(stages || []);
+    return res.status(200).json({
+      success: true,
+      data: stages || []
+    });
   } catch (error: any) {
     console.error('[API] Error fetching stages:', error);
-    return res.status(500).json({ error: 'Internal server error', details: error.message });
+    return res.status(500).json({ 
+      success: false,
+      error: 'Internal server error', 
+      details: error.message 
+    });
   }
 }

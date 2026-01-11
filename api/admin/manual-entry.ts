@@ -1,63 +1,37 @@
+/**
+ * Manual Stage Entry API (Optimized)
+ */
+
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ManualStageEntry, ApiError, ApiSuccess } from '../../lib/types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-interface StageData {
-  stage_number: number;
-  date?: string;
-  distance?: string;
-  departure_city?: string;
-  arrival_city?: string;
-  stage_type?: string;
-  difficulty?: string;
-  won_how?: string;
-  top_20_finishers: Array<{
-    rider_name: string;
-    position: number;
-    time_gap?: string;
-  }>;
-  jerseys: {
-    yellow?: string;
-    green?: string;
-    polka_dot?: string;
-    white?: string;
-  };
-  combativity?: string;
-  dnf_riders?: string[];
-  dns_riders?: string[];
-}
-
-interface ErrorResponse {
-  error: string;
-  details?: any;
-}
-
-interface SuccessResponse {
-  success: boolean;
-  stage_id: string;
-  warnings?: string[];
-}
-
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false,
+      error: 'Method not allowed' 
+    });
   }
 
   try {
-    const stageData: StageData = req.body;
+    const stageData: ManualStageEntry = req.body;
     const warnings: string[] = [];
-    const forceEdit = (req.body as any).force === true;
 
-    // Validate required fields
+    // Validation
     if (!stageData.stage_number) {
-      return res.status(400).json({ error: 'stage_number is required' });
+      return res.status(400).json({ 
+        success: false,
+        error: 'stage_number is required' 
+      });
     }
 
     // Check if stage already exists and is complete
@@ -67,8 +41,9 @@ export default async function handler(
       .eq('stage_number', stageData.stage_number)
       .single();
 
-    if (existingStage?.is_complete) {
+    if (existingStage?.is_complete && !stageData.force) {
       return res.status(400).json({
+        success: false,
         error: `Stage ${stageData.stage_number} is already marked as complete. Cannot modify.`,
       });
     }
@@ -95,6 +70,7 @@ export default async function handler(
 
     if (stageError || !stage) {
       return res.status(500).json({
+        success: false,
         error: 'Failed to create/update stage',
         details: stageError,
       });
@@ -109,6 +85,7 @@ export default async function handler(
 
     if (ridersError || !riders) {
       return res.status(500).json({
+        success: false,
         error: 'Failed to fetch riders',
         details: ridersError,
       });
@@ -125,6 +102,7 @@ export default async function handler(
     // Step 4: Insert top 20 finishers
     if (!stageData.top_20_finishers || stageData.top_20_finishers.length === 0) {
       return res.status(400).json({
+        success: false,
         error: 'top_20_finishers is required and cannot be empty',
       });
     }
@@ -153,6 +131,7 @@ export default async function handler(
 
       if (resultsError) {
         return res.status(500).json({
+          success: false,
           error: 'Failed to insert stage results',
           details: resultsError,
         });
@@ -161,7 +140,7 @@ export default async function handler(
 
     // Step 5: Insert jerseys
     const jerseyInserts = [];
-    const jerseyTypes = ['yellow', 'green', 'polka_dot', 'white'] as const;
+    const jerseyTypes: Array<keyof typeof stageData.jerseys> = ['yellow', 'green', 'polka_dot', 'white'];
 
     for (const jerseyType of jerseyTypes) {
       const riderName = stageData.jerseys?.[jerseyType];
@@ -190,6 +169,7 @@ export default async function handler(
 
       if (jerseysError) {
         return res.status(500).json({
+          success: false,
           error: 'Failed to insert jerseys',
           details: jerseysError,
         });
@@ -259,6 +239,7 @@ export default async function handler(
 
       if (dnfError) {
         return res.status(500).json({
+          success: false,
           error: 'Failed to insert DNF/DNS riders',
           details: dnfError,
         });
@@ -268,12 +249,15 @@ export default async function handler(
     // Return success with warnings if any
     return res.status(200).json({
       success: true,
-      stage_id: stageId,
-      ...(warnings.length > 0 && { warnings }),
+      data: {
+        stage_id: stageId,
+        warnings: warnings.length > 0 ? warnings : undefined,
+      },
     });
   } catch (error: any) {
     console.error('Manual stage entry error:', error);
     return res.status(500).json({
+      success: false,
       error: 'Internal server error',
       details: error.message,
     });

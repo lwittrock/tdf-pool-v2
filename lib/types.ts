@@ -20,7 +20,83 @@ export type PointsType =
   | 'combativity';
 
 // ============================================================================
-// API Response Types
+// API Request/Response Types
+// ============================================================================
+
+export interface ApiSuccess<T = any> {
+  success: true;
+  data?: T;
+  message?: string;
+}
+
+export interface ApiError {
+  success: false;
+  error: string;
+  details?: any;
+}
+
+export type ApiResponse<T = any> = ApiSuccess<T> | ApiError;
+
+// ============================================================================
+// API-Specific Request Types
+// ============================================================================
+
+export interface ManualStageEntry {
+  stage_number: number;
+  date?: string;
+  distance?: string;
+  departure_city?: string;
+  arrival_city?: string;
+  stage_type?: string;
+  difficulty?: string;
+  won_how?: string;
+  top_20_finishers: Array<{
+    rider_name: string;
+    position: number;
+    time_gap?: string;
+  }>;
+  jerseys: {
+    yellow: string;
+    green: string;
+    polka_dot: string;
+    white: string;
+  };
+  combativity?: string;
+  dnf_riders?: string[];
+  dns_riders?: string[];
+  force?: boolean;
+}
+
+export interface CalculatePointsRequest {
+  stage_number: number;
+  force?: boolean;
+}
+
+export interface ProcessStageRequest {
+  stage_number: number;
+  force?: boolean;
+}
+
+export interface UpdateActiveSelectionsRequest {
+  stage_number: number;
+}
+
+export interface SubstitutionMade {
+  participant_name: string;
+  rider_out: string;
+  rider_in: string;
+}
+
+export interface UpdateActiveSelectionsSuccess {
+  success: true;
+  stage_number: number;
+  dns_riders: string[];
+  substitutions_made: SubstitutionMade[];
+  participants_affected: number;
+}
+
+// ============================================================================
+// Frontend Data Types
 // ============================================================================
 
 export interface Metadata {
@@ -94,7 +170,7 @@ export interface RiderData {
 export type RidersData = Record<string, RiderData>;
 
 // ============================================================================
-// Rider Rankings Types (for simplified rider_rankings.json)
+// NEW: Rider Rankings Types (for simplified rider_rankings.json)
 // ============================================================================
 
 export interface RiderMedalCounts {

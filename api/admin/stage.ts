@@ -1,5 +1,10 @@
+/**
+ * Get Stage API (Optimized)
+ */
+
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { StageData, ApiError, ApiSuccess } from '../../lib/types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -11,14 +16,20 @@ export default async function handler(
   res: VercelResponse
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false,
+      error: 'Method not allowed' 
+    });
   }
 
   try {
     const { stage_number } = req.query;
 
     if (!stage_number) {
-      return res.status(400).json({ error: 'stage_number is required' });
+      return res.status(400).json({ 
+        success: false,
+        error: 'stage_number is required' 
+      });
     }
 
     console.log('[API] Fetching stage:', stage_number);
@@ -32,7 +43,10 @@ export default async function handler(
 
     if (stageError || !stage) {
       console.error('[API] Stage not found:', stageError);
-      return res.status(404).json({ error: 'Stage not found' });
+      return res.status(404).json({ 
+        success: false,
+        error: 'Stage not found' 
+      });
     }
 
     console.log('[API] Found stage:', stage.id);
@@ -67,7 +81,7 @@ export default async function handler(
       .from('stage_combativity')
       .select('rider_id')
       .eq('stage_id', stage.id)
-      .single();
+      .maybeSingle();
 
     console.log('[API] Found combativity:', combativity ? 'yes' : 'no');
 
@@ -79,8 +93,8 @@ export default async function handler(
 
     console.log('[API] Found DNF/DNS:', dnf?.length);
 
-    // Format response
-    const stageData = {
+    // Format response using shared StageData type
+    const stageData: StageData = {
       stage_number: stage.stage_number,
       date: stage.date,
       distance: stage.distance,
@@ -107,9 +121,16 @@ export default async function handler(
     };
 
     console.log('[API] Returning stage data');
-    return res.status(200).json(stageData);
+    return res.status(200).json({
+      success: true,
+      data: stageData
+    });
   } catch (error: any) {
     console.error('[API] Error fetching stage:', error);
-    return res.status(500).json({ error: 'Internal server error', details: error.message });
+    return res.status(500).json({ 
+      success: false,
+      error: 'Internal server error', 
+      details: error.message 
+    });
   }
 }

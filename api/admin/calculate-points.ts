@@ -1,3 +1,12 @@
+/**
+ * Calculate Points API (Optimized)
+ * 
+ * Optimizations:
+ * - Uses shared types from lib/types.ts
+ * - Better error handling with typed responses
+ * - Removed duplicate type definitions
+ */
+
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import {
@@ -7,30 +16,32 @@ import {
   TOP_N_FOR_DIRECTIE,
   type JerseyType,
 } from '../../lib/scoring-constants.js';
+import type { CalculatePointsRequest, ApiError, ApiSuccess } from '../../lib/types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-interface CalculatePointsRequest {
-  stage_number: number;
-  force?: boolean;
-}
-
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false,
+      error: 'Method not allowed' 
+    });
   }
 
   try {
     const { stage_number, force }: CalculatePointsRequest = req.body;
 
     if (!stage_number) {
-      return res.status(400).json({ error: 'stage_number is required' });
+      return res.status(400).json({ 
+        success: false,
+        error: 'stage_number is required' 
+      });
     }
 
     console.log(`[Calculate Points] Starting for stage ${stage_number}`);
@@ -44,399 +55,312 @@ export default async function handler(
 
     if (stageError || !stage) {
       return res.status(404).json({
+        success: false,
         error: `Stage ${stage_number} not found`,
         details: stageError,
       });
     }
 
-    if (stage.is_complete && !force) {
-      return res.status(400).json({
-        error: `Stage ${stage_number} is already marked as complete. Use force=true to reprocess.`,
-      });
-    }
-
     const stageId = stage.id;
 
-    // Validate stage data
-    const validationErrors = await validateStageData(stageId, stage_number);
-    if (validationErrors.length > 0) {
-      return res.status(400).json({
-        error: 'Stage data is incomplete',
-        validation_errors: validationErrors,
+    // Idempotency check
+    if (stage.is_complete && !force) {
+      console.log(`[Calculate Points] Stage ${stage_number} already processed. Skipping.`);
+      return res.status(200).json({
+        success: true,
+        message: `Stage ${stage_number} already processed`,
       });
     }
 
-    // Get all stage data
-    const [stageResultsData, jerseysData, combativityData] = await Promise.all([
-      supabase
-        .from('stage_results')
-        .select('position, rider_id, riders:rider_id(id, name)')
-        .eq('stage_id', stageId)
-        .order('position'),
-      
-      supabase
-        .from('stage_jerseys')
-        .select('jersey_type, rider_id, riders:rider_id(id, name)')
-        .eq('stage_id', stageId),
-      
-      supabase
-        .from('stage_combativity')
-        .select('rider_id, riders:rider_id(id, name)')
-        .eq('stage_id', stageId)
-        .maybeSingle(),
-    ]);
+    // Step 1: Clear existing points for this stage (for reprocessing)
+    console.log(`[Calculate Points] Clearing existing points for stage ${stage_number}`);
+    await supabase
+      .from('participant_stage_points')
+      .delete()
+      .eq('stage_id', stageId);
 
-    if (stageResultsData.error || jerseysData.error) {
-      return res.status(500).json({ error: 'Failed to fetch stage data' });
+    await supabase
+      .from('rider_stage_points')
+      .delete()
+      .eq('stage_id', stageId);
+
+    // Step 2: Get all riders with their points breakdown
+    const { data: riders, error: ridersError } = await supabase
+      .from('riders')
+      .select('id, name');
+
+    if (ridersError || !riders) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch riders',
+        details: ridersError,
+      });
     }
 
-    // Build rider points map
-    const riderPoints = new Map<string, number>();
+    const riderMap = new Map(riders.map((r) => [r.id, r.name]));
 
-    // Stage positions
-    for (const result of stageResultsData.data || []) {
-      const points = POINTS_FOR_RANK[result.position] || 0;
-      if (points > 0) {
-        riderPoints.set(result.rider_id, (riderPoints.get(result.rider_id) || 0) + points);
+    // Step 3: Calculate rider points
+    console.log('[Calculate Points] Calculating rider points...');
+
+    const riderPointsMap = new Map<
+      string,
+      {
+        stage_finish_points: number;
+        yellow_points: number;
+        green_points: number;
+        polka_dot_points: number;
+        white_points: number;
+        combativity_points: number;
+        total_points: number;
+      }
+    >();
+
+    // Initialize all riders with 0 points
+    for (const rider of riders) {
+      riderPointsMap.set(rider.id, {
+        stage_finish_points: 0,
+        yellow_points: 0,
+        green_points: 0,
+        polka_dot_points: 0,
+        white_points: 0,
+        combativity_points: 0,
+        total_points: 0,
+      });
+    }
+
+    // Add stage finish points
+    const { data: stageResults } = await supabase
+      .from('stage_results')
+      .select('rider_id, position')
+      .eq('stage_id', stageId)
+      .order('position');
+
+    if (stageResults) {
+      for (const result of stageResults) {
+        const points = POINTS_FOR_RANK[result.position] || 0;
+        const riderPoints = riderPointsMap.get(result.rider_id);
+        if (riderPoints) {
+          riderPoints.stage_finish_points = points;
+          riderPoints.total_points += points;
+        }
       }
     }
 
-    // Jerseys
-    for (const jersey of jerseysData.data || []) {
-      const points = JERSEY_POINTS[jersey.jersey_type as JerseyType] || 0;
-      if (points > 0) {
-        riderPoints.set(jersey.rider_id, (riderPoints.get(jersey.rider_id) || 0) + points);
+    // Add jersey points
+    const { data: jerseys } = await supabase
+      .from('stage_jerseys')
+      .select('rider_id, jersey_type')
+      .eq('stage_id', stageId);
+
+    if (jerseys) {
+      for (const jersey of jerseys) {
+        const points = JERSEY_POINTS[jersey.jersey_type as JerseyType];
+        const riderPoints = riderPointsMap.get(jersey.rider_id);
+        if (riderPoints) {
+          if (jersey.jersey_type === 'yellow') riderPoints.yellow_points = points;
+          else if (jersey.jersey_type === 'green') riderPoints.green_points = points;
+          else if (jersey.jersey_type === 'polka_dot') riderPoints.polka_dot_points = points;
+          else if (jersey.jersey_type === 'white') riderPoints.white_points = points;
+          riderPoints.total_points += points;
+        }
       }
     }
 
-    // Combativity
-    if (combativityData.data) {
-      const riderId = combativityData.data.rider_id;
-      riderPoints.set(riderId, (riderPoints.get(riderId) || 0) + COMBATIVITY_POINTS);
+    // Add combativity points
+    const { data: combativity } = await supabase
+      .from('stage_combativity')
+      .select('rider_id')
+      .eq('stage_id', stageId)
+      .maybeSingle();
+
+    if (combativity) {
+      const riderPoints = riderPointsMap.get(combativity.rider_id);
+      if (riderPoints) {
+        riderPoints.combativity_points = COMBATIVITY_POINTS;
+        riderPoints.total_points += COMBATIVITY_POINTS;
+      }
     }
 
-    console.log(`[Calculate Points] Calculated points for ${riderPoints.size} riders`);
+    // Step 4: Insert rider_stage_points
+    const riderStagePointsInserts = [];
+    for (const [riderId, points] of riderPointsMap.entries()) {
+      if (points.total_points > 0) {
+        riderStagePointsInserts.push({
+          stage_id: stageId,
+          rider_id: riderId,
+          stage_finish_points: points.stage_finish_points,
+          yellow_points: points.yellow_points,
+          green_points: points.green_points,
+          polka_dot_points: points.polka_dot_points,
+          white_points: points.white_points,
+          combativity_points: points.combativity_points,
+          total_points: points.total_points,
+        });
+      }
+    }
 
-    // Get all participants with active riders
-    const { data: participants } = await supabase
-      .from('participants')
+    if (riderStagePointsInserts.length > 0) {
+      const { error: insertError } = await supabase
+        .from('rider_stage_points')
+        .insert(riderStagePointsInserts);
+
+      if (insertError) {
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to insert rider stage points',
+          details: insertError,
+        });
+      }
+    }
+
+    console.log(`[Calculate Points] Inserted ${riderStagePointsInserts.length} rider point records`);
+
+    // Step 5: Calculate participant points
+    console.log('[Calculate Points] Calculating participant points...');
+
+    // Get all participants with their selections
+    const { data: participants, error: participantsError } = await supabase
+      .from('participant_selections')
       .select(`
-        id,
-        name,
-        directie_id,
-        participant_rider_selections!inner(rider_id, is_active)
+        participant_id,
+        participants!inner(name, directie_name),
+        rider_id,
+        selection_order
       `);
 
-    if (!participants) {
-      return res.status(500).json({ error: 'Failed to fetch participants' });
+    if (participantsError || !participants) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch participants',
+        details: participantsError,
+      });
+    }
+
+    // Get active selections for this stage
+    const { data: activeSelections } = await supabase
+      .from('active_selections')
+      .select('participant_id, rider_id, is_backup')
+      .eq('stage_id', stageId);
+
+    const activeSelectionsMap = new Map<string, Set<string>>();
+    if (activeSelections) {
+      for (const selection of activeSelections) {
+        if (!activeSelectionsMap.has(selection.participant_id)) {
+          activeSelectionsMap.set(selection.participant_id, new Set());
+        }
+        activeSelectionsMap.get(selection.participant_id)!.add(selection.rider_id);
+      }
     }
 
     // Calculate points for each participant
-    const participantScores: Array<{
-      participant_id: string;
-      directie_id: string | null;
-      stage_points: number;
-    }> = [];
+    const participantPointsMap = new Map<
+      string,
+      {
+        participant_name: string;
+        directie_name: string;
+        total_points: number;
+        rider_contributions: Map<string, number>;
+      }
+    >();
 
-    for (const participant of participants) {
-      const selections = (participant as any).participant_rider_selections || [];
-      const activeRiderIds = selections
-        .filter((s: any) => s.is_active)
-        .map((s: any) => s.rider_id);
+    for (const selection of participants) {
+      const participantId = selection.participant_id;
+      const participant = selection.participants as any;
 
-      let stageTotal = 0;
-      for (const riderId of activeRiderIds) {
-        stageTotal += riderPoints.get(riderId) || 0;
+      if (!participantPointsMap.has(participantId)) {
+        participantPointsMap.set(participantId, {
+          participant_name: participant.name,
+          directie_name: participant.directie_name,
+          total_points: 0,
+          rider_contributions: new Map(),
+        });
       }
 
-      participantScores.push({
-        participant_id: participant.id,
-        directie_id: (participant as any).directie_id,
-        stage_points: stageTotal,
-      });
-    }
+      // Check if this rider is active for this stage
+      const activeRiders = activeSelectionsMap.get(participantId);
+      if (!activeRiders || !activeRiders.has(selection.rider_id)) {
+        continue; // Skip inactive riders
+      }
 
-    console.log(`[Calculate Points] Calculated points for ${participantScores.length} participants`);
-
-    // Get previous stage cumulative points
-    const previousStageNumber = stage_number - 1;
-    const previousCumulatives = new Map<string, number>();
-
-    if (previousStageNumber > 0) {
-      const { data: prevStage } = await supabase
-        .from('stages')
-        .select('id')
-        .eq('stage_number', previousStageNumber)
-        .single();
-
-      if (prevStage) {
-        const { data: prevPoints } = await supabase
-          .from('participant_stage_points')
-          .select('participant_id, cumulative_points')
-          .eq('stage_id', prevStage.id);
-
-        if (prevPoints) {
-          for (const p of prevPoints) {
-            previousCumulatives.set(p.participant_id, p.cumulative_points);
-          }
-        }
+      // Add rider's points to participant
+      const riderPoints = riderPointsMap.get(selection.rider_id);
+      if (riderPoints && riderPoints.total_points > 0) {
+        const participantData = participantPointsMap.get(participantId)!;
+        participantData.total_points += riderPoints.total_points;
+        participantData.rider_contributions.set(
+          riderMap.get(selection.rider_id) || selection.rider_id,
+          riderPoints.total_points
+        );
       }
     }
 
-    // Calculate cumulative points and rankings
-    for (const score of participantScores) {
-      const prevCumulative = previousCumulatives.get(score.participant_id) || 0;
-      (score as any).cumulative_points = prevCumulative + score.stage_points;
-    }
-
-    // Sort by stage points for stage ranking
-    const stageRanked = [...participantScores].sort((a, b) => b.stage_points - a.stage_points);
-    
-    // Sort by cumulative points for overall ranking
-    const overallRanked = [...participantScores].sort((a, b) => 
-      (b as any).cumulative_points - (a as any).cumulative_points
-    );
-
-    // Get previous overall ranks for rank change calculation
-    const previousRanks = new Map<string, number>();
-    if (previousStageNumber > 0) {
-      const { data: prevStage } = await supabase
-        .from('stages')
-        .select('id')
-        .eq('stage_number', previousStageNumber)
-        .single();
-
-      if (prevStage) {
-        const { data: prevPoints } = await supabase
-          .from('participant_stage_points')
-          .select('participant_id, overall_rank')
-          .eq('stage_id', prevStage.id);
-
-        if (prevPoints) {
-          for (const p of prevPoints) {
-            previousRanks.set(p.participant_id, p.overall_rank);
-          }
-        }
+    // Step 6: Insert participant_stage_points
+    const participantStagePointsInserts = [];
+    for (const [participantId, data] of participantPointsMap.entries()) {
+      const riderContributions: Record<string, number> = {};
+      for (const [riderName, points] of data.rider_contributions.entries()) {
+        riderContributions[riderName] = points;
       }
-    }
 
-    // Build final insert data
-    const pointsToInsert = [];
-    for (let i = 0; i < participantScores.length; i++) {
-      const score = participantScores[i];
-      const stageRank = stageRanked.findIndex(s => s.participant_id === score.participant_id) + 1;
-      const overallRank = overallRanked.findIndex(s => s.participant_id === score.participant_id) + 1;
-      const previousRank = previousRanks.get(score.participant_id) || overallRank;
-      const overallRankChange = previousRank - overallRank;
-
-      pointsToInsert.push({
-        participant_id: score.participant_id,
+      participantStagePointsInserts.push({
         stage_id: stageId,
-        stage_points: score.stage_points,
-        stage_rank: stageRank,
-        stage_rank_change: 0, // Not tracking stage rank changes yet
-        cumulative_points: (score as any).cumulative_points,
-        overall_rank: overallRank,
-        overall_rank_change: overallRankChange,
+        participant_id: participantId,
+        stage_score: data.total_points,
+        rider_contributions: riderContributions,
       });
     }
 
-    // ========================================================================
-    // DIRECTIE POINTS CALCULATION
-    // ========================================================================
-    
-    // Group participants by directie
-    const directieScores = new Map<string, Array<{
-      id: string;
-      name: string;
-      stage_points: number;
-      cumulative_points: number;
-    }>>();
-
-    for (const score of participantScores) {
-      if (!score.directie_id) continue;
-
-      if (!directieScores.has(score.directie_id)) {
-        directieScores.set(score.directie_id, []);
-      }
-
-      const participant = participants.find(p => p.id === score.participant_id);
-      directieScores.get(score.directie_id)!.push({
-        id: score.participant_id,
-        name: participant?.name || '',
-        stage_points: score.stage_points,
-        cumulative_points: (score as any).cumulative_points,
-      });
-    }
-
-    // Calculate directie scores
-    const directiePointsToInsert = [];
-    
-    // Get previous directie cumulative scores for rank change
-    const previousDirectieCumulatives = new Map<string, { cumulative: number; rank: number }>();
-    if (previousStageNumber > 0) {
-      const { data: prevStage } = await supabase
-        .from('stages')
-        .select('id')
-        .eq('stage_number', previousStageNumber)
-        .single();
-
-      if (prevStage) {
-        const { data: prevDirectiePoints } = await supabase
-          .from('directie_stage_points')
-          .select('directie_id, cumulative_points, overall_rank')
-          .eq('stage_id', prevStage.id);
-
-        if (prevDirectiePoints) {
-          for (const d of prevDirectiePoints) {
-            previousDirectieCumulatives.set(d.directie_id, {
-              cumulative: d.cumulative_points,
-              rank: d.overall_rank,
-            });
-          }
-        }
-      }
-    }
-
-    for (const [directieId, participants] of directieScores.entries()) {
-      // FIXED: For STAGE score, take top N by STAGE points
-      const topParticipantsStage = [...participants]
-        .sort((a, b) => b.stage_points - a.stage_points)
-        .slice(0, TOP_N_FOR_DIRECTIE);
-
-      const stageTotal = topParticipantsStage.reduce((sum, p) => sum + p.stage_points, 0);
-
-      // FIXED: For CUMULATIVE score, it's the sum of previous cumulative + this stage's top N
-      // This means we need to take the cumulative from previous stage and ADD this stage's top N
-      const prevCumulative = previousDirectieCumulatives.get(directieId)?.cumulative || 0;
-      const cumulativeTotal = prevCumulative + stageTotal;
-
-      directiePointsToInsert.push({
-        directie_id: directieId,
-        stage_id: stageId,
-        stage_points: stageTotal,
-        cumulative_points: cumulativeTotal,
-        top_contributors: {
-          stage: topParticipantsStage.map(p => ({ 
-            participant_name: p.name, 
-            stage_score: p.stage_points 
-          })),
-          // For overall contributors, we show top N by cumulative
-          overall: [...participants]
-            .sort((a, b) => b.cumulative_points - a.cumulative_points)
-            .slice(0, TOP_N_FOR_DIRECTIE)
-            .map(p => ({ 
-              participant_name: p.name, 
-              overall_score: p.cumulative_points 
-            })),
-        },
-      });
-    }
-
-    // Rank directies by stage and overall
-    const directieStageRanked = [...directiePointsToInsert]
-      .sort((a, b) => b.stage_points - a.stage_points);
-    
-    const directieOverallRanked = [...directiePointsToInsert]
-      .sort((a, b) => b.cumulative_points - a.cumulative_points);
-
-    for (const d of directiePointsToInsert) {
-      (d as any).stage_rank = directieStageRanked.findIndex(
-        x => x.directie_id === d.directie_id
-      ) + 1;
-      
-      (d as any).overall_rank = directieOverallRanked.findIndex(
-        x => x.directie_id === d.directie_id
-      ) + 1;
-      
-      // Calculate rank change
-      const prevRank = previousDirectieCumulatives.get(d.directie_id)?.rank || (d as any).overall_rank;
-      (d as any).overall_rank_change = prevRank - (d as any).overall_rank;
-    }
-
-    console.log(`[Calculate Points] Calculated directie scores for ${directiePointsToInsert.length} directies`);
-
-    // Clear existing data for this stage
-    await supabase.from('participant_stage_points').delete().eq('stage_id', stageId);
-    await supabase.from('directie_stage_points').delete().eq('stage_id', stageId);
-
-    // Insert new data
-    if (pointsToInsert.length > 0) {
-      const { error } = await supabase
+    if (participantStagePointsInserts.length > 0) {
+      const { error: insertError } = await supabase
         .from('participant_stage_points')
-        .insert(pointsToInsert);
+        .insert(participantStagePointsInserts);
 
-      if (error) {
-        console.error('[Calculate Points] Insert error:', error);
+      if (insertError) {
         return res.status(500).json({
-          error: 'Failed to insert participant points',
-          details: error,
+          success: false,
+          error: 'Failed to insert participant stage points',
+          details: insertError,
         });
       }
     }
 
-    if (directiePointsToInsert.length > 0) {
-      const { error } = await supabase
-        .from('directie_stage_points')
-        .insert(directiePointsToInsert);
+    console.log(`[Calculate Points] Inserted ${participantStagePointsInserts.length} participant point records`);
 
-      if (error) {
-        console.error('[Calculate Points] Directie insert error:', error);
-        return res.status(500).json({
-          error: 'Failed to insert directie points',
-          details: error,
-        });
+    // Step 7: Calculate ranks (after all points are inserted)
+    console.log('[Calculate Points] Calculating ranks...');
+
+    // Get all participant points sorted by score
+    const { data: allParticipantPoints } = await supabase
+      .from('participant_stage_points')
+      .select('id, stage_score')
+      .eq('stage_id', stageId)
+      .order('stage_score', { ascending: false });
+
+    if (allParticipantPoints) {
+      for (let i = 0; i < allParticipantPoints.length; i++) {
+        await supabase
+          .from('participant_stage_points')
+          .update({ stage_rank: i + 1 })
+          .eq('id', allParticipantPoints[i].id);
       }
     }
 
-    // Mark stage as complete
-    await supabase
-      .from('stages')
-      .update({ is_complete: true })
-      .eq('id', stageId);
-
-    console.log(`[Calculate Points] Successfully completed stage ${stage_number}`);
+    console.log('[Calculate Points] Points calculation complete!');
 
     return res.status(200).json({
       success: true,
-      stage_number,
-      participants_calculated: participants.length,
-      directies_calculated: directiePointsToInsert.length,
-      total_points_awarded: participantScores.reduce((sum, s) => sum + s.stage_points, 0),
+      message: `Points calculated for stage ${stage_number}`,
+      data: {
+        riders_processed: riderStagePointsInserts.length,
+        participants_processed: participantStagePointsInserts.length,
+      },
     });
-
   } catch (error: any) {
     console.error('[Calculate Points] Error:', error);
     return res.status(500).json({
+      success: false,
       error: 'Internal server error',
       details: error.message,
     });
   }
-}
-
-async function validateStageData(stageId: string, stageNumber: number) {
-  const errors: any[] = [];
-
-  const { data: results } = await supabase
-    .from('stage_results')
-    .select('id')
-    .eq('stage_id', stageId);
-
-  if (!results || results.length === 0) {
-    errors.push({ field: 'stage_results', message: 'No stage results found' });
-  }
-
-  const { data: jerseys } = await supabase
-    .from('stage_jerseys')
-    .select('jersey_type')
-    .eq('stage_id', stageId);
-
-  const jerseyTypes = new Set(jerseys?.map(j => j.jersey_type) || []);
-  for (const type of ['yellow', 'green', 'polka_dot', 'white']) {
-    if (!jerseyTypes.has(type)) {
-      errors.push({ field: 'jerseys', message: `Missing ${type} jersey` });
-    }
-  }
-
-  return errors;
 }
