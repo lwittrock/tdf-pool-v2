@@ -23,7 +23,7 @@ import {
   matchesSearch,
   createRiderRankMap
 } from '../../lib/data-transforms';
-import { JERSEY_ICONS } from '../../lib/constants';
+import { JERSEY_ICONS, SELECTION_ICONS, SELECTION_THRESHOLDS } from '../../lib/constants';
 import type { RidersData, RiderStageData, StageInfo } from '../../lib/types';
 
 function TeamSelectionsPage() {
@@ -132,7 +132,7 @@ function TeamSelectionsPage() {
   // Helper: Check if rider is in top 10
   const isTop10 = (riderName: string) => {
     const rank = riderRankMap[riderName];
-    return rank !== undefined && rank <= 10;
+    return rank !== undefined && rank <= SELECTION_THRESHOLDS.TOP_RIDER_RANK;
   };
 
   // Loading state
@@ -214,7 +214,7 @@ function TeamSelectionsPage() {
                       <div className="text-xl w-6 flex items-center justify-center">
                         {isTop10(rider.name) && (
                           <span className="leading-none">
-                            {rider.selection_percentage >= 50 ? '⭐' : '💎'}
+                            {rider.selection_percentage >= SELECTION_THRESHOLDS.POPULAR ? SELECTION_ICONS.POPULAR_TOP_10 : SELECTION_ICONS.RARE_TOP_10}
                           </span>
                         )}
                       </div>
@@ -306,7 +306,7 @@ function TeamSelectionsPage() {
                         <div className="text-lg w-6 flex items-center justify-center"> 
                           {isTop10(rider.name) && (
                             <span className="leading-none">
-                              {rider.selection_percentage >= 50 ? '⭐' : '💎'}
+                              {rider.selection_percentage >= SELECTION_THRESHOLDS.POPULAR ? SELECTION_ICONS.POPULAR_TOP_10 : SELECTION_ICONS.RARE_TOP_10}
                             </span>
                           )}
                         </div>                        
