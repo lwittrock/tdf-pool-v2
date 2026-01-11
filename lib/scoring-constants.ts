@@ -64,6 +64,24 @@ export const TEAM_SIZE = {
 } as const;
 
 /**
+ * Medal position thresholds
+ */
+export const MEDAL_POSITIONS = {
+  GOLD: 1,
+  SILVER: 2,
+  BRONZE: 3,
+} as const;
+
+/**
+ * Medal emoji characters
+ */
+export const MEDALS = {
+  GOLD: '🥇',
+  SILVER: '🥈',
+  BRONZE: '🥉',
+} as const;
+
+/**
  * Helper function to get points for a given position
  * Returns 0 if position is outside the top 20
  */
@@ -79,6 +97,22 @@ export function getPointsForJersey(
   jerseyType: 'yellow' | 'green' | 'polka_dot' | 'white'
 ): number {
   return JERSEY_POINTS[jerseyType] || 0;
+}
+
+/**
+ * Format medal counts into display string
+ * @example formatMedalDisplay(2, 1, 3) => "🥇🥇 🥈 🥉🥉🥉"
+ */
+export function formatMedalDisplay(
+  gold: number,
+  silver: number,
+  bronze: number
+): string {
+  const parts: string[] = [];
+  if (gold > 0) parts.push(MEDALS.GOLD.repeat(gold));
+  if (silver > 0) parts.push(MEDALS.SILVER.repeat(silver));
+  if (bronze > 0) parts.push(MEDALS.BRONZE.repeat(bronze));
+  return parts.join(' ');
 }
 
 /**

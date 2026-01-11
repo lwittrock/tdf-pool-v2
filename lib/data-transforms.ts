@@ -14,7 +14,7 @@ import type {
   LeaderboardsData,
   LeaderboardEntry,
 } from './types';
-import { MEDALS, MEDAL_POSITIONS } from './constants';
+import { MEDAL_POSITIONS, formatMedalDisplay } from './scoring-constants';
 
 // ============================================================================
 // Rider Stage Transformations
@@ -108,8 +108,31 @@ export function getStageAwards(stage: StageInfo): {
 }
 
 // ============================================================================
-// Medal Calculations
+// Medal Calculations (UNIFIED)
 // ============================================================================
+
+/**
+ * Calculate medals from an array of positions
+ * This is the SINGLE source of truth for medal calculation
+ */
+export function calculateMedalsFromPositions(positions: number[]): MedalCounts {
+  let gold = 0;
+  let silver = 0;
+  let bronze = 0;
+
+  for (const pos of positions) {
+    if (pos === MEDAL_POSITIONS.GOLD) gold++;
+    else if (pos === MEDAL_POSITIONS.SILVER) silver++;
+    else if (pos === MEDAL_POSITIONS.BRONZE) bronze++;
+  }
+
+  return {
+    gold,
+    silver,
+    bronze,
+    display: formatMedalDisplay(gold, silver, bronze),
+  };
+}
 
 /**
  * Calculate medal counts for a rider based on stage finishes
@@ -123,28 +146,11 @@ export function getRiderMedals(
     return { gold: 0, silver: 0, bronze: 0, display: '' };
   }
 
-  let gold = 0;
-  let silver = 0;
-  let bronze = 0;
+  const positions = Object.values(rider.stages).map(
+    (stageData) => stageData.stage_finish_position
+  );
 
-  Object.values(rider.stages).forEach((stageData) => {
-    const pos = stageData.stage_finish_position;
-    if (pos === MEDAL_POSITIONS.GOLD) gold++;
-    else if (pos === MEDAL_POSITIONS.SILVER) silver++;
-    else if (pos === MEDAL_POSITIONS.BRONZE) bronze++;
-  });
-
-  const parts: string[] = [];
-  if (gold > 0) parts.push(MEDALS.GOLD.repeat(gold));
-  if (silver > 0) parts.push(MEDALS.SILVER.repeat(silver));
-  if (bronze > 0) parts.push(MEDALS.BRONZE.repeat(bronze));
-
-  return {
-    gold,
-    silver,
-    bronze,
-    display: parts.join(' '),
-  };
+  return calculateMedalsFromPositions(positions);
 }
 
 /**
@@ -154,30 +160,16 @@ export function getParticipantMedals(
   leaderboardsData: LeaderboardsData,
   participantName: string
 ): MedalCounts {
-  let gold = 0;
-  let silver = 0;
-  let bronze = 0;
+  const positions: number[] = [];
 
   Object.values(leaderboardsData.leaderboard_by_stage).forEach((stageData) => {
     const entry = stageData.find((p) => p.participant_name === participantName);
     if (entry) {
-      if (entry.stage_rank === MEDAL_POSITIONS.GOLD) gold++;
-      else if (entry.stage_rank === MEDAL_POSITIONS.SILVER) silver++;
-      else if (entry.stage_rank === MEDAL_POSITIONS.BRONZE) bronze++;
+      positions.push(entry.stage_rank);
     }
   });
 
-  const parts: string[] = [];
-  if (gold > 0) parts.push(MEDALS.GOLD.repeat(gold));
-  if (silver > 0) parts.push(MEDALS.SILVER.repeat(silver));
-  if (bronze > 0) parts.push(MEDALS.BRONZE.repeat(bronze));
-
-  return {
-    gold,
-    silver,
-    bronze,
-    display: parts.join(' '),
-  };
+  return calculateMedalsFromPositions(positions);
 }
 
 // ============================================================================

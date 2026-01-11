@@ -2,6 +2,7 @@
  * Application Constants
  * 
  * All magic strings, numbers, and configuration in one place.
+ * Note: Scoring-related constants (points, medals) are in scoring-constants.ts
  */
 
 // ============================================================================
@@ -60,22 +61,6 @@ export const LABELS = {
   ERROR: 'Fout',
   NO_DATA: 'Geen gegevens beschikbaar',
   NO_RESULTS: 'Geen resultaten gevonden',
-} as const;
-
-// ============================================================================
-// Medal Configuration
-// ============================================================================
-
-export const MEDALS = {
-  GOLD: '🥇',
-  SILVER: '🥈',
-  BRONZE: '🥉',
-} as const;
-
-export const MEDAL_POSITIONS = {
-  GOLD: 1,
-  SILVER: 2,
-  BRONZE: 3,
 } as const;
 
 // ============================================================================

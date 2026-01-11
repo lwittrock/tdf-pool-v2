@@ -1,13 +1,12 @@
--- TdF Pool - Optimized Database Schema
+-- TdF Pool - Complete Database Schema (Updated & Fixed)
 -- This is the COMPLETE schema - drop existing tables and run this fresh
 
 -- Drop existing tables (in correct order due to foreign keys)
-DROP TABLE IF EXISTS participant_stage_points_breakdown CASCADE;
+DROP TABLE IF EXISTS participant_rider_contributions CASCADE;
+DROP TABLE IF EXISTS rider_stage_points CASCADE;
 DROP TABLE IF EXISTS participant_stage_points CASCADE;
 DROP TABLE IF EXISTS directie_stage_points CASCADE;
 DROP TABLE IF EXISTS participant_rider_selections CASCADE;
-DROP TABLE IF EXISTS participant_team_selections CASCADE;
-DROP TABLE IF EXISTS scrape_logs CASCADE;
 DROP TABLE IF EXISTS stage_combativity CASCADE;
 DROP TABLE IF EXISTS stage_jerseys CASCADE;
 DROP TABLE IF EXISTS stage_results CASCADE;
@@ -20,7 +19,6 @@ DROP TABLE IF EXISTS riders CASCADE;
 -- Drop existing types
 DROP TYPE IF EXISTS jersey_type CASCADE;
 DROP TYPE IF EXISTS dnf_status CASCADE;
-DROP TYPE IF EXISTS points_type CASCADE;
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -31,14 +29,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TYPE jersey_type AS ENUM ('yellow', 'green', 'polka_dot', 'white');
 CREATE TYPE dnf_status AS ENUM ('DNF', 'DNS', 'OTL', 'DSQ');
-CREATE TYPE points_type AS ENUM (
-  'stage_position',
-  'yellow_jersey',
-  'green_jersey',
-  'polka_dot_jersey',
-  'white_jersey',
-  'combativity'
-);
 
 -- ============================================================================
 -- BASE TABLES
@@ -157,7 +147,30 @@ CREATE TABLE stage_dnf (
 -- POINTS TRACKING (PRE-CALCULATED)
 -- ============================================================================
 
--- Participant points per stage (ENHANCED with rankings)
+-- Rider points per stage (NEW - stores all rider points)
+CREATE TABLE rider_stage_points (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  rider_id UUID NOT NULL REFERENCES riders(id) ON DELETE CASCADE,
+  stage_id UUID NOT NULL REFERENCES stages(id) ON DELETE CASCADE,
+  
+  -- Points breakdown
+  stage_finish_points INTEGER NOT NULL DEFAULT 0,
+  yellow_points INTEGER NOT NULL DEFAULT 0,
+  green_points INTEGER NOT NULL DEFAULT 0,
+  polka_dot_points INTEGER NOT NULL DEFAULT 0,
+  white_points INTEGER NOT NULL DEFAULT 0,
+  combativity_points INTEGER NOT NULL DEFAULT 0,
+  total_points INTEGER NOT NULL DEFAULT 0,
+  
+  -- Rankings
+  stage_rank INTEGER,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  UNIQUE(rider_id, stage_id)
+);
+
+-- Participant points per stage
 CREATE TABLE participant_stage_points (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   participant_id UUID NOT NULL REFERENCES participants(id) ON DELETE CASCADE,
@@ -178,19 +191,20 @@ CREATE TABLE participant_stage_points (
   UNIQUE(participant_id, stage_id)
 );
 
--- Detailed breakdown of where points came from
-CREATE TABLE participant_stage_points_breakdown (
+-- Participant rider contributions (NEW - tracks which riders contributed to each participant)
+CREATE TABLE participant_rider_contributions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   participant_id UUID NOT NULL REFERENCES participants(id) ON DELETE CASCADE,
   stage_id UUID NOT NULL REFERENCES stages(id) ON DELETE CASCADE,
-  rider_id UUID REFERENCES riders(id) ON DELETE CASCADE,
-  points_type points_type NOT NULL,
-  points_value INTEGER NOT NULL,
-  description TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  rider_id UUID NOT NULL REFERENCES riders(id) ON DELETE CASCADE,
+  points_contributed INTEGER NOT NULL DEFAULT 0,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  UNIQUE(participant_id, stage_id, rider_id)
 );
 
--- Directie (team) points per stage (NEW)
+-- Directie (team) points per stage
 CREATE TABLE directie_stage_points (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   directie_id UUID NOT NULL REFERENCES directie(id) ON DELETE CASCADE,
@@ -243,13 +257,21 @@ CREATE INDEX idx_stage_dnf_stage ON stage_dnf(stage_id);
 CREATE INDEX idx_stage_dnf_rider ON stage_dnf(rider_id);
 CREATE INDEX idx_stage_dnf_status ON stage_dnf(status);
 
--- Points indexes
+-- Rider stage points indexes (NEW)
+CREATE INDEX idx_rider_stage_points_rider ON rider_stage_points(rider_id);
+CREATE INDEX idx_rider_stage_points_stage ON rider_stage_points(stage_id);
+CREATE INDEX idx_rider_stage_points_rank ON rider_stage_points(stage_id, stage_rank);
+
+-- Participant points indexes
 CREATE INDEX idx_participant_points_participant ON participant_stage_points(participant_id);
 CREATE INDEX idx_participant_points_stage ON participant_stage_points(stage_id);
-CREATE INDEX idx_participant_points_breakdown_participant ON participant_stage_points_breakdown(participant_id);
-CREATE INDEX idx_participant_points_breakdown_stage ON participant_stage_points_breakdown(stage_id);
-CREATE INDEX idx_participant_points_breakdown_rider ON participant_stage_points_breakdown(rider_id);
 
+-- Participant rider contributions indexes (NEW)
+CREATE INDEX idx_participant_rider_contrib_participant ON participant_rider_contributions(participant_id);
+CREATE INDEX idx_participant_rider_contrib_stage ON participant_rider_contributions(stage_id);
+CREATE INDEX idx_participant_rider_contrib_rider ON participant_rider_contributions(rider_id);
+
+-- Directie points indexes
 CREATE INDEX idx_directie_points_directie ON directie_stage_points(directie_id);
 CREATE INDEX idx_directie_points_stage ON directie_stage_points(stage_id);
 
@@ -308,8 +330,9 @@ ALTER TABLE stage_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE stage_jerseys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE stage_combativity ENABLE ROW LEVEL SECURITY;
 ALTER TABLE stage_dnf ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rider_stage_points ENABLE ROW LEVEL SECURITY;
 ALTER TABLE participant_stage_points ENABLE ROW LEVEL SECURITY;
-ALTER TABLE participant_stage_points_breakdown ENABLE ROW LEVEL SECURITY;
+ALTER TABLE participant_rider_contributions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE directie_stage_points ENABLE ROW LEVEL SECURITY;
 
 -- Public read access for all tables (everyone can view)
@@ -317,8 +340,9 @@ CREATE POLICY "Public read directie" ON directie FOR SELECT USING (true);
 CREATE POLICY "Public read riders" ON riders FOR SELECT USING (true);
 CREATE POLICY "Public read participants" ON participants FOR SELECT USING (true);
 CREATE POLICY "Public read participant_rider_selections" ON participant_rider_selections FOR SELECT USING (true);
+CREATE POLICY "Public read rider_stage_points" ON rider_stage_points FOR SELECT USING (true);
 CREATE POLICY "Public read participant_stage_points" ON participant_stage_points FOR SELECT USING (true);
-CREATE POLICY "Public read participant_stage_points_breakdown" ON participant_stage_points_breakdown FOR SELECT USING (true);
+CREATE POLICY "Public read participant_rider_contributions" ON participant_rider_contributions FOR SELECT USING (true);
 CREATE POLICY "Public read directie_stage_points" ON directie_stage_points FOR SELECT USING (true);
 
 -- Stages: public can only see completed stages
@@ -378,12 +402,13 @@ COMMENT ON TABLE stage_results IS 'Top 20 finishers per stage';
 COMMENT ON TABLE stage_jerseys IS 'Jersey holders after each stage';
 COMMENT ON TABLE stage_combativity IS 'Most combative rider per stage';
 COMMENT ON TABLE stage_dnf IS 'Riders who did not finish/start each stage';
+COMMENT ON TABLE rider_stage_points IS 'Pre-calculated points and rankings per rider per stage';
 COMMENT ON TABLE participant_stage_points IS 'Pre-calculated points and rankings per participant per stage';
-COMMENT ON TABLE participant_stage_points_breakdown IS 'Detailed breakdown of where points came from';
+COMMENT ON TABLE participant_rider_contributions IS 'Tracks which riders contributed points to each participant per stage';
 COMMENT ON TABLE directie_stage_points IS 'Pre-calculated points and rankings per directie per stage';
 
 COMMENT ON COLUMN participant_rider_selections.position IS '1-10 for main riders, 11 for backup';
 COMMENT ON COLUMN participant_rider_selections.is_active IS 'False if rider DNF/DNS and was replaced';
 COMMENT ON COLUMN participant_stage_points.stage_rank_change IS 'Positive = moved up, negative = moved down';
 COMMENT ON COLUMN participant_stage_points.overall_rank_change IS 'Change in overall ranking after this stage';
-
+COMMENT ON COLUMN rider_stage_points.stage_rank IS 'Rank among all riders for this stage (1 = highest points)';

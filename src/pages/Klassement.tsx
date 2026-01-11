@@ -1,3 +1,7 @@
+/**
+ * Klassement Page
+ */
+
 import React, { useState, useMemo } from 'react'
 import { useMetadata, useLeaderboards } from '../hooks/useTdfData';
 import { RankChange } from '../components/shared/RankChange';
@@ -9,7 +13,7 @@ interface LeaderboardEntry {
   overall_score: number;
   overall_rank: number;
   overall_rank_change: number;
-  stage_score: number;
+  stage_score: number;  // Note: json-generators maps stage_points → stage_score
   stage_rank: number;
   stage_rider_contributions: Record<string, number | undefined>;
 }
@@ -19,7 +23,7 @@ interface DirectieEntry {
   overall_score: number;
   overall_rank: number;
   overall_rank_change: number;
-  stage_score: number;
+  stage_score: number;  // Note: json-generators maps stage_points → stage_score
   stage_rank: number;
   stage_participant_contributions: Array<{ participant_name: string; stage_score: number }>;
   overall_participant_contributions: Array<{ participant_name: string; overall_score: number }>;
@@ -120,27 +124,18 @@ function HomePage() {
 
   const currentStageNum = metadata.current_stage;
 
-  const renderMedal = (rank: number) => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
-    return '';
-  };
-
   const toggleItemDetails = (itemName: string) => {
     setExpandedItem(prev => prev === itemName ? null : itemName);
   };
 
   return (
     <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
-      {/* FIXED ISSUE 1: Removed "Na etappe", made title bigger and centered */}
       <header className="mb-6 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">
           Klassement
         </h1>
       </header>
 
-      {/* FIXED ISSUE 2: Restored original button layout with flex-1 for full width */}
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
           <button
@@ -175,83 +170,41 @@ function HomePage() {
           </button>
         </div>
 
-        <div className="relative w-full">
+        <div className="w-full">
           <input
             type="text"
-            placeholder="Zoek deelnemer of directie..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-3 pr-10 rounded-lg bg-white border-2 border-gray-300 text-tdf-text-primary focus:border-yellow-500 text-sm sm:text-base"
+            placeholder="Zoek deelnemer of directie..."
+            className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-tdf-accent focus:outline-none text-sm sm:text-base"
           />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-              aria-label="Clear search"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
         </div>
       </div>
 
       {/* ETAPPE VIEW */}
       {activeView === 'stage_individual' && (
         <main>
-          {/* FIXED ISSUE 4: Added stage number to heading */}
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Etappe {currentStageNum} Resultaten
-          </h2>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">Etappe {currentStageNum} Klassement</h2>
 
-          {/* FIXED ISSUE 4: Medals now show for stage results */}
           <div className="block lg:hidden space-y-2">
-            {(filteredResults as LeaderboardEntry[]).map((entry) => {
-              const medal = renderMedal(entry.stage_rank);
-
-              return (
-                <div key={entry.participant_name} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <div
-                    onClick={() => toggleItemDetails(entry.participant_name)}
-                    className="p-3 cursor-pointer active:bg-tdf-bg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col items-center justify-center min-w-[50px]">
-                        <div className="text-lg font-bold text-tdf-text-primary">#{entry.stage_rank}</div>
-                        {medal && <div className="text-sm">{medal}</div>}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="font-bold text-sm text-tdf-text-primary truncate">{entry.participant_name}</div>
-                        <div className="text-xs text-tdf-text-secondary truncate">{entry.directie_name}</div>
-                      </div>
-                      
-                      <div className="text-right min-w-[60px]">
-                        <div className="text-lg font-bold text-tdf-primary">{entry.stage_score}</div>
-                      </div>
-                    </div>
+            {(filteredResults as LeaderboardEntry[]).map((entry) => (
+              <div key={entry.participant_name} className="bg-white rounded-lg shadow-md p-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-center justify-center min-w-[50px]">
+                    <div className="text-lg font-bold text-tdf-text-primary">#{entry.stage_rank}</div>
                   </div>
-
-                  {expandedItem === entry.participant_name && (
-                    <div className="px-3 pb-3 bg-tdf-bg border-t border-gray-200">
-                      <div className="pt-3">
-                        <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Etappe</h3>
-                        {getParticipantStages(leaderboardsData, entry.participant_name).map((stage) => (
-                          <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
-                            <span className="text-sm text-gray-700">Etappe {stage.stageNum}:</span>
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs text-tdf-text-secondary">#{stage.stage_rank}</span>
-                              <span className="text-sm font-bold text-tdf-text-primary">{stage.stage_score}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-sm text-tdf-text-primary truncate">{entry.participant_name}</div>
+                    <div className="text-xs text-tdf-text-secondary truncate">{entry.directie_name}</div>
+                  </div>
+                  
+                  <div className="text-right min-w-[60px]">
+                    <div className="text-lg font-bold text-tdf-primary">{entry.stage_score}</div>
+                  </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
 
           <div className="hidden lg:block overflow-x-auto">
@@ -266,37 +219,15 @@ function HomePage() {
               </thead>
               <tbody>
                 {(filteredResults as LeaderboardEntry[]).map((entry, idx) => (
-                  <React.Fragment key={entry.participant_name}>
-                    <tr
-                      className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
-                      onClick={() => toggleItemDetails(entry.participant_name)}
-                    >
-                      <td className="px-4 py-3 text-sm font-medium">
-                        {entry.stage_rank} {renderMedal(entry.stage_rank)}
-                      </td>
-                      <td className="px-4 py-3 text-sm">{entry.participant_name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{entry.directie_name}</td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold">{entry.stage_score}</td>
-                    </tr>
-                    {expandedItem === entry.participant_name && (
-                      <tr className="bg-gray-100">
-                        <td colSpan={4} className="px-4 py-4">
-                          <div className="ml-8 max-w-md">
-                            <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Etappe</h3>
-                            {getParticipantStages(leaderboardsData, entry.participant_name).map((stage) => (
-                              <div key={stage.stageKey} className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
-                                <span className="text-sm text-gray-600">Etappe {stage.stageNum}:</span>
-                                <div className="flex items-center gap-3">
-                                  <span className="text-xs text-tdf-text-secondary">#{stage.stage_rank}</span>
-                                  <span className="text-sm font-bold">{stage.stage_score}</span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
+                  <tr
+                    key={entry.participant_name}
+                    className={`${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
+                  >
+                    <td className="px-4 py-3 text-sm font-medium">{entry.stage_rank}</td>
+                    <td className="px-4 py-3 text-sm">{entry.participant_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{entry.directie_name}</td>
+                    <td className="px-4 py-3 text-sm text-right font-semibold">{entry.stage_score}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -346,7 +277,7 @@ function HomePage() {
                             <span className="text-sm text-gray-700">Etappe {stage.stageNum}:</span>
                             <div className="flex items-center gap-3">
                               <span className="text-xs text-tdf-text-secondary">#{stage.stage_rank}</span>
-                              <span className="text-sm font-bold text-tdf-text-primary">{stage.stage_score}</span>
+                              <span className="text-sm font-bold">{stage.stage_score}</span>
                             </div>
                           </div>
                         ))}
@@ -415,7 +346,6 @@ function HomePage() {
       )}
 
       {/* DIRECTIE KLASSEMENT VIEW */}
-      {/* FIXED ISSUE 3: Directie table now renders correctly */}
       {activeView === 'standings_directie' && (
         <main>
           <h2 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-4 text-tdf-primary">Directie Klassement</h2>

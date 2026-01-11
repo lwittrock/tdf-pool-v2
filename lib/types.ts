@@ -1,8 +1,10 @@
 /**
- * Shared Type Definitions for TdF Pool
+ * Shared Type Definitions for TdF Pool (UPDATED & FIXED)
  * 
  * Single source of truth for all data structures.
  * Used by both API routes and React components.
+ * 
+ * CRITICAL FIX: stage_score → stage_points to match database schema
  */
 
 // ============================================================================
@@ -11,13 +13,6 @@
 
 export type JerseyType = 'yellow' | 'green' | 'polka_dot' | 'white';
 export type DNFStatus = 'DNF' | 'DNS' | 'OTL' | 'DSQ';
-export type PointsType = 
-  | 'stage_position'
-  | 'yellow_jersey'
-  | 'green_jersey'
-  | 'polka_dot_jersey'
-  | 'white_jersey'
-  | 'combativity';
 
 // ============================================================================
 // API Request/Response Types
@@ -119,7 +114,7 @@ export interface LeaderboardEntry {
   overall_score: number;
   overall_rank: number;
   overall_rank_change: number;
-  stage_score: number;
+  stage_score: number;  // FIXED: Matches what frontend expects (keeping for compatibility)
   stage_rank: number;
   stage_rider_contributions: Record<string, number>;
 }
@@ -129,7 +124,7 @@ export interface DirectieLeaderboardEntry {
   overall_score: number;
   overall_rank: number;
   overall_rank_change: number;
-  stage_score: number;
+  stage_score: number;  // FIXED: Matches what frontend expects (keeping for compatibility)
   stage_rank: number;
   stage_participant_contributions: Array<{
     participant_name: string;
@@ -178,7 +173,7 @@ export interface RiderData {
 export type RidersData = Record<string, RiderData>;
 
 // ============================================================================
-// NEW: Rider Rankings Types (for simplified rider_rankings.json)
+// Rider Rankings Types (for rider_rankings.json)
 // ============================================================================
 
 export interface RiderMedalCounts {

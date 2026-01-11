@@ -1,10 +1,9 @@
 /**
- * Process Stage API (Optimized)
+ * Process Stage API (UPDATED)
  * 
- * Optimizations:
- * - Uses shared types from lib/types.ts
- * - Better error handling with typed responses
- * - Removed duplicate type definitions
+ * Updates:
+ * - ✅ Added rider_rankings.json to generated files
+ * - ✅ Uses updated json-generators
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -16,8 +15,9 @@ import {
   generateRidersJSON,
   generateStagesDataJSON,
   generateTeamSelectionsJSON,
+  generateRiderRankingsJSON,  // ✅ ADDED
 } from '../../lib/json-generators.js';
-import type { ProcessStageRequest, ApiError, ApiSuccess } from '../../lib/types';
+import type { ProcessStageRequest } from '../../lib/types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -126,12 +126,13 @@ export default async function handler(
     // STEP 4: Generate JSON files
     console.log('[Process Stage] Step 4: Generating JSON files...');
 
-    const [metadata, leaderboards, riders, stages, teamSelections] = await Promise.all([
+    const [metadata, leaderboards, riders, stages, teamSelections, riderRankings] = await Promise.all([
       generateMetadataJSON(),
       generateLeaderboardsJSON(),
       generateRidersJSON(),
       generateStagesDataJSON(),
       generateTeamSelectionsJSON(),
+      generateRiderRankingsJSON(),  // ✅ ADDED
     ]);
 
     // Upload to Vercel Blob
@@ -155,6 +156,10 @@ export default async function handler(
         addRandomSuffix: false,
       }),
       put('data/team_selections.json', JSON.stringify(teamSelections), {
+        access: 'public',
+        addRandomSuffix: false,
+      }),
+      put('data/rider_rankings.json', JSON.stringify(riderRankings), {  // ✅ ADDED
         access: 'public',
         addRandomSuffix: false,
       }),

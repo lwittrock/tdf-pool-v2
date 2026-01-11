@@ -1,5 +1,11 @@
 /**
- * Update Active Selections API (Optimized)
+ * Update Active Selections API (COMPLETELY REWRITTEN & FIXED)
+ * 
+ * Major changes:
+ * - ✅ No more active_selections table (doesn't exist!)
+ * - ✅ Uses participant_rider_selections.is_active instead
+ * - ✅ Properly handles DNS riders and backup activation
+ * - ✅ Records substitution history
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -8,7 +14,6 @@ import type {
   UpdateActiveSelectionsRequest, 
   UpdateActiveSelectionsSuccess,
   SubstitutionMade,
-  ApiError 
 } from '../../lib/types';
 
 const supabase = createClient(
@@ -37,10 +42,14 @@ export default async function handler(
       });
     }
 
-    // Step 1: Get the stage
+    console.log(`[Update Active Selections] Processing stage ${stage_number}`);
+
+    // ========================================================================
+    // STEP 1: Get the stage
+    // ========================================================================
     const { data: stage, error: stageError } = await supabase
       .from('stages')
-      .select('id')
+      .select('id, stage_number')
       .eq('stage_number', stage_number)
       .single();
 
@@ -54,7 +63,9 @@ export default async function handler(
 
     const stageId = stage.id;
 
-    // Step 2: Get all DNS riders for this stage
+    // ========================================================================
+    // STEP 2: Get all DNS riders for this stage
+    // ========================================================================
     const { data: dnsRecords } = await supabase
       .from('stage_dnf')
       .select(`
@@ -69,19 +80,33 @@ export default async function handler(
 
     console.log(`[Update Active] DNS riders for stage ${stage_number}:`, dnsRiderNames);
 
-    // Step 3: Clear existing active selections for this stage (idempotent)
-    await supabase
-      .from('active_selections')
-      .delete()
-      .eq('stage_id', stageId);
+    // If no DNS riders, nothing to do
+    if (dnsRiderIds.size === 0) {
+      console.log('[Update Active] No DNS riders, selections unchanged');
+      return res.status(200).json({
+        success: true,
+        stage_number,
+        dns_riders: [],
+        substitutions_made: [],
+        participants_affected: 0,
+      });
+    }
 
-    // Step 4: Get all participants and their selections
+    // ========================================================================
+    // STEP 3: Get all participants and their selections
+    // ========================================================================
     const { data: participants, error: participantsError } = await supabase
       .from('participants')
       .select(`
         id,
         name,
-        participant_selections!inner(rider_id, selection_order, is_backup)
+        participant_rider_selections!inner(
+          id,
+          rider_id,
+          position,
+          is_active,
+          riders!inner(name)
+        )
       `);
 
     if (participantsError || !participants) {
@@ -92,87 +117,68 @@ export default async function handler(
       });
     }
 
-    // Step 5: For each participant, determine active riders
-    const activeSelectionsToInsert: any[] = [];
+    // ========================================================================
+    // STEP 4: Process each participant - handle DNS and activate backups
+    // ========================================================================
     const substitutionsMade: SubstitutionMade[] = [];
     let participantsAffected = 0;
 
     for (const participant of participants) {
-      const selections = (participant.participant_selections as any[])
-        .sort((a, b) => a.selection_order - b.selection_order);
+      const selections = (participant.participant_rider_selections as any[])
+        .sort((a, b) => a.position - b.position);
 
-      const regularRiders = selections.filter((s) => !s.is_backup);
-      const backupRiders = selections.filter((s) => s.is_backup);
+      let hasSubstitutions = false;
 
-      let activeRiders = [...regularRiders];
-      let substitutionsForParticipant = 0;
+      // Separate main riders (1-10) from backup (11)
+      const mainRiders = selections.filter((s) => s.position <= 10);
+      const backupRider = selections.find((s) => s.position === 11);
 
-      // Check if any regular riders are DNS
-      for (let i = 0; i < activeRiders.length; i++) {
-        if (dnsRiderIds.has(activeRiders[i].rider_id)) {
-          // Find first available backup
-          const backup = backupRiders.find(
-            (b) => !dnsRiderIds.has(b.rider_id) && !activeRiders.some((a) => a.rider_id === b.rider_id)
-          );
+      // Check each main rider for DNS
+      for (const selection of mainRiders) {
+        if (dnsRiderIds.has(selection.rider_id) && selection.is_active) {
+          // This rider is DNS - deactivate them
+          await supabase
+            .from('participant_rider_selections')
+            .update({ 
+              is_active: false,
+              replaced_at_stage: stage_number,
+            })
+            .eq('id', selection.id);
 
-          if (backup) {
-            // Get rider names for logging
-            const { data: riderOut } = await supabase
-              .from('riders')
-              .select('name')
-              .eq('id', activeRiders[i].rider_id)
-              .single();
+          console.log(`[Update Active] Deactivated DNS rider for ${participant.name}: ${selection.riders.name}`);
 
-            const { data: riderIn } = await supabase
-              .from('riders')
-              .select('name')
-              .eq('id', backup.rider_id)
-              .single();
+          // Activate backup if available and not also DNS
+          if (backupRider && !dnsRiderIds.has(backupRider.rider_id)) {
+            await supabase
+              .from('participant_rider_selections')
+              .update({ 
+                is_active: true,
+                replacement_for_rider_id: selection.rider_id,
+              })
+              .eq('id', backupRider.id);
 
             substitutionsMade.push({
               participant_name: participant.name,
-              rider_out: riderOut?.name || 'Unknown',
-              rider_in: riderIn?.name || 'Unknown',
+              rider_out: selection.riders.name,
+              rider_in: backupRider.riders.name,
             });
 
-            activeRiders[i] = backup;
-            substitutionsForParticipant++;
+            hasSubstitutions = true;
+            console.log(`[Update Active] Activated backup for ${participant.name}: ${backupRider.riders.name} replaces ${selection.riders.name}`);
+          } else {
+            console.log(`[Update Active] No valid backup available for ${participant.name}`);
+            hasSubstitutions = true; // Still count as affected
           }
         }
       }
 
-      if (substitutionsForParticipant > 0) {
+      if (hasSubstitutions) {
         participantsAffected++;
       }
-
-      // Insert active selections
-      for (const selection of activeRiders) {
-        activeSelectionsToInsert.push({
-          stage_id: stageId,
-          participant_id: participant.id,
-          rider_id: selection.rider_id,
-          is_backup: selection.is_backup,
-        });
-      }
     }
 
-    // Step 6: Insert all active selections
-    if (activeSelectionsToInsert.length > 0) {
-      const { error: insertError } = await supabase
-        .from('active_selections')
-        .insert(activeSelectionsToInsert);
-
-      if (insertError) {
-        return res.status(500).json({
-          success: false,
-          error: 'Failed to insert active selections',
-          details: insertError,
-        });
-      }
-    }
-
-    console.log(`[Update Active] Created ${activeSelectionsToInsert.length} active selection records`);
     console.log(`[Update Active] Made ${substitutionsMade.length} substitutions`);
+    console.log(`[Update Active] ${participantsAffected} participants affected`);
 
     return res.status(200).json({
       success: true,
@@ -180,7 +186,8 @@ export default async function handler(
       dns_riders: dnsRiderNames,
       substitutions_made: substitutionsMade,
       participants_affected: participantsAffected,
-    });
+    } as UpdateActiveSelectionsSuccess);
+
   } catch (error: any) {
     console.error('[Update Active] Error:', error);
     return res.status(500).json({
