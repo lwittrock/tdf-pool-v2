@@ -4,7 +4,6 @@
  * Displays detailed per-stage breakdown for riders or participants.
  */
 
-import React from 'react';
 import { JerseyList } from './JerseyIcons';
 import { CombativityIcon } from './CombativityIcon';
 import { getStageAwards } from '../../../lib/data-transforms';

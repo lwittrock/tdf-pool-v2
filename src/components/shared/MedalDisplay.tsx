@@ -4,7 +4,7 @@
  * Renders medal emoji for positions (gold/silver/bronze).
  */
 
-import { MEDALS, MEDAL_POSITIONS } from '../../../lib/constants';
+import { MEDALS, MEDAL_POSITIONS } from '../../../lib/scoring-constants.js';
 
 interface MedalDisplayProps {
   position?: number;
