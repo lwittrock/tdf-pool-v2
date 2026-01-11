@@ -1,8 +1,11 @@
 /**
- * Utility functions for generating static JSON files from database
+ * JSON Generators (Optimized)
  * 
- * This module reads from the calculated data in participant_stage_points and directie_stage_points
- * tables, rather than recalculating points. This ensures JSON matches database exactly.
+ * Optimizations:
+ * - Uses shared types from lib/types.ts
+ * - Removed all duplicate type definitions
+ * - Uses shared constants
+ * - Better organization
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -12,99 +15,26 @@ import {
   COMBATIVITY_POINTS, 
   type JerseyType 
 } from './scoring-constants.js';
+import type {
+  Metadata,
+  LeaderboardEntry,
+  DirectieLeaderboardEntry,
+  RiderStageData,
+  RiderMedalCounts,
+  RiderData,
+  RidersData,
+  RiderRankingsStageEntry,
+  RiderRankingsTotalEntry,
+  RiderRankingsData,
+  StageData,
+  TeamSelection,
+  JerseyPoints
+} from './types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
-
-interface MetadataJSON {
-  current_stage: number;
-  top_n_participants_for_directie: number;
-  last_updated: string;
-}
-
-interface LeaderboardEntry {
-  participant_name: string;
-  directie_name: string;
-  overall_score: number;
-  overall_rank: number;
-  overall_rank_change: number;
-  stage_score: number;
-  stage_rank: number;
-  stage_rider_contributions: Record<string, number>;
-}
-
-interface DirectieLeaderboardEntry {
-  directie_name: string;
-  overall_score: number;
-  overall_rank: number;
-  overall_rank_change: number;
-  stage_score: number;
-  stage_rank: number;
-  stage_participant_contributions: Array<{ participant_name: string; stage_score: number }>;
-  overall_participant_contributions: Array<{ participant_name: string; overall_score: number }>;
-}
-
-interface JerseyPoints {
-  yellow: number;
-  green: number;
-  polka_dot: number;
-  white: number;
-  combative: number;
-}
-
-interface RiderStageData {
-  date: string;
-  stage_finish_points: number;
-  stage_finish_position: number;
-  stage_rank: number;
-  jersey_points: JerseyPoints;
-  stage_total: number;
-  cumulative_total: number;
-}
-
-interface RiderMedalCounts {
-  gold: number;
-  silver: number;
-  bronze: number;
-  display: string;
-}
-
-interface RiderData {
-  team: string;
-  total_points: number;
-  overall_rank: number;
-  medal_counts: RiderMedalCounts;
-  stages: Record<string, RiderStageData>;
-}
-
-interface RidersJSON {
-  [riderName: string]: RiderData;
-}
-
-interface RiderRankingsStageEntry {
-  name: string;
-  team: string;
-  stage_rank: number;
-  stage_points: number;
-  stage_finish_position: number;
-  stage_finish_points: number;
-  jersey_points: JerseyPoints;
-}
-
-interface RiderRankingsTotalEntry {
-  name: string;
-  team: string;
-  overall_rank: number;
-  total_points: number;
-  medal_counts: RiderMedalCounts;
-}
-
-interface RiderRankingsData {
-  stage_rankings: Record<string, RiderRankingsStageEntry[]>;
-  total_rankings: RiderRankingsTotalEntry[];
-}
 
 /**
  * Get current stage number (highest completed stage)
@@ -124,7 +54,7 @@ export async function getCurrentStage(): Promise<number> {
 /**
  * Generate metadata.json
  */
-export async function generateMetadataJSON(): Promise<MetadataJSON> {
+export async function generateMetadataJSON(): Promise<Metadata> {
   const currentStage = await getCurrentStage();
   
   return {
@@ -283,7 +213,7 @@ function calculateRiderMedals(stages: Record<string, RiderStageData>): RiderMeda
 /**
  * Generate riders.json with rankings and medals
  */
-export async function generateRidersJSON(): Promise<RidersJSON> {
+export async function generateRidersJSON(): Promise<RidersData> {
   console.log('[Generate JSON] Building riders data...');
 
   const { data: riders } = await supabase
@@ -294,7 +224,7 @@ export async function generateRidersJSON(): Promise<RidersJSON> {
 
   if (!riders) return {};
 
-  const ridersJSON: RidersJSON = {};
+  const ridersJSON: RidersData = {};
 
   // First pass: Build basic rider data
   for (const rider of riders) {
@@ -339,12 +269,10 @@ export async function generateRidersJSON(): Promise<RidersJSON> {
         const stageNum = (jp.stages as any).stage_number;
         ensureStage(stageNum);
         
-        // We check if the DB string exists in your JERSEY_POINTS constant
         const type = jp.jersey_type as JerseyType;
         
         if (type in JERSEY_POINTS) {
-            // It is safe to access JERSEY_POINTS[type]
-            jerseyPointsByStage[stageNum][type] = JERSEY_POINTS[type];
+          jerseyPointsByStage[stageNum][type] = JERSEY_POINTS[type];
         }
       }
     }
@@ -442,7 +370,6 @@ export async function generateRidersJSON(): Promise<RidersJSON> {
   return ridersJSON;
 }
 
-
 /**
  * Generate rider_rankings.json
  */
@@ -470,7 +397,7 @@ export async function generateRiderRankingsJSON(): Promise<RiderRankingsData> {
       stageRankings.push({
         name,
         team: riderData.team,
-        stage_rank: stageData.stage_rank,
+        stage_rank: stageData.stage_rank!,
         stage_points: stageData.stage_total,
         stage_finish_position: stageData.stage_finish_position,
         stage_finish_points: stageData.stage_finish_points,
@@ -486,9 +413,9 @@ export async function generateRiderRankingsJSON(): Promise<RiderRankingsData> {
   const totalRankings: RiderRankingsTotalEntry[] = Object.entries(ridersData).map(([name, riderData]) => ({
     name,
     team: riderData.team,
-    overall_rank: riderData.overall_rank,
+    overall_rank: riderData.overall_rank!,
     total_points: riderData.total_points,
-    medal_counts: riderData.medal_counts
+    medal_counts: riderData.medal_counts!
   }));
 
   // Sort by overall rank
@@ -504,7 +431,6 @@ export async function generateRiderRankingsJSON(): Promise<RiderRankingsData> {
 
 /**
  * Calculate rider contributions for each participant per stage
- * This shows which riders earned which points for each participant
  */
 async function calculateRiderContributions(
   stages: Array<{ id: string; stage_number: number }>
@@ -558,11 +484,8 @@ async function calculateRiderContributions(
     }
 
     for (const jersey of jerseys || []) {
-      let points = 0;
-      if (jersey.jersey_type === 'yellow') points = 20;
-      if (jersey.jersey_type === 'green') points = 15;
-      if (jersey.jersey_type === 'polka_dot') points = 15;
-      if (jersey.jersey_type === 'white') points = 15;
+      const type = jersey.jersey_type as JerseyType;
+      const points = JERSEY_POINTS[type] || 0;
       
       if (points > 0) {
         riderPoints.set(jersey.rider_id, (riderPoints.get(jersey.rider_id) || 0) + points);
@@ -572,7 +495,7 @@ async function calculateRiderContributions(
     if (combativity?.rider_id) {
       riderPoints.set(
         combativity.rider_id, 
-        (riderPoints.get(combativity.rider_id) || 0) + 10
+        (riderPoints.get(combativity.rider_id) || 0) + COMBATIVITY_POINTS
       );
     }
 
@@ -598,7 +521,7 @@ async function calculateRiderContributions(
 /**
  * Generate stages_data.json (for admin panel)
  */
-export async function generateStagesDataJSON() {
+export async function generateStagesDataJSON(): Promise<StageData[]> {
   console.log('[Generate JSON] Building stages data...');
 
   // Get all stages
@@ -616,7 +539,7 @@ export async function generateStagesDataJSON() {
   
   const riderMap = new Map(allRiders?.map(r => [r.id, r.name]) || []);
 
-  const stagesData = [];
+  const stagesData: StageData[] = [];
 
   for (const stage of allStages) {
     // Get stage results
@@ -679,7 +602,7 @@ export async function generateStagesDataJSON() {
 /**
  * Generate team_selections.json (participant team rosters)
  */
-export async function generateTeamSelectionsJSON() {
+export async function generateTeamSelectionsJSON(): Promise<Record<string, TeamSelection>> {
   console.log('[Generate JSON] Building team selections...');
 
   const { data: participants } = await supabase
@@ -701,11 +624,7 @@ export async function generateTeamSelectionsJSON() {
     throw new Error('Failed to fetch participants');
   }
 
-  const teamSelections: Record<string, {
-    participant_name: string;
-    directie_name: string;
-    riders: string[];
-  }> = {};
+  const teamSelections: Record<string, TeamSelection> = {};
 
   for (const participant of participants) {
     const selections = (participant as any).participant_rider_selections || [];

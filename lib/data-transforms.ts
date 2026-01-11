@@ -91,14 +91,19 @@ export function getStageAwards(stage: StageInfo): {
   hasCombative: boolean;
 } {
   const jerseys: string[] = [];
-  if (stage.jersey_points.yellow > 0) jerseys.push('yellow');
-  if (stage.jersey_points.green > 0) jerseys.push('green');
-  if (stage.jersey_points.polka_dot > 0) jerseys.push('polka_dot');
-  if (stage.jersey_points.white > 0) jerseys.push('white');
+  
+  if (!stage.jersey_points) {
+    return { jerseys: [], hasCombative: false };
+  }
+  
+  if ((stage.jersey_points.yellow ?? 0) > 0) jerseys.push('yellow');
+  if ((stage.jersey_points.green ?? 0) > 0) jerseys.push('green');
+  if ((stage.jersey_points.polka_dot ?? 0) > 0) jerseys.push('polka_dot');
+  if ((stage.jersey_points.white ?? 0) > 0) jerseys.push('white');
 
   return {
     jerseys,
-    hasCombative: (stage.jersey_points.combative || 0) > 0,
+    hasCombative: (stage.jersey_points.combative ?? 0) > 0,
   };
 }
 

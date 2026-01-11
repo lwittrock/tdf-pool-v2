@@ -99,6 +99,14 @@ export interface UpdateActiveSelectionsSuccess {
 // Frontend Data Types
 // ============================================================================
 
+export interface JerseyPoints {
+  yellow: number;
+  green: number;
+  polka_dot: number;
+  white: number;
+  combative: number;
+}
+
 export interface Metadata {
   current_stage: number;
   top_n_participants_for_directie: number;
@@ -142,7 +150,7 @@ export interface RiderStageData {
   date: string;
   stage_finish_points: number;
   stage_finish_position: number;
-  stage_rank?: number;  // ← ADDED: Rank among all riders for this stage
+  stage_rank?: number;
   jersey_points: {
     yellow: number;
     green: number;
@@ -157,8 +165,8 @@ export interface RiderStageData {
 export interface RiderData {
   team: string;
   total_points: number;
-  overall_rank?: number;  // ← ADDED: Overall rank by total points
-  medal_counts?: {        // ← ADDED: Medal counts across all stages
+  overall_rank?: number;
+  medal_counts?: {
     gold: number;
     silver: number;
     bronze: number;
