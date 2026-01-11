@@ -14,7 +14,7 @@ import type {
   UpdateActiveSelectionsRequest, 
   UpdateActiveSelectionsSuccess,
   SubstitutionMade,
-} from '../../lib/types';
+} from '../../lib/types.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

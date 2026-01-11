@@ -29,7 +29,7 @@ import type {
   StageData,
   TeamSelection,
   JerseyPoints
-} from './types';
+} from './types.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

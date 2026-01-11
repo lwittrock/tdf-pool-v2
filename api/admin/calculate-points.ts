@@ -18,7 +18,7 @@ import {
   COMBATIVITY_POINTS,
   type JerseyType,
 } from '../../lib/scoring-constants.js';
-import type { CalculatePointsRequest } from '../../lib/types';
+import type { CalculatePointsRequest } from '../../lib/types.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

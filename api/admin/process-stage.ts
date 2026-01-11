@@ -15,9 +15,9 @@ import {
   generateRidersJSON,
   generateStagesDataJSON,
   generateTeamSelectionsJSON,
-  generateRiderRankingsJSON,  // ✅ ADDED
+  generateRiderRankingsJSON,
 } from '../../lib/json-generators.js';
-import type { ProcessStageRequest } from '../../lib/types';
+import type { ProcessStageRequest } from '../../lib/types.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

@@ -14,7 +14,7 @@ import type {
   LeaderboardsData,
   LeaderboardEntry,
 } from './types';
-import { MEDAL_POSITIONS, formatMedalDisplay } from './scoring-constants';
+import { MEDAL_POSITIONS, formatMedalDisplay } from './scoring-constants.js';
 
 // ============================================================================
 // Rider Stage Transformations
