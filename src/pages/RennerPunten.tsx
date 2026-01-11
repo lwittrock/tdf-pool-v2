@@ -17,9 +17,9 @@
 
 import React, { useState, useMemo } from 'react';
 import { useMetadata, useRiders } from '../hooks/useTdfData';
-import { getRiderMedals, getRiderStagesFromData, getStageAwards } from '../../lib/data-transforms';
+import { getRiderMedals, getRiderStagesFromData } from '../../lib/data-transforms';
 import { JERSEY_ICONS, MEDALS } from '../../lib/constants';
-import type { RidersData, RiderData, RiderStageData } from '../../lib/types';
+import type { RidersData, RiderData, RiderStageData, StageInfo } from '../../lib/types';
 
 // Combative Icon Component
 interface CombativeIconProps {
@@ -148,6 +148,25 @@ function RennerPunten() {
     return '';
   };
 
+  // Helper function for getting jerseys from stage data
+  const getStageJerseys = (stageData: RiderStageData | StageInfo | undefined): { 
+    jerseys: Array<'yellow' | 'green' | 'polka_dot' | 'white'>; 
+    hasCombative: boolean 
+  } => {
+    if (!stageData?.jersey_points) return { jerseys: [], hasCombative: false };
+    
+    const jerseys: Array<'yellow' | 'green' | 'polka_dot' | 'white'> = [];
+    if ((stageData.jersey_points.yellow ?? 0) > 0) jerseys.push('yellow');
+    if ((stageData.jersey_points.green ?? 0) > 0) jerseys.push('green');
+    if ((stageData.jersey_points.polka_dot ?? 0) > 0) jerseys.push('polka_dot');
+    if ((stageData.jersey_points.white ?? 0) > 0) jerseys.push('white');
+    
+    return {
+      jerseys,
+      hasCombative: (stageData.jersey_points.combative ?? 0) > 0
+    };
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -262,7 +281,7 @@ function RennerPunten() {
             {(filteredResults as StageRankedRider[]).map((rider) => {
               const finishPos = rider.stage_finish_position;
               const medal = renderMedal(finishPos);
-              const { jerseys, hasCombative } = getStageAwards(rider.stage_data);
+              const { jerseys, hasCombative } = getStageJerseys(rider.stage_data);
 
               return (
                 <div key={rider.name} className="bg-white rounded-lg shadow-md p-3">
@@ -284,7 +303,7 @@ function RennerPunten() {
                             {jerseys.map(jersey => (
                               <img 
                                 key={jersey}
-                                src={JERSEY_ICONS[jersey]}
+                                src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
                                 alt={`${jersey} jersey`}
                                 className="w-3 h-3"
                               />
@@ -320,7 +339,7 @@ function RennerPunten() {
               </thead>
               <tbody>
                 {(filteredResults as StageRankedRider[]).map((rider, idx) => {
-                  const { jerseys, hasCombative } = getStageAwards(rider.stage_data);
+                  const { jerseys, hasCombative } = getStageJerseys(rider.stage_data);
                   const finishPos = rider.stage_finish_position;
                   const medal = renderMedal(finishPos);
                   
@@ -340,7 +359,7 @@ function RennerPunten() {
                               {jerseys.map(jersey => (
                                 <img 
                                   key={jersey}
-                                  src={JERSEY_ICONS[jersey]}
+                                  src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
                                   alt={`${jersey} jersey`}
                                   className="w-5 h-5"
                                 />
@@ -403,7 +422,7 @@ function RennerPunten() {
                       <div className="pt-3">
                         <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Etappe</h3>
                         {getRiderStagesFromData(rider).map((stage) => {
-                          const stageAwards = getStageAwards(stage);
+                          const stageAwards = getStageJerseys(stage);
                           return (
                             <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
                               <div className="flex items-center gap-2">
@@ -413,7 +432,7 @@ function RennerPunten() {
                                     {stageAwards.jerseys.map(jersey => (
                                       <img 
                                         key={jersey}
-                                        src={JERSEY_ICONS[jersey]}
+                                        src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
                                         alt={`${jersey} jersey`}
                                         className="w-3 h-3"
                                       />
@@ -471,7 +490,7 @@ function RennerPunten() {
                             <div className="ml-8 max-w-md">
                               <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Etappe</h3>
                               {getRiderStagesFromData(rider).map((stage) => {
-                                const stageAwards = getStageAwards(stage);
+                                const stageAwards = getStageJerseys(stage);
                                 return (
                                   <div key={stage.stageKey} className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
                                     <div className="flex items-center gap-2">
@@ -481,7 +500,7 @@ function RennerPunten() {
                                           {stageAwards.jerseys.map(jersey => (
                                             <img 
                                               key={jersey}
-                                              src={JERSEY_ICONS[jersey]}
+                                              src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
                                               alt={`${jersey} jersey`}
                                               className="w-4 h-4"
                                             />
