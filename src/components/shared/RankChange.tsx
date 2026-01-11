@@ -4,7 +4,6 @@
  * Displays rank changes with colored arrows.
  */
 
-import React from 'react';
 import { RANK_ARROWS, RANK_COLORS } from '../../../lib/constants';
 
 interface RankChangeProps {
