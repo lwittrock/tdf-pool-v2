@@ -33,3 +33,7 @@ dist-ssr
 .supabase
 
 .vercel
+
+# Venv
+venv/
+__pycache__/

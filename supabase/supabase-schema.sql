@@ -1,5 +1,4 @@
--- TdF Pool - Complete Database Schema (Updated & Fixed)
--- This is the COMPLETE schema - drop existing tables and run this fresh
+-- TdF Pool - Complete Database Schema - drop existing tables and run this fresh
 
 -- Drop existing tables (in correct order due to foreign keys)
 DROP TABLE IF EXISTS participant_rider_contributions CASCADE;
@@ -72,6 +71,7 @@ CREATE TABLE stages (
   stage_type TEXT,
   difficulty TEXT,
   won_how TEXT,
+  winning_team TEXT,
   is_complete BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -147,7 +147,7 @@ CREATE TABLE stage_dnf (
 -- POINTS TRACKING (PRE-CALCULATED)
 -- ============================================================================
 
--- Rider points per stage (NEW - stores all rider points)
+-- Rider points per stage (stores all rider points)
 CREATE TABLE rider_stage_points (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   rider_id UUID NOT NULL REFERENCES riders(id) ON DELETE CASCADE,
@@ -191,7 +191,7 @@ CREATE TABLE participant_stage_points (
   UNIQUE(participant_id, stage_id)
 );
 
--- Participant rider contributions (NEW - tracks which riders contributed to each participant)
+-- Participant rider contributions (tracks which riders contributed to each participant)
 CREATE TABLE participant_rider_contributions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   participant_id UUID NOT NULL REFERENCES participants(id) ON DELETE CASCADE,
@@ -257,7 +257,7 @@ CREATE INDEX idx_stage_dnf_stage ON stage_dnf(stage_id);
 CREATE INDEX idx_stage_dnf_rider ON stage_dnf(rider_id);
 CREATE INDEX idx_stage_dnf_status ON stage_dnf(status);
 
--- Rider stage points indexes (NEW)
+-- Rider stage points indexes
 CREATE INDEX idx_rider_stage_points_rider ON rider_stage_points(rider_id);
 CREATE INDEX idx_rider_stage_points_stage ON rider_stage_points(stage_id);
 CREATE INDEX idx_rider_stage_points_rank ON rider_stage_points(stage_id, stage_rank);
@@ -266,7 +266,7 @@ CREATE INDEX idx_rider_stage_points_rank ON rider_stage_points(stage_id, stage_r
 CREATE INDEX idx_participant_points_participant ON participant_stage_points(participant_id);
 CREATE INDEX idx_participant_points_stage ON participant_stage_points(stage_id);
 
--- Participant rider contributions indexes (NEW)
+-- Participant rider contributions indexes
 CREATE INDEX idx_participant_rider_contrib_participant ON participant_rider_contributions(participant_id);
 CREATE INDEX idx_participant_rider_contrib_stage ON participant_rider_contributions(stage_id);
 CREATE INDEX idx_participant_rider_contrib_rider ON participant_rider_contributions(rider_id);
@@ -278,6 +278,7 @@ CREATE INDEX idx_directie_points_stage ON directie_stage_points(stage_id);
 -- Stages indexes
 CREATE INDEX idx_stages_number ON stages(stage_number);
 CREATE INDEX idx_stages_complete ON stages(is_complete) WHERE is_complete = true;
+CREATE INDEX idx_stages_winning_team ON stages(winning_team);
 
 -- ============================================================================
 -- HELPER FUNCTIONS
@@ -315,6 +316,36 @@ BEGIN
   );
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function for fuzzy rider name matching (helps with scraper integration)
+CREATE OR REPLACE FUNCTION find_rider_by_name_fuzzy(search_name TEXT)
+RETURNS TABLE(
+  id UUID,
+  name TEXT,
+  team TEXT,
+  similarity_score REAL
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    r.id,
+    r.name,
+    r.team,
+    GREATEST(
+      similarity(LOWER(r.name), LOWER(search_name)),
+      similarity(LOWER(r.name), LOWER(regexp_replace(search_name, '[^a-zA-Z ]', '', 'g')))
+    ) as similarity_score
+  FROM riders r
+  WHERE 
+    LOWER(r.name) = LOWER(search_name)
+    OR similarity(LOWER(r.name), LOWER(search_name)) > 0.6
+  ORDER BY similarity_score DESC
+  LIMIT 5;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Enable pg_trgm extension for fuzzy matching
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- ============================================================================
 -- ROW LEVEL SECURITY (RLS)
@@ -412,3 +443,4 @@ COMMENT ON COLUMN participant_rider_selections.is_active IS 'False if rider DNF/
 COMMENT ON COLUMN participant_stage_points.stage_rank_change IS 'Positive = moved up, negative = moved down';
 COMMENT ON COLUMN participant_stage_points.overall_rank_change IS 'Change in overall ranking after this stage';
 COMMENT ON COLUMN rider_stage_points.stage_rank IS 'Rank among all riders for this stage (1 = highest points)';
+COMMENT ON COLUMN stages.winning_team IS 'Team of the stage winner (derived from winner''s team)';
