@@ -29,7 +29,7 @@ def submit_stage_to_api(year: int, stage_number: int, api_url: str, force: bool 
     try:
         stage_data = scraper.get_complete_stage_data(year, stage_number)
     except Exception as e:
-        print(f"\nâœ— Scraping failed: {e}")
+        print(f"\n Scraping failed: {e}")
         import traceback
         traceback.print_exc()
         return None
@@ -58,7 +58,7 @@ def submit_stage_to_api(year: int, stage_number: int, api_url: str, force: bool 
     print(f"{'='*70}")
     print(f"Stage: {stage_data['stage_number']}")
     print(f"Date: {stage_data.get('date', 'N/A')}")
-    print(f"Route: {stage_data.get('departure_city', 'N/A')} â†' {stage_data.get('arrival_city', 'N/A')}")
+    print(f"Route: {stage_data.get('departure_city', 'N/A')} -> {stage_data.get('arrival_city', 'N/A')}")
     print(f"Distance: {stage_data.get('distance', 'N/A')} km")
     print(f"Results: {len(stage_data['top_20_finishers'])} riders")
     if stage_data['top_20_finishers']:
@@ -104,7 +104,7 @@ def submit_stage_to_api(year: int, stage_number: int, api_url: str, force: bool 
                     if warning['issue'] == 'not_found':
                         print(f"  - NOT FOUND: {warning['rider_name']}")
                     elif warning['issue'] == 'low_confidence':
-                        print(f"  - FUZZY MATCH: '{warning['rider_name']}' â†' '{warning.get('matched_to')}' "
+                        print(f"  - FUZZY MATCH: '{warning['rider_name']}' -> '{warning.get('matched_to')}' "
                               f"(confidence: {warning.get('similarity_score', 0):.2f})")
                 if len(rider_warnings) > 15:
                     print(f"  ... and {len(rider_warnings) - 15} more")
@@ -122,7 +122,7 @@ def submit_stage_to_api(year: int, stage_number: int, api_url: str, force: bool 
                 print("\n✓ No warnings - all riders matched perfectly!")
                 
         else:
-            print(f"âœ— API returned error: {result.get('error')}")
+            print(f" API returned error: {result.get('error')}")
             details = result.get('details')
             if details:
                 print(f"Details: {details}")
@@ -131,7 +131,7 @@ def submit_stage_to_api(year: int, stage_number: int, api_url: str, force: bool 
         return result
         
     except requests.exceptions.RequestException as e:
-        print(f"\nâœ— API submission failed: {e}")
+        print(f"\n API submission failed: {e}")
         if hasattr(e, 'response') and e.response is not None:
             try:
                 error_data = e.response.json()
@@ -177,6 +177,6 @@ if __name__ == "__main__":
         print(f"   with body: {{\"stage_number\": {stage_number}}}")
     else:
         print(f"\n{'='*70}")
-        print("âœ— STAGE SUBMISSION FAILED")
+        print(" STAGE SUBMISSION FAILED")
         print(f"{'='*70}")
         sys.exit(1)

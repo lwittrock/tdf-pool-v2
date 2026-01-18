@@ -10,7 +10,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { 
   SubmitStartlistRequest, 
   SubmitStartlistSuccess 
-} from '../../lib/scraper-types.js';
+} from '../lib/scraper-types.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

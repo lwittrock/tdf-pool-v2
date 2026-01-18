@@ -15,7 +15,7 @@ import type {
   SubmitStageResultsRequest, 
   SubmitStageResultsSuccess,
   RiderMatchWarning,
-} from '../../lib/scraper-types.js';
+} from '../lib/scraper-types.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
