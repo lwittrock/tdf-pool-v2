@@ -5,15 +5,17 @@
  * Note: Scoring-related constants (points, medals) are in scoring-constants.ts
  */
 
+import { config } from './config';
+
 // ============================================================================
 // Jersey Configuration
 // ============================================================================
 
 export const JERSEY_ICONS = {
-  yellow: '/assets/jersey_yellow.svg',
-  green: '/assets/jersey_green.svg',
-  polka_dot: '/assets/jersey_polka_dot.svg',
-  white: '/assets/jersey_white.svg',
+  yellow: config.assets.jersey('yellow'),
+  green: config.assets.jersey('green'),
+  polka_dot: config.assets.jersey('polka_dot'),
+  white: config.assets.jersey('white'),
 } as const;
 
 export const JERSEY_LABELS = {
@@ -121,12 +123,12 @@ export const BREAKPOINTS = {
 // ============================================================================
 
 export const DATA_PATHS = {
-  METADATA: '/data/metadata.json',
-  LEADERBOARDS: '/data/leaderboards.json',
-  RIDERS: '/data/riders.json',
-  STAGES: '/data/stages_data.json',
-  TEAM_SELECTIONS: '/data/team_selections.json',
-  RIDER_RANKINGS: '/data/rider_rankings.json',
+  METADATA: config.data.metadata(),
+  LEADERBOARDS: config.data.leaderboards(),
+  RIDERS: config.data.riders(),
+  STAGES: config.data.stages(),
+  TEAM_SELECTIONS: config.data.teamSelections(),
+  RIDER_RANKINGS: config.data.riderRankings(),
 } as const;
 
 // ============================================================================

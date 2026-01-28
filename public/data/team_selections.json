@@ -3,23 +3,23 @@
     "participant_name": "deelnemer 1",
     "directie_name": "EB",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "João Almeida",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Tim Merlier",
-      "Primoz Roglic"
+      "Primož Roglič"
     ]
   },
   "deelnemer 10": {
     "participant_name": "deelnemer 10",
     "directie_name": "PDI",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Adam Yates",
       "Florian Lipowitz",
       "Remco Evenepoel",
@@ -33,14 +33,14 @@
     "participant_name": "deelnemer 100",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Simon Yates",
-      "Joao Almeida",
+      "João Almeida",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Primož Roglič",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Dylan Groenewegen"
     ]
@@ -50,26 +50,26 @@
     "directie_name": "DJZ",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Tim Merlier",
-      "Joao Almeida",
+      "João Almeida",
       "Jonathan Milan",
       "Lenny Martinez",
-      "Primoz Roglic",
-      "Wout van Aert"
+      "Primož Roglič",
+      "Wout Van Aert"
     ]
   },
   "deelnemer 102": {
     "participant_name": "deelnemer 102",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Jonas Abrahamsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Matteo Jorgenson",
       "Jasper Philipsen",
       "Remco Evenepoel"
@@ -79,15 +79,14 @@
     "participant_name": "deelnemer 103",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonas Vingegaard",
       "Mattias Skjelmose",
-      "Joao Almeida",
+      "João Almeida",
       "Jonathan Milan",
-      "Kevin Vauquelin",
       "Florian Lipowitz"
     ]
   },
@@ -95,13 +94,13 @@
     "participant_name": "deelnemer 104",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Matteo Jorgenson",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Enric Mas",
       "Adam Yates",
       "Simon Yates"
@@ -111,31 +110,31 @@
     "participant_name": "deelnemer 105",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
-      "Mathieu van der Poel",
+      "Primož Roglič",
+      "João Almeida",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Biniam Girmay",
-      "Wout van Aert"
+      "Wout Van Aert"
     ]
   },
   "deelnemer 106": {
     "participant_name": "deelnemer 106",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Florian Lipowitz",
-      "Joao Almeida",
+      "João Almeida",
       "Tim Merlier"
     ]
   },
@@ -143,14 +142,14 @@
     "participant_name": "deelnemer 107",
     "directie_name": "DZ",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
       "Tim Merlier",
       "Jonathan Milan",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Florian Lipowitz",
       "Mattias Skjelmose"
     ]
@@ -159,14 +158,14 @@
     "participant_name": "deelnemer 108",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Tim Merlier",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Filippo Ganna",
       "Florian Lipowitz"
     ]
@@ -175,9 +174,9 @@
     "participant_name": "deelnemer 109",
     "directie_name": "BBC",
     "riders": [
-      "Mathieu van der Poel",
-      "Wout van Aert",
-      "Tadej Pogacar",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Mattias Skjelmose",
@@ -191,29 +190,30 @@
     "participant_name": "deelnemer 11",
     "directie_name": "DJZ",
     "riders": [
-      "Joao Almeida",
+      "João Almeida",
       "Jasper Philipsen",
       "Jonas Vingegaard",
       "Biniam Girmay",
       "Simon Yates",
       "Remco Evenepoel",
       "Matteo Jorgenson",
-      "Tadej Pogacar"
+      "Laurenz Rex",
+      "Tadej Pogačar"
     ]
   },
   "deelnemer 110": {
     "participant_name": "deelnemer 110",
     "directie_name": "DC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Mattias Skjelmose",
       "Matteo Jorgenson",
       "Florian Lipowitz",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Jasper Philipsen"
     ]
   },
@@ -221,13 +221,13 @@
     "participant_name": "deelnemer 111",
     "directie_name": "Bestuur",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Tim Merlier",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Jonathan Milan",
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Lenny Martinez",
       "Jonas Vingegaard",
       "Jasper Philipsen"
@@ -237,14 +237,14 @@
     "participant_name": "deelnemer 112",
     "directie_name": "DJZ",
     "riders": [
-      "Tadej Pogacar",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Tadej Pogačar",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Remco Evenepoel",
       "Jonas Vingegaard",
       "Jasper Philipsen",
       "Tim Merlier",
-      "Joao Almeida",
+      "João Almeida",
       "Simon Yates",
       "Biniam Girmay"
     ]
@@ -253,14 +253,14 @@
     "participant_name": "deelnemer 113",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jasper Philipsen",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Carlos Rodriguez",
-      "Joao Almeida",
+      "Carlos Rodríguez",
+      "João Almeida",
       "Tim Merlier",
       "Jonathan Milan"
     ]
@@ -269,14 +269,14 @@
     "participant_name": "deelnemer 114",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Matteo Jorgenson",
       "Jasper Philipsen",
       "Biniam Girmay",
       "Jonathan Milan",
-      "Joao Almeida",
-      "Mathieu van der Poel",
+      "João Almeida",
+      "Mathieu Van Der Poel",
       "Remco Evenepoel",
       "Florian Lipowitz"
     ]
@@ -287,11 +287,10 @@
     "riders": [
       "Tim Merlier",
       "Jonathan Milan",
-      "Wout van Aert",
-      "Mathieu van der Poel",
-      "Kevin Vauquelin",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Florian Lipowitz",
       "Filippo Ganna"
@@ -301,31 +300,32 @@
     "participant_name": "deelnemer 116",
     "directie_name": "PDI",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Florian Lipowitz",
       "Enric Mas",
-      "Carlos Rodriguez",
-      "Matteo Jorgenson"
+      "Carlos Rodríguez",
+      "Matteo Jorgenson",
+      "Ben O'Connor"
     ]
   },
   "deelnemer 117": {
     "participant_name": "deelnemer 117",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Tim Merlier",
-      "Primoz Roglic",
-      "Wout van Aert",
+      "Primož Roglič",
+      "Wout Van Aert",
       "Jasper Philipsen",
       "Mattias Skjelmose",
-      "Joao Almeida",
-      "Mathieu van der Poel"
+      "João Almeida",
+      "Mathieu Van Der Poel"
     ]
   },
   "deelnemer 118": {
@@ -335,10 +335,10 @@
       "Jasper Philipsen",
       "Tim Merlier",
       "Jonathan Milan",
-      "Mathieu van der Poel",
-      "Wout van Aert",
-      "Joao Almeida",
-      "Tadej Pogacar",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
+      "João Almeida",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Matteo Jorgenson"
@@ -350,10 +350,10 @@
     "riders": [
       "Jonathan Milan",
       "Jasper Philipsen",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Tim Merlier",
-      "Mathieu van der Poel",
-      "Tadej Pogacar",
+      "Mathieu Van Der Poel",
+      "Tadej Pogačar",
       "Biniam Girmay",
       "Remco Evenepoel",
       "Jonas Vingegaard",
@@ -365,9 +365,9 @@
     "directie_name": "DTE",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Biniam Girmay",
       "Oscar Onley",
       "Mattias Skjelmose",
@@ -380,13 +380,13 @@
     "participant_name": "deelnemer 120",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Tim Merlier",
       "Jasper Philipsen",
       "Jonathan Milan",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Florian Lipowitz",
       "Lenny Martinez",
       "Tobias Halland Johannessen"
@@ -397,14 +397,14 @@
     "directie_name": "DTE",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Matteo Jorgenson",
       "Tim Merlier",
       "Jasper Philipsen",
       "Jonathan Milan",
-      "Primoz Roglic",
-      "Mathieu van der Poel",
+      "Primož Roglič",
+      "Mathieu Van Der Poel",
       "Florian Lipowitz"
     ]
   },
@@ -412,30 +412,30 @@
     "participant_name": "deelnemer 122",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Biniam Girmay",
       "Tim Merlier",
       "Simon Yates",
       "Ben Healy",
-      "Wout van Aert"
+      "Wout Van Aert"
     ]
   },
   "deelnemer 123": {
     "participant_name": "deelnemer 123",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Joao Almeida",
-      "Tadej Pogacar",
+      "João Almeida",
+      "Tadej Pogačar",
       "Dylan Groenewegen",
       "Alexis Renard",
       "Tim Merlier",
       "Jonathan Milan",
       "Jonas Vingegaard",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Thibau Nys"
     ]
   },
@@ -448,57 +448,55 @@
       "Jonathan Milan",
       "Florian Lipowitz",
       "Matteo Jorgenson",
-      "Joao Almeida",
-      "Tadej Pogacar",
+      "João Almeida",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Jonas Vingegaard",
-      "Carlos Rodriguez"
+      "Carlos Rodríguez"
     ]
   },
   "deelnemer 125": {
     "participant_name": "deelnemer 125",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Mattias Skjelmose",
-      "Kevin Vauquelin",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
-      "Wout van Aert"
+      "Wout Van Aert"
     ]
   },
   "deelnemer 126": {
     "participant_name": "deelnemer 126",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Jonas Vingegaard",
-      "Kevin Vauquelin",
       "Jasper Philipsen",
-      "Joao Almeida",
-      "Primoz Roglic",
-      "Wout van Aert"
+      "João Almeida",
+      "Primož Roglič",
+      "Wout Van Aert"
     ]
   },
   "deelnemer 127": {
     "participant_name": "deelnemer 127",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Tim Merlier",
       "Jonathan Milan",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Jasper Philipsen",
       "Felix Gall"
     ]
@@ -507,16 +505,16 @@
     "participant_name": "deelnemer 13",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Biniam Girmay",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Remco Evenepoel",
       "Tim Merlier",
       "Jonathan Milan",
-      "Wout van Aert",
-      "Primoz Roglic"
+      "Wout Van Aert",
+      "Primož Roglič"
     ]
   },
   "deelnemer 14": {
@@ -525,10 +523,10 @@
     "riders": [
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Tadej Pogacar",
-      "Mathieu van der Poel",
-      "Joao Almeida",
-      "Wout van Aert",
+      "Tadej Pogačar",
+      "Mathieu Van Der Poel",
+      "João Almeida",
+      "Wout Van Aert",
       "Mattias Skjelmose",
       "Jonathan Milan",
       "Tim Merlier",
@@ -539,46 +537,46 @@
     "participant_name": "deelnemer 15",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Tim Merlier",
       "Filippo Ganna",
       "Neilson Powless",
-      "Carlos Rodriguez"
+      "Carlos Rodríguez"
     ]
   },
   "deelnemer 16": {
     "participant_name": "deelnemer 16",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Florian Lipowitz",
       "Jasper Philipsen",
       "Biniam Girmay",
       "Lenny Martinez",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Ben Healy",
       "Oscar Onley",
-      "Wout van Aert"
+      "Wout Van Aert"
     ]
   },
   "deelnemer 17": {
     "participant_name": "deelnemer 17",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
-      "Primoz Roglic",
+      "João Almeida",
+      "Primož Roglič",
       "Adam Yates",
       "Enric Mas",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Florian Lipowitz"
     ]
   },
@@ -586,14 +584,14 @@
     "participant_name": "deelnemer 18",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
-      "Primoz Roglic",
+      "João Almeida",
+      "Primož Roglič",
       "Enric Mas",
       "Matteo Jorgenson",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Mattias Skjelmose"
     ]
   },
@@ -601,13 +599,13 @@
     "participant_name": "deelnemer 19",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jordi Meeus",
       "Matteo Jorgenson",
       "Florian Lipowitz",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Tobias Halland Johannessen",
       "Jonathan Milan",
       "Tim Merlier"
@@ -617,29 +615,30 @@
     "participant_name": "deelnemer 2",
     "directie_name": "BBC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Joao Almeida",
+      "João Almeida",
       "Jasper Philipsen",
       "Biniam Girmay",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Sepp Kuss",
-      "Matej Mohoric"
+      "Matej Mohorič",
+      "Magnus Cort"
     ]
   },
   "deelnemer 20": {
     "participant_name": "deelnemer 20",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Dylan Groenewegen",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Biniam Girmay",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Julian Alaphilippe"
     ]
@@ -649,25 +648,25 @@
     "directie_name": "DTE",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Florian Lipowitz",
       "Tim Merlier",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Jasper Philipsen",
       "Thibau Nys",
       "Neilson Powless",
       "Remco Evenepoel",
-      "Joao Almeida"
+      "João Almeida"
     ]
   },
   "deelnemer 22": {
     "participant_name": "deelnemer 22",
     "directie_name": "DM",
     "riders": [
-      "Joao Almeida",
+      "João Almeida",
       "Matteo Jorgenson",
       "Florian Lipowitz",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Mattias Skjelmose",
@@ -681,13 +680,14 @@
     "directie_name": "BBC",
     "riders": [
       "Matteo Jorgenson",
-      "Carlos Rodriguez",
-      "Mathieu van der Poel",
-      "Tadej Pogacar",
+      "Carlos Rodríguez",
+      "Mathieu Van Der Poel",
+      "Tadej Pogačar",
       "Kaden Groves",
       "Remco Evenepoel",
-      "Louis Barre",
+      "Louis Barré",
       "Florian Lipowitz",
+      "Magnus Cort",
       "Marc Hirschi"
     ]
   },
@@ -695,31 +695,31 @@
     "participant_name": "deelnemer 24",
     "directie_name": "BBC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
-      "Primoz Roglic",
-      "Wout van Aert",
-      "Joao Almeida",
+      "Primož Roglič",
+      "Wout Van Aert",
+      "João Almeida",
       "Jonathan Milan",
-      "Mathieu van der Poel",
-      "Carlos Rodriguez"
+      "Mathieu Van Der Poel",
+      "Carlos Rodríguez"
     ]
   },
   "deelnemer 25": {
     "participant_name": "deelnemer 25",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jonathan Milan",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Mattias Skjelmose",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Florian Lipowitz",
-      "Joao Almeida",
+      "João Almeida",
       "Tim Merlier"
     ]
   },
@@ -727,15 +727,15 @@
     "participant_name": "deelnemer 26",
     "directie_name": "DC",
     "riders": [
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonas Vingegaard",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Remco Evenepoel",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Adam Yates",
       "Simon Yates",
       "Matteo Jorgenson",
-      "Joao Almeida",
+      "João Almeida",
       "Sepp Kuss"
     ]
   },
@@ -743,15 +743,15 @@
     "participant_name": "deelnemer 27",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Matteo Jorgenson",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Filippo Ganna"
     ]
   },
@@ -759,14 +759,14 @@
     "participant_name": "deelnemer 28",
     "directie_name": "DJZ",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Julian Alaphilippe",
-      "Matej Mohoric",
+      "Matej Mohorič",
       "Guillaume Martin",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Biniam Girmay",
       "Jasper Philipsen"
     ]
@@ -775,14 +775,14 @@
     "participant_name": "deelnemer 29",
     "directie_name": "PDI",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Tim Merlier",
-      "Mathieu van der Poel",
-      "Joao Almeida",
+      "Mathieu Van Der Poel",
+      "João Almeida",
       "Matteo Jorgenson",
       "Thibau Nys"
     ]
@@ -791,12 +791,12 @@
     "participant_name": "deelnemer 3",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jasper Philipsen",
       "Remco Evenepoel",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Adam Yates",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Dylan Groenewegen"
     ]
   },
@@ -804,13 +804,13 @@
     "participant_name": "deelnemer 30",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Florian Lipowitz",
       "Jonathan Milan",
       "Jasper Philipsen",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Filippo Ganna",
       "Felix Gall",
       "Tim Merlier"
@@ -820,13 +820,13 @@
     "participant_name": "deelnemer 31",
     "directie_name": "DBV-N",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Julian Alaphilippe",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Sepp Kuss",
-      "Joao Almeida",
+      "João Almeida",
       "Biniam Girmay",
       "Dylan Groenewegen",
       "Jasper Philipsen"
@@ -836,14 +836,13 @@
     "participant_name": "deelnemer 32",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Joao Almeida",
+      "João Almeida",
       "Remco Evenepoel",
       "Florian Lipowitz",
-      "Kevin Vauquelin",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
       "Tim Merlier"
     ]
@@ -852,13 +851,13 @@
     "participant_name": "deelnemer 33",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Tim Merlier",
-      "Joao Almeida",
+      "João Almeida",
       "Florian Lipowitz",
       "Jonathan Milan",
       "Jasper Philipsen"
@@ -868,14 +867,14 @@
     "participant_name": "deelnemer 34",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Florian Lipowitz",
-      "Joao Almeida",
+      "João Almeida",
       "Enric Mas",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Mattias Skjelmose",
       "Matteo Jorgenson"
     ]
@@ -886,11 +885,13 @@
     "riders": [
       "Thymen Arensman",
       "Cees Bol",
-      "Mick van Dijke",
+      "Marijn Van Den Berg",
+      "Frank Van Den Broek",
+      "Mick Van Dijke",
       "Pascal Eenkhoorn",
       "Dylan Groenewegen",
-      "Mathieu van der Poel",
-      "Danny van Poppel",
+      "Mathieu Van Der Poel",
+      "Danny Van Poppel",
       "Mike Teunissen"
     ]
   },
@@ -898,12 +899,12 @@
     "participant_name": "deelnemer 36",
     "directie_name": "PDI",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
-      "Carlos Rodriguez",
+      "Primož Roglič",
+      "João Almeida",
+      "Carlos Rodríguez",
       "Matteo Jorgenson",
       "Enric Mas",
       "Simon Yates",
@@ -915,8 +916,8 @@
     "directie_name": "DTVP",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
-      "Joao Almeida",
+      "Tadej Pogačar",
+      "João Almeida",
       "Remco Evenepoel",
       "Florian Lipowitz",
       "Tim Merlier",
@@ -933,11 +934,11 @@
       "Mattias Skjelmose",
       "Matteo Jorgenson",
       "Enric Mas",
-      "Joao Almeida",
+      "João Almeida",
       "Biniam Girmay",
       "Jonas Vingegaard",
-      "Tadej Pogacar",
-      "Mathieu van der Poel",
+      "Tadej Pogačar",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Remco Evenepoel"
     ]
@@ -946,12 +947,12 @@
     "participant_name": "deelnemer 39",
     "directie_name": "DC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Dylan Groenewegen",
       "Jasper Philipsen",
-      "Joao Almeida",
-      "Mathieu van der Poel",
+      "João Almeida",
+      "Mathieu Van Der Poel",
       "Biniam Girmay",
       "Jonas Vingegaard",
       "Tim Merlier",
@@ -962,12 +963,12 @@
     "participant_name": "deelnemer 4",
     "directie_name": "EB",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Joao Almeida",
+      "João Almeida",
       "Matteo Jorgenson",
       "Florian Lipowitz",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
       "Tim Merlier",
       "Filippo Ganna",
@@ -978,14 +979,14 @@
     "participant_name": "deelnemer 40",
     "directie_name": "DZ",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Biniam Girmay",
       "Jonas Vingegaard",
       "Simon Yates",
       "Jasper Philipsen",
-      "Wout van Aert",
-      "Joao Almeida",
+      "Wout Van Aert",
+      "João Almeida",
       "Adam Yates",
       "Matteo Jorgenson"
     ]
@@ -995,12 +996,12 @@
     "directie_name": "DM",
     "riders": [
       "Remco Evenepoel",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Mike Teunissen",
       "Stefan Bissegger",
       "Jonas Vingegaard",
       "Oscar Onley",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Santiago Buitrago",
       "Julian Alaphilippe",
       "Filippo Ganna"
@@ -1011,11 +1012,10 @@
     "directie_name": "Vrienden van de ACM",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
-      "Joao Almeida",
-      "Primoz Roglic",
-      "Kevin Vauquelin",
+      "João Almeida",
+      "Primož Roglič",
       "Filippo Ganna",
       "Jonathan Milan",
       "Tim Merlier",
@@ -1026,11 +1026,11 @@
     "participant_name": "deelnemer 43",
     "directie_name": "FMH",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Dylan Groenewegen",
-      "Mathieu van der Poel",
-      "Primoz Roglic",
+      "Mathieu Van Der Poel",
+      "Primož Roglič",
       "Simon Yates",
       "Adam Yates",
       "Jonas Vingegaard",
@@ -1042,30 +1042,31 @@
     "participant_name": "deelnemer 44",
     "directie_name": "FMH",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Mattias Skjelmose",
-      "Mathieu van der Poel",
-      "Joao Almeida",
+      "Mathieu Van Der Poel",
+      "João Almeida",
       "Oscar Onley",
       "Dylan Groenewegen",
-      "Wout van Aert"
+      "Wout Van Aert"
     ]
   },
   "deelnemer 45": {
     "participant_name": "deelnemer 45",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Florian Lipowitz",
       "Matteo Jorgenson",
       "Mattias Skjelmose",
+      "Ben O'Connor",
       "Lenny Martinez"
     ]
   },
@@ -1073,12 +1074,12 @@
     "participant_name": "deelnemer 46",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
-      "Primoz Roglic",
-      "Carlos Rodriguez",
+      "João Almeida",
+      "Primož Roglič",
+      "Carlos Rodríguez",
       "Mattias Skjelmose",
       "Simon Yates",
       "Adam Yates",
@@ -1089,27 +1090,28 @@
     "participant_name": "deelnemer 47",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Mathieu van der Poel",
+      "Primož Roglič",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
-      "Louis Barre",
+      "Louis Barré",
       "Neilson Powless",
-      "Wout van Aert"
+      "Wout Van Aert",
+      "Stian Fredheim"
     ]
   },
   "deelnemer 48": {
     "participant_name": "deelnemer 48",
     "directie_name": "DC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Florian Lipowitz",
       "Lenny Martinez",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Enric Mas",
       "Tim Merlier",
       "Jasper Philipsen",
@@ -1120,12 +1122,14 @@
     "participant_name": "deelnemer 49",
     "directie_name": "DTE",
     "riders": [
-      "Joao Almeida",
-      "Tadej Pogacar",
-      "Mathieu van der Poel",
+      "João Almeida",
+      "Tadej Pogačar",
+      "Mathieu Van Der Poel",
       "Florian Lipowitz",
+      "Magnus Cort",
       "Matteo Jorgenson",
       "Tim Merlier",
+      "Frank Van Den Broek",
       "Lenny Martinez",
       "Julian Alaphilippe"
     ]
@@ -1134,15 +1138,15 @@
     "participant_name": "deelnemer 5",
     "directie_name": "BBC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Florian Lipowitz",
       "Tim Merlier",
       "Jonathan Milan",
-      "Mathieu van der Poel",
-      "Wout van Aert",
-      "Primoz Roglic",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
+      "Primož Roglič",
       "Jasper Philipsen"
     ]
   },
@@ -1151,14 +1155,14 @@
     "directie_name": "Vrienden van de ACM",
     "riders": [
       "Jasper Philipsen",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Tim Merlier",
       "Jonathan Milan",
       "Remco Evenepoel",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Simon Yates",
-      "Joao Almeida",
+      "João Almeida",
       "Bruno Armirail"
     ]
   },
@@ -1166,13 +1170,13 @@
     "participant_name": "deelnemer 51",
     "directie_name": "DC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Florian Lipowitz",
       "Matteo Jorgenson",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Tim Merlier",
       "Filippo Ganna",
       "Bruno Armirail"
@@ -1182,7 +1186,7 @@
     "participant_name": "deelnemer 52",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Florian Lipowitz",
@@ -1191,17 +1195,17 @@
       "Thibau Nys",
       "Filippo Ganna",
       "Tim Merlier",
-      "Mathieu van der Poel"
+      "Mathieu Van Der Poel"
     ]
   },
   "deelnemer 53": {
     "participant_name": "deelnemer 53",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Georg Zimmermann",
-      "Mathieu van der Poel",
-      "Joao Almeida",
+      "Mathieu Van Der Poel",
+      "João Almeida",
       "Simon Yates",
       "Alexey Lutsenko",
       "Jasper Philipsen",
@@ -1214,11 +1218,11 @@
     "participant_name": "deelnemer 54",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Jonas Vingegaard",
-      "Joao Almeida",
-      "Mathieu van der Poel",
+      "João Almeida",
+      "Mathieu Van Der Poel",
       "Dylan Groenewegen",
       "Tobias Foss",
       "Geraint Thomas",
@@ -1236,21 +1240,21 @@
       "Jonas Vingegaard",
       "Jonathan Milan",
       "Lenny Martinez",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Remco Evenepoel",
-      "Tadej Pogacar",
-      "Wout van Aert"
+      "Tadej Pogačar",
+      "Wout Van Aert"
     ]
   },
   "deelnemer 56": {
     "participant_name": "deelnemer 56",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
-      "Joao Almeida",
+      "Mathieu Van Der Poel",
+      "João Almeida",
       "Florian Lipowitz",
       "Matteo Jorgenson",
       "Mattias Skjelmose",
@@ -1261,11 +1265,11 @@
     "participant_name": "deelnemer 57",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Julian Alaphilippe",
-      "Danny van Poppel",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Danny Van Poppel",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Jonas Vingegaard",
       "Laurenz Rex",
       "Dylan Groenewegen",
@@ -1277,15 +1281,15 @@
     "directie_name": "EB",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Jasper Philipsen",
       "Tim Merlier",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Jonathan Milan",
-      "Mathieu van der Poel"
+      "Mathieu Van Der Poel"
     ]
   },
   "deelnemer 59": {
@@ -1293,14 +1297,14 @@
     "directie_name": "DTVP",
     "riders": [
       "Remco Evenepoel",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Joao Almeida",
+      "João Almeida",
       "Simon Yates",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Alexey Lutsenko",
       "Dylan Groenewegen",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Sepp Kuss"
     ]
   },
@@ -1308,11 +1312,11 @@
     "participant_name": "deelnemer 6",
     "directie_name": "Academie",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Matteo Jorgenson",
       "Florian Lipowitz",
       "Adam Yates",
@@ -1325,9 +1329,9 @@
     "directie_name": "DTVP",
     "riders": [
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Dylan Groenewegen",
       "Sepp Kuss",
       "Jasper Philipsen",
@@ -1340,14 +1344,14 @@
     "participant_name": "deelnemer 61",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Jonathan Milan",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Tim Merlier",
       "Simon Yates"
     ]
@@ -1356,15 +1360,14 @@
     "participant_name": "deelnemer 62",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Florian Lipowitz",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Tim Merlier",
-      "Mathieu van der Poel",
-      "Kevin Vauquelin",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Remco Evenepoel"
     ]
   },
@@ -1372,13 +1375,13 @@
     "participant_name": "deelnemer 63",
     "directie_name": "DTE",
     "riders": [
-      "Mathieu van der Poel",
-      "Kevin Vauquelin",
+      "Mathieu Van Der Poel",
       "Neilson Powless",
-      "Tadej Pogacar",
-      "Primoz Roglic",
+      "Tadej Pogačar",
+      "Primož Roglič",
+      "Stian Fredheim",
       "Alex Aranburu",
-      "Louis Barre",
+      "Louis Barré",
       "Remco Evenepoel",
       "Geraint Thomas"
     ]
@@ -1387,15 +1390,15 @@
     "participant_name": "deelnemer 64",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Biniam Girmay",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Arnaud De Lie"
     ]
   },
@@ -1404,29 +1407,29 @@
     "directie_name": "DM",
     "riders": [
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Matteo Jorgenson",
       "Jasper Philipsen",
       "Jonas Vingegaard",
-      "Tadej Pogacar",
-      "Carlos Rodriguez",
-      "Louis Barre",
+      "Tadej Pogačar",
+      "Carlos Rodríguez",
+      "Louis Barré",
       "Julian Alaphilippe",
-      "Primoz Roglic"
+      "Primož Roglič"
     ]
   },
   "deelnemer 66": {
     "participant_name": "deelnemer 66",
     "directie_name": "Academie",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
-      "Wout van Aert",
-      "Joao Almeida",
+      "Wout Van Aert",
+      "João Almeida",
       "Biniam Girmay",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
       "Mattias Skjelmose"
     ]
@@ -1435,15 +1438,15 @@
     "participant_name": "deelnemer 67",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Tim Merlier",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
       "Remco Evenepoel",
       "Ben Healy",
       "Jonas Vingegaard",
       "Jasper Philipsen",
-      "Joao Almeida",
+      "João Almeida",
       "Mattias Skjelmose"
     ]
   },
@@ -1451,12 +1454,12 @@
     "participant_name": "deelnemer 68",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Florian Lipowitz",
       "Tim Merlier",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Dylan Groenewegen",
@@ -1467,15 +1470,15 @@
     "participant_name": "deelnemer 69",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
       "Tim Merlier",
       "Jonathan Milan",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Florian Lipowitz",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Oscar Onley"
     ]
   },
@@ -1483,13 +1486,13 @@
     "participant_name": "deelnemer 7",
     "directie_name": "Academie",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Adam Yates",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Matteo Jorgenson",
       "Mattias Skjelmose",
       "Sepp Kuss"
@@ -1499,15 +1502,15 @@
     "participant_name": "deelnemer 70",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Matteo Jorgenson",
       "Adam Yates",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Santiago Buitrago",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Simon Yates"
     ]
   },
@@ -1515,60 +1518,61 @@
     "participant_name": "deelnemer 71",
     "directie_name": "BBC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Joao Almeida",
+      "Primož Roglič",
+      "João Almeida",
       "Jonathan Milan",
       "Tim Merlier",
-      "Wout van Aert",
-      "Mathieu van der Poel"
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
+      "Ben O'Connor"
     ]
   },
   "deelnemer 72": {
     "participant_name": "deelnemer 72",
     "directie_name": "PDI",
     "riders": [
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Jonathan Milan",
       "Bastien Tronchon",
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Ivan Romeo"
+      "Primož Roglič",
+      "Iván Romeo"
     ]
   },
   "deelnemer 73": {
     "participant_name": "deelnemer 73",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Lenny Martinez",
       "Jonas Vingegaard",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Remco Evenepoel",
       "Tim Merlier",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Biniam Girmay",
-      "Mathieu van der Poel"
+      "Mathieu Van Der Poel"
     ]
   },
   "deelnemer 74": {
     "participant_name": "deelnemer 74",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Jonathan Milan",
-      "Carlos Rodriguez",
-      "Joao Almeida",
+      "Carlos Rodríguez",
+      "João Almeida",
       "Santiago Buitrago",
       "Jasper Philipsen"
     ]
@@ -1578,13 +1582,13 @@
     "directie_name": "DTE",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Adam Yates",
       "Simon Yates",
       "Tim Merlier",
       "Florian Lipowitz",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Dylan Groenewegen",
       "Remco Evenepoel"
     ]
@@ -1593,30 +1597,29 @@
     "participant_name": "deelnemer 76",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Florian Lipowitz",
       "Mattias Skjelmose",
       "Matteo Jorgenson",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Tim Merlier",
-      "Jonathan Milan",
-      "Kevin Vauquelin"
+      "Jonathan Milan"
     ]
   },
   "deelnemer 77": {
     "participant_name": "deelnemer 77",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Jasper Philipsen",
       "Tim Merlier",
       "Jonathan Milan",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Biniam Girmay",
       "Thibau Nys"
     ]
@@ -1625,14 +1628,14 @@
     "participant_name": "deelnemer 78",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Tim Merlier",
       "Jonathan Milan",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Biniam Girmay",
       "Jonas Vingegaard",
-      "Primoz Roglic",
-      "Carlos Rodriguez",
+      "Primož Roglič",
+      "Carlos Rodríguez",
       "Remco Evenepoel",
       "Filippo Ganna"
     ]
@@ -1641,14 +1644,14 @@
     "participant_name": "deelnemer 79",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Matteo Jorgenson",
       "Jasper Philipsen",
       "Tim Merlier",
       "Jonathan Milan",
-      "Joao Almeida",
-      "Wout van Aert",
+      "João Almeida",
+      "Wout Van Aert",
       "Remco Evenepoel",
       "Florian Lipowitz"
     ]
@@ -1659,29 +1662,28 @@
     "riders": [
       "Dylan Groenewegen",
       "Simon Yates",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Mattias Skjelmose",
       "Jasper Philipsen",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Remco Evenepoel",
       "Jonas Vingegaard",
-      "Tadej Pogacar"
+      "Tadej Pogačar"
     ]
   },
   "deelnemer 80": {
     "participant_name": "deelnemer 80",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
-      "Carlos Rodriguez",
+      "Carlos Rodríguez",
       "Tim Merlier",
-      "Matteo Jorgenson",
-      "Kevin Vauquelin"
+      "Matteo Jorgenson"
     ]
   },
   "deelnemer 81": {
@@ -1689,31 +1691,31 @@
     "directie_name": "DTE",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jasper Philipsen",
       "Tim Merlier",
       "Jonathan Milan",
       "Mattias Skjelmose",
-      "Joao Almeida",
+      "João Almeida",
       "Tobias Halland Johannessen",
       "Remco Evenepoel",
-      "Wout van Aert"
+      "Wout Van Aert"
     ]
   },
   "deelnemer 82": {
     "participant_name": "deelnemer 82",
     "directie_name": "DM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
       "Jasper Philipsen",
       "Biniam Girmay",
       "Jonathan Milan",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Julian Alaphilippe",
-      "Joao Almeida",
-      "Primoz Roglic"
+      "João Almeida",
+      "Primož Roglič"
     ]
   },
   "deelnemer 83": {
@@ -1725,10 +1727,10 @@
       "Jonathan Milan",
       "Thibau Nys",
       "Jasper Philipsen",
-      "Tadej Pogacar",
-      "Primoz Roglic",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Tadej Pogačar",
+      "Primož Roglič",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Jonas Vingegaard"
     ]
   },
@@ -1736,13 +1738,13 @@
     "participant_name": "deelnemer 84",
     "directie_name": "DTVP",
     "riders": [
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Dylan Groenewegen",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Matteo Jorgenson",
       "Remco Evenepoel",
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Santiago Buitrago",
       "Filippo Ganna",
       "Biniam Girmay"
@@ -1752,15 +1754,15 @@
     "participant_name": "deelnemer 85",
     "directie_name": "DTE",
     "riders": [
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jasper Philipsen",
       "Tim Merlier",
-      "Tadej Pogacar",
-      "Primoz Roglic",
+      "Tadej Pogačar",
+      "Primož Roglič",
       "Jonas Vingegaard",
-      "Carlos Rodriguez",
-      "Joao Almeida",
-      "Wout van Aert",
+      "Carlos Rodríguez",
+      "João Almeida",
+      "Wout Van Aert",
       "Remco Evenepoel"
     ]
   },
@@ -1768,16 +1770,16 @@
     "participant_name": "deelnemer 86",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Jasper Philipsen",
       "Biniam Girmay",
       "Jonathan Milan",
       "Felix Gall",
       "Tim Merlier",
-      "Mathieu van der Poel"
+      "Mathieu Van Der Poel"
     ]
   },
   "deelnemer 87": {
@@ -1785,30 +1787,30 @@
     "directie_name": "Vrienden van de ACM",
     "riders": [
       "Jonas Vingegaard",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Mattias Skjelmose",
-      "Joao Almeida",
-      "Wout van Aert",
+      "João Almeida",
+      "Wout Van Aert",
       "Florian Lipowitz",
       "Matteo Jorgenson",
       "Jasper Philipsen",
-      "Mathieu van der Poel"
+      "Mathieu Van Der Poel"
     ]
   },
   "deelnemer 88": {
     "participant_name": "deelnemer 88",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
+      "João Almeida",
       "Jonathan Milan",
       "Tim Merlier",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Mauro Schmid",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Matteo Jorgenson"
     ]
   },
@@ -1816,12 +1818,11 @@
     "participant_name": "deelnemer 89",
     "directie_name": "DZ",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Joao Almeida",
-      "Kevin Vauquelin",
+      "João Almeida",
       "Ben Healy",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Felix Gall",
       "Tim Merlier",
       "Florian Lipowitz",
@@ -1832,15 +1833,15 @@
     "participant_name": "deelnemer 9",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
+      "Primož Roglič",
       "Jonathan Milan",
       "Tim Merlier",
-      "Wout van Aert",
-      "Mathieu van der Poel",
-      "Joao Almeida",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
+      "João Almeida",
       "Jasper Philipsen"
     ]
   },
@@ -1848,10 +1849,10 @@
     "participant_name": "deelnemer 90",
     "directie_name": "DTVP",
     "riders": [
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Jonathan Milan",
       "Marc Hirschi",
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Filippo Ganna",
       "Jonas Vingegaard",
       "Biniam Girmay",
@@ -1864,11 +1865,12 @@
     "participant_name": "deelnemer 91",
     "directie_name": "PDI",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Primoz Roglic",
-      "Wout van Aert",
+      "Primož Roglič",
+      "Wout Van Aert",
       "Jasper Philipsen",
+      "Lennert Van Eetvelt",
       "Michael Woods",
       "Julian Alaphilippe",
       "Remco Evenepoel",
@@ -1879,12 +1881,12 @@
     "participant_name": "deelnemer 92",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Biniam Girmay",
-      "Wout van Aert",
-      "Primoz Roglic",
+      "Wout Van Aert",
+      "Primož Roglič",
       "Julian Alaphilippe"
     ]
   },
@@ -1892,13 +1894,13 @@
     "participant_name": "deelnemer 93",
     "directie_name": "DTVP",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Remco Evenepoel",
       "Sepp Kuss",
       "Biniam Girmay",
-      "Joao Almeida",
+      "João Almeida",
       "Filippo Ganna",
       "Julian Alaphilippe",
       "Alexey Lutsenko"
@@ -1908,12 +1910,12 @@
     "participant_name": "deelnemer 94",
     "directie_name": "BBC",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Joao Almeida",
-      "Mathieu van der Poel",
-      "Wout van Aert",
+      "João Almeida",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
       "Jasper Philipsen",
       "Jonathan Milan",
       "Tim Merlier",
@@ -1924,16 +1926,16 @@
     "participant_name": "deelnemer 95",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Primoz Roglic",
-      "Mathieu van der Poel",
+      "Primož Roglič",
+      "Mathieu Van Der Poel",
       "Tim Merlier",
       "Jonathan Milan",
-      "Wout van Aert",
+      "Wout Van Aert",
       "Mattias Skjelmose",
-      "Carlos Rodriguez"
+      "Carlos Rodríguez"
     ]
   },
   "deelnemer 96": {
@@ -1943,12 +1945,12 @@
       "Tim Merlier",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Mathieu van der Poel",
-      "Tadej Pogacar",
-      "Joao Almeida",
+      "Mathieu Van Der Poel",
+      "Tadej Pogačar",
+      "João Almeida",
       "Thibau Nys",
-      "Primoz Roglic",
-      "Wout van Aert",
+      "Primož Roglič",
+      "Wout Van Aert",
       "Mattias Skjelmose"
     ]
   },
@@ -1956,15 +1958,15 @@
     "participant_name": "deelnemer 97",
     "directie_name": "Vrienden van de ACM",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Remco Evenepoel",
       "Jonas Vingegaard",
       "Lenny Martinez",
       "Michael Storer",
       "Jasper Philipsen",
       "Jonathan Milan",
-      "Wout van Aert",
-      "Mathieu van der Poel",
+      "Wout Van Aert",
+      "Mathieu Van Der Poel",
       "Tim Merlier"
     ]
   },
@@ -1972,13 +1974,13 @@
     "participant_name": "deelnemer 98",
     "directie_name": "DTE",
     "riders": [
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Dylan Groenewegen",
       "Jasper Philipsen",
       "Tim Merlier",
       "Mattias Skjelmose",
-      "Tadej Pogacar",
-      "Primoz Roglic",
+      "Tadej Pogačar",
+      "Primož Roglič",
       "Remco Evenepoel",
       "Jonas Vingegaard",
       "Lenny Martinez"
@@ -1989,12 +1991,12 @@
     "directie_name": "Vrienden van de ACM",
     "riders": [
       "Tim Merlier",
-      "Mathieu van der Poel",
-      "Wout van Aert",
-      "Tadej Pogacar",
+      "Mathieu Van Der Poel",
+      "Wout Van Aert",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Remco Evenepoel",
-      "Ivan Romeo",
+      "Iván Romeo",
       "Bastien Tronchon",
       "Tobias Foss",
       "Mattias Skjelmose"
@@ -2004,10 +2006,10 @@
     "participant_name": "Lars Wittrock",
     "directie_name": "DTE",
     "riders": [
-      "Tadej Pogacar",
+      "Tadej Pogačar",
       "Jonas Vingegaard",
       "Jasper Philipsen",
-      "Mathieu van der Poel",
+      "Mathieu Van Der Poel",
       "Remco Evenepoel",
       "Jonathan Milan",
       "Mattias Skjelmose",

@@ -1,16 +1,18 @@
 /**
  * Submit Startlist API
  * Endpoint for scraper to submit Tour de France startlist
- * 
+ *
  * This populates the riders table at the start of the Tour
  */
-
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { 
-  SubmitStartlistRequest, 
-  SubmitStartlistSuccess 
+import type {
+  SubmitStartlistRequest,
+  SubmitStartlistSuccess
 } from '../lib/scraper-types.js';
+
+console.log('[DEBUG] SUPABASE_URL:', process.env.SUPABASE_URL);
+console.log('[DEBUG] SERVICE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 20) + '...');
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -22,9 +24,9 @@ export default async function handler(
   res: VercelResponse
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
+    return res.status(405).json({
       success: false,
-      error: 'Method not allowed' 
+      error: 'Method not allowed'
     });
   }
 
@@ -33,9 +35,9 @@ export default async function handler(
 
     // Validation
     if (!year || !riders || !Array.isArray(riders) || riders.length === 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        error: 'year and riders array are required' 
+        error: 'year and riders array are required'
       });
     }
 

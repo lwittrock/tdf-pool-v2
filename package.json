@@ -9,7 +9,14 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "seed-participants": "tsx scripts/seed-participants.ts",
-    "seed-stages": "tsx scripts/seed-stages.ts"
+    "seed-stages": "tsx scripts/seed-stages.ts",
+    "deploy:data": "node scripts/manage-data.js",
+    "deploy:data:download": "node scripts/manage-data.js download",
+    "deploy:data:upload": "node scripts/manage-data.js upload",
+    "deploy:data:list": "node scripts/manage-data.js list",
+    "deploy:data:sync": "node scripts/manage-data.js download && npm run build",
+    "predeploy": "npm run deploy:data:download",
+    "deploy": "npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",

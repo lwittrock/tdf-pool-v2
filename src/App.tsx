@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter , Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import HomePage from './pages/Klassement';
 import RennerPunten from './pages/RennerPunten';
 import TeamSelectie from './pages/TeamSelectie';
@@ -48,7 +48,7 @@ function Navigation() {
       <div className="max-w-7xl mx-auto">
         {/* Mobile Header */}
         <div className="flex justify-between items-center lg:hidden">
-          <span className="text-white font-bold text-lg">ACM Tour de France Poule</span>
+          <span className="text-white font-bold text-lg">TdF Poule</span>
           <button
             onClick={toggleMobileMenu}
             className="text-white p-2 hover:bg-gray-700 rounded"
@@ -89,8 +89,19 @@ function Navigation() {
 
 // App component
 function App() {
+  /**
+   * CRITICAL FIX: Tell React Router about the base path
+   * 
+   * This syncs with vite.config.ts base path setting.
+   * 
+   * Development: import.meta.env.BASE_URL = '/tdf-pool-v2/'
+   * Production (GitHub Pages): '/tdf-pool-v2/'
+   * Future (custom domain): Change vite.config.ts to base: '/'
+   */
+  const basename = import.meta.env.BASE_URL;
+
   return (
-    <BrowserRouter >
+    <BrowserRouter basename={basename}>
       <Navigation />
       <main className="max-w-7xl mx-auto">
         <Routes>
@@ -102,7 +113,7 @@ function App() {
           <Route path="/OverDezePoule" element={<OverDezePoule />} />
         </Routes>
       </main>
-    </BrowserRouter >
+    </BrowserRouter>
   );
 }
 

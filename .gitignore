@@ -34,6 +34,44 @@ dist-ssr
 
 .vercel
 
-# Venv
+# Venv (Python)
 venv/
 __pycache__/
+
+# ============================================================================
+# TdF Pool Specific
+# ============================================================================
+
+# Generated JSON data files (downloaded during build)
+# Keep the directory but not the files
+public/data/*.json
+
+# But DO track the directory itself
+!public/data/.gitkeep
+
+# Vercel Blob uploads (these are uploaded to cloud storage)
+# Don't track them in git
+*.blob
+
+# Build artifacts that might be generated
+public/data/backup/
+public/data/archive/
+
+# ============================================================================
+# Development
+# ============================================================================
+
+# Local development database exports
+*.sql.gz
+*.dump
+
+# Test data
+test-data/
+.test/
+
+# ============================================================================
+# Optional: Track some sample data for development
+# ============================================================================
+
+# If you want to keep ONE sample file for development, uncomment:
+# !public/data/metadata.json.sample
