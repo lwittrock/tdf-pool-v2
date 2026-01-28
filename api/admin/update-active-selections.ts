@@ -105,7 +105,7 @@ export default async function handler(
           rider_id,
           position,
           is_active,
-          riders!inner(name)
+          riders!participant_rider_selections_rider_id_fkey(name)
         )
       `);
 

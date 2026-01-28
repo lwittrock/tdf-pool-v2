@@ -129,26 +129,32 @@ export default async function handler(
       put('data/metadata.json', JSON.stringify(metadata), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
       put('data/leaderboards.json', JSON.stringify(leaderboards), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
       put('data/riders.json', JSON.stringify(riders), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
       put('data/stages_data.json', JSON.stringify(stages), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
       put('data/team_selections.json', JSON.stringify(teamSelections), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
       put('data/rider_rankings.json', JSON.stringify(riderRankings), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
     ]);
 
