@@ -90,7 +90,7 @@ function Navigation() {
 // App component
 function App() {
   return (
-    <BrowserRouter basename="/tdf-pool-v2">
+    <BrowserRouter>
       <Navigation />
       <main className="max-w-7xl mx-auto">
         <Routes>
