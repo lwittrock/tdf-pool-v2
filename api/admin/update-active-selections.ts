@@ -1,11 +1,8 @@
 /**
- * Update Active Selections API (COMPLETELY REWRITTEN & FIXED)
+ * Update Active Selections API
  * 
- * Major changes:
- * - ✅ No more active_selections table (doesn't exist!)
- * - ✅ Uses participant_rider_selections.is_active instead
- * - ✅ Properly handles DNS riders and backup activation
- * - ✅ Records substitution history
+ * Handles rider substitutions when riders DNS (Did Not Start).
+ * Deactivates DNS riders and activates backup riders.
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -44,9 +41,7 @@ export default async function handler(
 
     console.log(`[Update Active Selections] Processing stage ${stage_number}`);
 
-    // ========================================================================
-    // STEP 1: Get the stage
-    // ========================================================================
+    // Get the stage
     const { data: stage, error: stageError } = await supabase
       .from('stages')
       .select('id, stage_number')
@@ -63,9 +58,7 @@ export default async function handler(
 
     const stageId = stage.id;
 
-    // ========================================================================
-    // STEP 2: Get all DNS riders for this stage
-    // ========================================================================
+    // Get all DNS riders for this stage
     const { data: dnsRecords } = await supabase
       .from('stage_dnf')
       .select(`
@@ -92,9 +85,7 @@ export default async function handler(
       });
     }
 
-    // ========================================================================
-    // STEP 3: Get all participants and their selections
-    // ========================================================================
+    // Get all participants and their selections
     const { data: participants, error: participantsError } = await supabase
       .from('participants')
       .select(`
@@ -117,9 +108,7 @@ export default async function handler(
       });
     }
 
-    // ========================================================================
-    // STEP 4: Process each participant - handle DNS and activate backups
-    // ========================================================================
+    // Process each participant - handle DNS and activate backups
     const substitutionsMade: SubstitutionMade[] = [];
     let participantsAffected = 0;
 
@@ -167,7 +156,7 @@ export default async function handler(
             console.log(`[Update Active] Activated backup for ${participant.name}: ${backupRider.riders.name} replaces ${selection.riders.name}`);
           } else {
             console.log(`[Update Active] No valid backup available for ${participant.name}`);
-            hasSubstitutions = true; // Still count as affected
+            hasSubstitutions = true;
           }
         }
       }

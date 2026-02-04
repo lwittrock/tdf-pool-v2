@@ -1,5 +1,7 @@
 /**
- * Manual Stage Entry API (Optimized)
+ * Manual Stage Entry API
+ * 
+ * Allows manual entry of stage results, jerseys, combativity, and DNF/DNS riders.
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -78,7 +80,7 @@ export default async function handler(
 
     const stageId = stage.id;
 
-    // Step 2: Get all rider IDs (we'll need this mapping)
+    // Step 2: Get all rider IDs
     const { data: riders, error: ridersError } = await supabase
       .from('riders')
       .select('id, name');
@@ -200,7 +202,6 @@ export default async function handler(
     // Step 7: Insert DNF/DNS riders
     const dnfInserts = [];
 
-    // DNF riders
     if (stageData.dnf_riders && stageData.dnf_riders.length > 0) {
       for (const riderName of stageData.dnf_riders) {
         const riderId = riderMap.get(riderName);
@@ -216,7 +217,6 @@ export default async function handler(
       }
     }
 
-    // DNS riders (these trigger backup activation)
     if (stageData.dns_riders && stageData.dns_riders.length > 0) {
       for (const riderName of stageData.dns_riders) {
         const riderId = riderMap.get(riderName);
@@ -246,7 +246,6 @@ export default async function handler(
       }
     }
 
-    // Return success with warnings if any
     return res.status(200).json({
       success: true,
       data: {

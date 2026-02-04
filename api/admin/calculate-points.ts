@@ -1,13 +1,8 @@
 /**
- * Calculate Points API (COMPLETELY REWRITTEN & FIXED)
+ * Calculate Points API
  * 
- * Major changes:
- * - ✅ Uses correct field names (stage_points not stage_score)
- * - ✅ Stores rider points in rider_stage_points table
- * - ✅ Stores rider contributions in participant_rider_contributions table
- * - ✅ Calculates cumulative points and ranks
- * - ✅ No more on-the-fly calculations needed
- * - ✅ Uses shared constants and types
+ * Calculates points for riders and participants after a stage is entered.
+ * Stores results in rider_stage_points and participant_stage_points tables.
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -74,9 +69,7 @@ export default async function handler(
       });
     }
 
-    // ========================================================================
     // STEP 1: Clear existing points for this stage (for reprocessing)
-    // ========================================================================
     console.log(`[Calculate Points] Clearing existing points for stage ${stage_number}`);
     
     await Promise.all([
@@ -85,9 +78,7 @@ export default async function handler(
       supabase.from('participant_rider_contributions').delete().eq('stage_id', stageId),
     ]);
 
-    // ========================================================================
     // STEP 2: Calculate and store RIDER points
-    // ========================================================================
     console.log('[Calculate Points] Calculating rider points...');
 
     // Get all riders
@@ -194,7 +185,7 @@ export default async function handler(
           white_points: points.white_points,
           combativity_points: points.combativity_points,
           total_points: points.total_points,
-          stage_rank: null, // Will calculate after all inserts
+          stage_rank: null,
         });
       }
     }
@@ -231,9 +222,7 @@ export default async function handler(
 
     console.log(`[Calculate Points] Inserted ${riderStagePointsInserts.length} rider point records`);
 
-    // ========================================================================
     // STEP 3: Calculate and store PARTICIPANT points
-    // ========================================================================
     console.log('[Calculate Points] Calculating participant points...');
 
     // Get all participants
@@ -253,7 +242,7 @@ export default async function handler(
       .from('participant_rider_selections')
       .select('participant_id, rider_id, position')
       .eq('is_active', true)
-      .lte('position', 10); // Only main 10 riders, not backup
+      .lte('position', 10);
 
     if (!activeSelections) {
       return res.status(500).json({
@@ -299,10 +288,10 @@ export default async function handler(
       participantStagePointsInserts.push({
         stage_id: stageId,
         participant_id: participantId,
-        stage_points: data.total_points,  // ✅ FIXED: Using correct field name
-        stage_rank: null, // Will calculate later
-        cumulative_points: 0, // Will calculate later
-        overall_rank: null, // Will calculate later
+        stage_points: data.total_points,
+        stage_rank: null,
+        cumulative_points: 0,
+        overall_rank: null,
       });
     }
 
@@ -322,9 +311,7 @@ export default async function handler(
 
     console.log(`[Calculate Points] Inserted ${participantStagePointsInserts.length} participant point records`);
 
-    // ========================================================================
     // STEP 4: Store rider contributions
-    // ========================================================================
     console.log('[Calculate Points] Storing rider contributions...');
 
     const contributionsInserts = [];
@@ -355,9 +342,7 @@ export default async function handler(
 
     console.log(`[Calculate Points] Inserted ${contributionsInserts.length} contribution records`);
 
-    // ========================================================================
     // STEP 5: Calculate stage ranks
-    // ========================================================================
     console.log('[Calculate Points] Calculating stage ranks...');
 
     const { data: allParticipantPoints } = await supabase
@@ -375,9 +360,7 @@ export default async function handler(
       }
     }
 
-    // ========================================================================
     // STEP 6: Calculate cumulative points and overall ranks
-    // ========================================================================
     console.log('[Calculate Points] Calculating cumulative points and overall ranks...');
 
     // Get all completed stages up to and including this one

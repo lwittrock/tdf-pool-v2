@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/tdf-pool-v2/',
+  base: '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
