@@ -6,6 +6,7 @@ import TeamSelectie from './pages/TeamSelectie';
 import OverDezePoule from './pages/OverDezePoule';
 import EtappeBeheer from './pages/EtappeBeheer';
 
+// Navigation items
 const navItems = [
   { path: '/Klassement', label: 'Klassement' },
   { path: '/RennerPunten', label: 'Renner Punten' },
@@ -14,6 +15,7 @@ const navItems = [
   { path: '/OverDezePoule', label: 'Over deze Poule' },
 ];
 
+// Animated hamburger icon
 const AnimatedMenuIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
   <div className="flex flex-col justify-center items-center w-6 h-5 gap-1">
     <span className={`block w-full h-0.5 bg-white transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-[0.4rem]' : ''}`} />
@@ -22,6 +24,7 @@ const AnimatedMenuIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
   </div>
 );
 
+// Navigation component
 function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { pathname } = useLocation();
@@ -43,6 +46,7 @@ function Navigation() {
   return (
     <nav className="bg-gray-800 p-4 shadow-md">
       <div className="max-w-7xl mx-auto">
+        {/* Mobile Header */}
         <div className="flex justify-between items-center lg:hidden">
           <span className="text-white font-bold text-lg">TdF Poule</span>
           <button
@@ -55,6 +59,7 @@ function Navigation() {
           </button>
         </div>
 
+        {/* Desktop Links */}
         <ul className="hidden lg:flex justify-center space-x-12">
           {navItems.map((item) => (
             <li key={item.path}>
@@ -65,6 +70,7 @@ function Navigation() {
           ))}
         </ul>
 
+        {/* Mobile Menu */}
         {mobileMenuOpen && (
           <ul className="lg:hidden mt-4 space-y-1 pt-4 border-t border-gray-700">
             {navItems.map((item) => (
@@ -81,9 +87,10 @@ function Navigation() {
   );
 }
 
+// App component
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/tdf-pool-v2">
       <Navigation />
       <main className="max-w-7xl mx-auto">
         <Routes>
@@ -95,7 +102,7 @@ function App() {
           <Route path="/OverDezePoule" element={<OverDezePoule />} />
         </Routes>
       </main>
-    </BrowserRouter>
+    </BrowserRouter >
   );
 }
 
