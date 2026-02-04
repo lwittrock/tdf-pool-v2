@@ -17,7 +17,6 @@ import { useRefreshTdfData } from '../hooks/useRefreshTdfData';
 import { useStagesData, useRiders } from '../hooks/useTdfData';
 import { JERSEY_ICONS } from '../../lib/constants';
 import type { StageData, RidersData } from '../../lib/types';
-import { TestDataSeeder } from '../components/TestDataSeeder';
 
 // ============================================================================
 // Types
@@ -304,7 +303,7 @@ function StageManagementPage() {
             onOpenEntry={handleOpenEntry}
           />
         )}
-        <TestDataSeeder />
+
         {/* VIEW MODE */}
         {viewMode === 'view' && (
           <StageViewMode
