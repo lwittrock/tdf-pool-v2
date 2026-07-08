@@ -64,7 +64,7 @@ The v1 plan proposed `editions` FKs everywhere. The red-team's key observation: 
 README describes deleted files (Login.tsx, `pages/admin/`, `src/lib/queries/`, wrong schema filename); `package.json` references 3 missing scripts; unused deps (`zustand`, `date-fns`, `tree`); `data/` legacy folder; dead `useBusinessLogic.ts` (339 lines) duplicating page logic; duplicate Tailwind config (`tailwind.config.ts` is a v3 leftover ignored by v4). **Red-team addition:** Tailwind is pinned to a **dead alpha** (`4.0.0-alpha.25`) — upgrade to v4 stable before building more frontend on it (multi-year rot risk).
 
 ### F9. No tests where correctness is socially critical 🟡
-The scoring engine has zero tests. Golden tests against real 2025 stage data, and the suite **must include a DNS-substitution scenario** (it would have caught F3) and a force-reprocess-after-substitution scenario (roster-as-of-stage).
+The scoring engine has zero tests. Golden tests against real stage data (anonymized 2026 fixtures from the live Excel are the ideal source — see the Scoring specification section), and the suite **must include a DNS-substitution scenario** (it would have caught F3) and a force-reprocess-after-substitution scenario (roster-as-of-stage).
 
 ### F10. The pipeline is massively N+1 — a merged single call is unsafe without a bulk-query refactor 🔴 (red-team, measured)
 Late in a Tour, one full recompute+regenerate executes on the order of **18,000+ sequential Supabase round-trips** (~3–8 min): per-row rank updates and a 50×21×2 cumulative loop in `calculate-points.ts` (lines ~382-404), 180×21×2 reads in `generateRidersJSON` (`json-generators.ts:290-338`) — which runs **twice** because `generateRiderRankingsJSON:371` recomputes it. Vercel's ceiling is 300s with Fluid compute (10–60s legacy). Today it only "works" because it's accidentally split over multiple invocations and few stages were complete. **Mandate:** rewrite scoring + generators to bulk reads (whole points/results tables in single queries — a few thousand tiny rows — join in memory) and bulk upserts; target < 10s total; set `maxDuration: 300` as belt-and-braces; verify Fluid compute is enabled on the Vercel project. After that, one atomic call is trivially safe and no job/status machinery is needed.
@@ -74,6 +74,53 @@ Late in a Tour, one full recompute+regenerate executes on the order of **18,000+
 - **Observability:** Vercel Hobby keeps logs ~1h. Write publish outcome (success/fail + timestamp) into the pointer file so the admin stage list shows it. No monitoring SaaS needed.
 - `submit-stage-results` sequential fuzzy RPC per rider (~50 round-trips) — fold into the bulk refactor.
 - Frontend: consolidate duplicated page logic into shared components/hooks during polish; keep the design tokens in `index.css` `@theme`.
+
+## Scoring specification — verified against the live 2026 Excel
+
+*Added after analyzing the real poule administration (anonymized export, standings after stage 4 of the 2026 Tour, 137 participants). The repo's rider-level scoring was recomputed against 332 rider-stage cells with **zero mismatches**, and all 137 participants' stage totals recompute exactly — but only after applying three rules the app does not implement yet. This section is the authoritative rule set v2 must reproduce.*
+
+### Per stage
+
+| Rule | Points | Status in repo |
+|---|---|---|
+| Stage finish, positions 1–20 | 25, 19, 18, 17, … , 1 | ✅ matches `lib/scoring-constants.ts` |
+| Yellow jersey (after the stage) | 15 | ✅ matches |
+| Green / polka-dot / white jersey | 10 each | ✅ matches |
+| Combativity ("rode rugnummer") | 5 | ✅ matches |
+| **Dagploeg** — the stage winner's team | **6 to every participant whose chosen *Ploeg* is that team** | ❌ **missing** |
+
+The Dagploeg rule implies a selection dimension the schema lacks: besides 10 riders + 1 reserve, **every participant also picks one team ("Ploeg")**. The stage winner's team is already stored (`stages.winning_team` — until now unused); what's missing is the participant's team pick and the +6 award in the scoring step.
+
+### Participant stage score
+
+Sum of the points of the participant's 10 active riders, **plus** the reserve rider's points when activated, **plus** 6 if their Ploeg is the stage's Dagploeg.
+
+**Reserve rule** as observed in the data: the position-11 reserve replaces a main rider who does not start; in the current Tour all activations run from stage 1 (pre-race non-starters). Whether a mid-Tour DNS also activates the reserve for the remaining stages must be confirmed with the pool rules before implementation (the app's current substitution code assumes it does — see F3 for the bug that makes the substituted reserve score zero either way).
+
+### End-of-Tour bonuses ("Bonuspunten eind") — ❌ missing entirely
+
+Awarded once, after stage 21, at rider level (participants benefit through the riders they hold):
+
+| Final classification | Bonus |
+|---|---|
+| GC winner / 2nd / 3rd | 100 / 50 / 25 |
+| Final green jersey | 50 |
+| Final polka-dot jersey | 50 |
+| Final white jersey | 50 |
+
+Implementation note: this needs a small "eindklassement" entry step in the admin (GC top-3 + final jersey holders) and one extra scoring pass; the snapshot format already has an `eind` column concept in the original Excel.
+
+### Directie klassement — ❌ implemented differently (produces different rankings)
+
+Verified formula: participants are grouped per directie; the group score is the **average of the top-5 members' cumulative totals** (e.g. group EB after stage 4: top-5 totals 483+461+444+407+394 → ÷5 = 437.8, exactly as shown). The repo instead **sums the top-5 per-stage scores stage by stage** — different semantics that ranks groups differently. `TOP_N_FOR_DIRECTIE = 5` survives; the aggregation must change to *average of top-5 cumulative*.
+
+### Why this matters beyond correctness
+
+The Excel itself contained a live data-entry defect: in one participant's block the per-rider point values are shifted one row relative to the rider names (totals happen to remain right). That's the failure mode manual spreadsheet administration invites, and exactly what the validated entry flow (F5) eliminates.
+
+**Schema/pipeline impact summary:** add a team pick per participant (column or table) + award Dagploeg points from `stages.winning_team`; add an end-of-Tour bonus entry + scoring pass; change directie aggregation to average-of-top-5-cumulative. Golden test fixtures can be extracted from the 2026 Excel (anonymized, P-coded) so the new engine must reproduce the real standings — planned as a follow-up.
+
+*Privacy note: the "anonymous" Excel export still contains two real participant names and one fully named block on the first sheet — regenerate the anonymization before sharing that file further.*
 
 ## Target architecture (concrete)
 
@@ -91,7 +138,7 @@ Late in a Tour, one full recompute+regenerate executes on the order of **18,000+
 ## Roadmap (re-timed to your answer: 2026 PoC now, 2027 live)
 
 - **Sprint A — PoC during this Tour (small, demonstrable):** versioned-pointer publish + client caching fix (F2); merge entry into one atomic server call with validate-before-delete (F3 entry half); fix the backup-rider scoring bug + add the one golden test that proves it (F3); minimal lockdown — admin route behind OTP login for just your email, out of public nav (F1). You enter 2026 stages by hand as the demo. Everything else waits.
-- **Sprint B — off-season core build:** bulk-query refactor of scoring + generators (F10); paste-and-parse + review screen + statuses + drafts + Dutch errors + mobile-first (F5); "Nieuw seizoen" imports (F6); full auth for 3–5 editors; content table + Over deze Poule; incremental migrations + non-destructive reset + archive 2025/2026 (F7); repo hygiene incl. Tailwind v4 stable (F8); test suite + CI (F9); `stage_entry_log` + publish-status surfacing (F11).
+- **Sprint B — off-season core build:** implement the three verified-but-missing scoring rules (Ploeg/Dagploeg pick, end-of-Tour bonuses, directie = avg top-5 cumulative — see Scoring specification); bulk-query refactor of scoring + generators (F10); paste-and-parse + review screen + statuses + drafts + Dutch errors + mobile-first (F5); "Nieuw seizoen" imports (F6); full auth for 3–5 editors; content table + Over deze Poule; incremental migrations + non-destructive reset + archive 2025/2026 (F7); repo hygiene incl. Tailwind v4 stable (F8); test suite + CI (F9); `stage_entry_log` + publish-status surfacing (F11).
 - **Sprint C — pre-Tour 2027 go-live:** seed the season via the new imports; participants submit teams via form → import; full dry-run on one historical stage; go-live checklist (Fluid compute on, env vars, allowlist, backup job).
 - **Ongoing — frontend polish (your track):** shared table/card components, consolidate duplicated logic, error boundaries.
 
