@@ -1,0 +1,2011 @@
+{
+  "stages_completed": 4,
+  "participants": {
+    "P001": {
+      "stage_points": {
+        "stage_1": 146,
+        "stage_2": 101,
+        "stage_3": 132,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 146,
+        "stage_2": 247,
+        "stage_3": 379,
+        "stage_4": 414
+      }
+    },
+    "P002": {
+      "stage_points": {
+        "stage_1": 104,
+        "stage_2": 130,
+        "stage_3": 128,
+        "stage_4": 1
+      },
+      "cumulative": {
+        "stage_1": 104,
+        "stage_2": 234,
+        "stage_3": 362,
+        "stage_4": 363
+      }
+    },
+    "P003": {
+      "stage_points": {
+        "stage_1": 115,
+        "stage_2": 140,
+        "stage_3": 136,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 115,
+        "stage_2": 255,
+        "stage_3": 391,
+        "stage_4": 391
+      }
+    },
+    "P004": {
+      "stage_points": {
+        "stage_1": 100,
+        "stage_2": 122,
+        "stage_3": 125,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 100,
+        "stage_2": 222,
+        "stage_3": 347,
+        "stage_4": 347
+      }
+    },
+    "P005": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 411
+      }
+    },
+    "P006": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 446
+      }
+    },
+    "P007": {
+      "stage_points": {
+        "stage_1": 137,
+        "stage_2": 142,
+        "stage_3": 150,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 137,
+        "stage_2": 279,
+        "stage_3": 429,
+        "stage_4": 429
+      }
+    },
+    "P008": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 260,
+        "stage_3": 401,
+        "stage_4": 436
+      }
+    },
+    "P009": {
+      "stage_points": {
+        "stage_1": 107,
+        "stage_2": 126,
+        "stage_3": 146,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 107,
+        "stage_2": 233,
+        "stage_3": 379,
+        "stage_4": 414
+      }
+    },
+    "P010": {
+      "stage_points": {
+        "stage_1": 121,
+        "stage_2": 123,
+        "stage_3": 125,
+        "stage_4": 50
+      },
+      "cumulative": {
+        "stage_1": 121,
+        "stage_2": 244,
+        "stage_3": 369,
+        "stage_4": 419
+      }
+    },
+    "P011": {
+      "stage_points": {
+        "stage_1": 147,
+        "stage_2": 141,
+        "stage_3": 138,
+        "stage_4": 56
+      },
+      "cumulative": {
+        "stage_1": 147,
+        "stage_2": 288,
+        "stage_3": 426,
+        "stage_4": 482
+      }
+    },
+    "P012": {
+      "stage_points": {
+        "stage_1": 118,
+        "stage_2": 92,
+        "stage_3": 119,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 118,
+        "stage_2": 210,
+        "stage_3": 329,
+        "stage_4": 364
+      }
+    },
+    "P013": {
+      "stage_points": {
+        "stage_1": 109,
+        "stage_2": 105,
+        "stage_3": 130,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 109,
+        "stage_2": 214,
+        "stage_3": 344,
+        "stage_4": 344
+      }
+    },
+    "P014": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 113,
+        "stage_3": 121,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 246,
+        "stage_3": 367,
+        "stage_4": 367
+      }
+    },
+    "P015": {
+      "stage_points": {
+        "stage_1": 110,
+        "stage_2": 139,
+        "stage_3": 145,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 110,
+        "stage_2": 249,
+        "stage_3": 394,
+        "stage_4": 429
+      }
+    },
+    "P016": {
+      "stage_points": {
+        "stage_1": 116,
+        "stage_2": 139,
+        "stage_3": 129,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 116,
+        "stage_2": 255,
+        "stage_3": 384,
+        "stage_4": 419
+      }
+    },
+    "P017": {
+      "stage_points": {
+        "stage_1": 91,
+        "stage_2": 95,
+        "stage_3": 116,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 91,
+        "stage_2": 186,
+        "stage_3": 302,
+        "stage_4": 302
+      }
+    },
+    "P018": {
+      "stage_points": {
+        "stage_1": 105,
+        "stage_2": 87,
+        "stage_3": 105,
+        "stage_4": 19
+      },
+      "cumulative": {
+        "stage_1": 105,
+        "stage_2": 192,
+        "stage_3": 297,
+        "stage_4": 316
+      }
+    },
+    "P019": {
+      "stage_points": {
+        "stage_1": 115,
+        "stage_2": 92,
+        "stage_3": 106,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 115,
+        "stage_2": 207,
+        "stage_3": 313,
+        "stage_4": 348
+      }
+    },
+    "P020": {
+      "stage_points": {
+        "stage_1": 121,
+        "stage_2": 139,
+        "stage_3": 147,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 121,
+        "stage_2": 260,
+        "stage_3": 407,
+        "stage_4": 407
+      }
+    },
+    "P021": {
+      "stage_points": {
+        "stage_1": 120,
+        "stage_2": 132,
+        "stage_3": 127,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 120,
+        "stage_2": 252,
+        "stage_3": 379,
+        "stage_4": 379
+      }
+    },
+    "P022": {
+      "stage_points": {
+        "stage_1": 85,
+        "stage_2": 89,
+        "stage_3": 118,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 85,
+        "stage_2": 174,
+        "stage_3": 292,
+        "stage_4": 327
+      }
+    },
+    "P023": {
+      "stage_points": {
+        "stage_1": 107,
+        "stage_2": 119,
+        "stage_3": 128,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 107,
+        "stage_2": 226,
+        "stage_3": 354,
+        "stage_4": 354
+      }
+    },
+    "P024": {
+      "stage_points": {
+        "stage_1": 120,
+        "stage_2": 132,
+        "stage_3": 127,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 120,
+        "stage_2": 252,
+        "stage_3": 379,
+        "stage_4": 414
+      }
+    },
+    "P025": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 446
+      }
+    },
+    "P026": {
+      "stage_points": {
+        "stage_1": 91,
+        "stage_2": 62,
+        "stage_3": 89,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 91,
+        "stage_2": 153,
+        "stage_3": 242,
+        "stage_4": 277
+      }
+    },
+    "P027": {
+      "stage_points": {
+        "stage_1": 151,
+        "stage_2": 114,
+        "stage_3": 138,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 151,
+        "stage_2": 265,
+        "stage_3": 403,
+        "stage_4": 403
+      }
+    },
+    "P028": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 56
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 260,
+        "stage_3": 401,
+        "stage_4": 457
+      }
+    },
+    "P029": {
+      "stage_points": {
+        "stage_1": 117,
+        "stage_2": 120,
+        "stage_3": 140,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 117,
+        "stage_2": 237,
+        "stage_3": 377,
+        "stage_4": 412
+      }
+    },
+    "P030": {
+      "stage_points": {
+        "stage_1": 122,
+        "stage_2": 132,
+        "stage_3": 142,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 122,
+        "stage_2": 254,
+        "stage_3": 396,
+        "stage_4": 431
+      }
+    },
+    "P031": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 260,
+        "stage_3": 401,
+        "stage_4": 436
+      }
+    },
+    "P032": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 144,
+        "stage_3": 159,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 267,
+        "stage_3": 426,
+        "stage_4": 461
+      }
+    },
+    "P033": {
+      "stage_points": {
+        "stage_1": 118,
+        "stage_2": 138,
+        "stage_3": 132,
+        "stage_4": 56
+      },
+      "cumulative": {
+        "stage_1": 118,
+        "stage_2": 256,
+        "stage_3": 388,
+        "stage_4": 444
+      }
+    },
+    "P034": {
+      "stage_points": {
+        "stage_1": 145,
+        "stage_2": 101,
+        "stage_3": 130,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 145,
+        "stage_2": 246,
+        "stage_3": 376,
+        "stage_4": 376
+      }
+    },
+    "P035": {
+      "stage_points": {
+        "stage_1": 103,
+        "stage_2": 74,
+        "stage_3": 108,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 103,
+        "stage_2": 177,
+        "stage_3": 285,
+        "stage_4": 285
+      }
+    },
+    "P036": {
+      "stage_points": {
+        "stage_1": 108,
+        "stage_2": 92,
+        "stage_3": 104,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 108,
+        "stage_2": 200,
+        "stage_3": 304,
+        "stage_4": 339
+      }
+    },
+    "P037": {
+      "stage_points": {
+        "stage_1": 107,
+        "stage_2": 80,
+        "stage_3": 102,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 107,
+        "stage_2": 187,
+        "stage_3": 289,
+        "stage_4": 289
+      }
+    },
+    "P038": {
+      "stage_points": {
+        "stage_1": 108,
+        "stage_2": 81,
+        "stage_3": 108,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 108,
+        "stage_2": 189,
+        "stage_3": 297,
+        "stage_4": 297
+      }
+    },
+    "P039": {
+      "stage_points": {
+        "stage_1": 113,
+        "stage_2": 143,
+        "stage_3": 132,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 113,
+        "stage_2": 256,
+        "stage_3": 388,
+        "stage_4": 388
+      }
+    },
+    "P040": {
+      "stage_points": {
+        "stage_1": 95,
+        "stage_2": 80,
+        "stage_3": 87,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 95,
+        "stage_2": 175,
+        "stage_3": 262,
+        "stage_4": 262
+      }
+    },
+    "P041": {
+      "stage_points": {
+        "stage_1": 143,
+        "stage_2": 161,
+        "stage_3": 164,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 143,
+        "stage_2": 304,
+        "stage_3": 468,
+        "stage_4": 503
+      }
+    },
+    "P042": {
+      "stage_points": {
+        "stage_1": 119,
+        "stage_2": 153,
+        "stage_3": 145,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 119,
+        "stage_2": 272,
+        "stage_3": 417,
+        "stage_4": 452
+      }
+    },
+    "P043": {
+      "stage_points": {
+        "stage_1": 150,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 150,
+        "stage_2": 296,
+        "stage_3": 448,
+        "stage_4": 483
+      }
+    },
+    "P044": {
+      "stage_points": {
+        "stage_1": 110,
+        "stage_2": 132,
+        "stage_3": 127,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 110,
+        "stage_2": 242,
+        "stage_3": 369,
+        "stage_4": 404
+      }
+    },
+    "P045": {
+      "stage_points": {
+        "stage_1": 160,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 160,
+        "stage_2": 306,
+        "stage_3": 458,
+        "stage_4": 458
+      }
+    },
+    "P046": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 260,
+        "stage_3": 401,
+        "stage_4": 436
+      }
+    },
+    "P047": {
+      "stage_points": {
+        "stage_1": 41,
+        "stage_2": 88,
+        "stage_3": 47,
+        "stage_4": 8
+      },
+      "cumulative": {
+        "stage_1": 41,
+        "stage_2": 129,
+        "stage_3": 176,
+        "stage_4": 184
+      }
+    },
+    "P048": {
+      "stage_points": {
+        "stage_1": 134,
+        "stage_2": 92,
+        "stage_3": 113,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 134,
+        "stage_2": 226,
+        "stage_3": 339,
+        "stage_4": 374
+      }
+    },
+    "P049": {
+      "stage_points": {
+        "stage_1": 94,
+        "stage_2": 82,
+        "stage_3": 106,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 94,
+        "stage_2": 176,
+        "stage_3": 282,
+        "stage_4": 317
+      }
+    },
+    "P050": {
+      "stage_points": {
+        "stage_1": 145,
+        "stage_2": 154,
+        "stage_3": 161,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 145,
+        "stage_2": 299,
+        "stage_3": 460,
+        "stage_4": 460
+      }
+    },
+    "P051": {
+      "stage_points": {
+        "stage_1": 96,
+        "stage_2": 94,
+        "stage_3": 125,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 96,
+        "stage_2": 190,
+        "stage_3": 315,
+        "stage_4": 350
+      }
+    },
+    "P052": {
+      "stage_points": {
+        "stage_1": 120,
+        "stage_2": 126,
+        "stage_3": 121,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 120,
+        "stage_2": 246,
+        "stage_3": 367,
+        "stage_4": 402
+      }
+    },
+    "P053": {
+      "stage_points": {
+        "stage_1": 146,
+        "stage_2": 155,
+        "stage_3": 138,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 146,
+        "stage_2": 301,
+        "stage_3": 439,
+        "stage_4": 439
+      }
+    },
+    "P054": {
+      "stage_points": {
+        "stage_1": 136,
+        "stage_2": 148,
+        "stage_3": 146,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 136,
+        "stage_2": 284,
+        "stage_3": 430,
+        "stage_4": 465
+      }
+    },
+    "P055": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 446
+      }
+    },
+    "P056": {
+      "stage_points": {
+        "stage_1": 126,
+        "stage_2": 139,
+        "stage_3": 129,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 126,
+        "stage_2": 265,
+        "stage_3": 394,
+        "stage_4": 394
+      }
+    },
+    "P057": {
+      "stage_points": {
+        "stage_1": 116,
+        "stage_2": 152,
+        "stage_3": 153,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 116,
+        "stage_2": 268,
+        "stage_3": 421,
+        "stage_4": 456
+      }
+    },
+    "P058": {
+      "stage_points": {
+        "stage_1": 147,
+        "stage_2": 141,
+        "stage_3": 138,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 147,
+        "stage_2": 288,
+        "stage_3": 426,
+        "stage_4": 461
+      }
+    },
+    "P059": {
+      "stage_points": {
+        "stage_1": 105,
+        "stage_2": 121,
+        "stage_3": 134,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 105,
+        "stage_2": 226,
+        "stage_3": 360,
+        "stage_4": 360
+      }
+    },
+    "P060": {
+      "stage_points": {
+        "stage_1": 111,
+        "stage_2": 82,
+        "stage_3": 90,
+        "stage_4": 60
+      },
+      "cumulative": {
+        "stage_1": 111,
+        "stage_2": 193,
+        "stage_3": 283,
+        "stage_4": 343
+      }
+    },
+    "P061": {
+      "stage_points": {
+        "stage_1": 120,
+        "stage_2": 139,
+        "stage_3": 145,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 120,
+        "stage_2": 259,
+        "stage_3": 404,
+        "stage_4": 439
+      }
+    },
+    "P062": {
+      "stage_points": {
+        "stage_1": 124,
+        "stage_2": 87,
+        "stage_3": 105,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 124,
+        "stage_2": 211,
+        "stage_3": 316,
+        "stage_4": 351
+      }
+    },
+    "P063": {
+      "stage_points": {
+        "stage_1": 126,
+        "stage_2": 152,
+        "stage_3": 153,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 126,
+        "stage_2": 278,
+        "stage_3": 431,
+        "stage_4": 431
+      }
+    },
+    "P064": {
+      "stage_points": {
+        "stage_1": 149,
+        "stage_2": 134,
+        "stage_3": 135,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 149,
+        "stage_2": 283,
+        "stage_3": 418,
+        "stage_4": 453
+      }
+    },
+    "P065": {
+      "stage_points": {
+        "stage_1": 93,
+        "stage_2": 109,
+        "stage_3": 115,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 93,
+        "stage_2": 202,
+        "stage_3": 317,
+        "stage_4": 317
+      }
+    },
+    "P066": {
+      "stage_points": {
+        "stage_1": 150,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 150,
+        "stage_2": 296,
+        "stage_3": 448,
+        "stage_4": 483
+      }
+    },
+    "P067": {
+      "stage_points": {
+        "stage_1": 160,
+        "stage_2": 153,
+        "stage_3": 170,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 160,
+        "stage_2": 313,
+        "stage_3": 483,
+        "stage_4": 483
+      }
+    },
+    "P068": {
+      "stage_points": {
+        "stage_1": 117,
+        "stage_2": 124,
+        "stage_3": 118,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 117,
+        "stage_2": 241,
+        "stage_3": 359,
+        "stage_4": 394
+      }
+    },
+    "P069": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 446
+      }
+    },
+    "P070": {
+      "stage_points": {
+        "stage_1": 120,
+        "stage_2": 126,
+        "stage_3": 121,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 120,
+        "stage_2": 246,
+        "stage_3": 367,
+        "stage_4": 402
+      }
+    },
+    "P071": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 131,
+        "stage_3": 135,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 264,
+        "stage_3": 399,
+        "stage_4": 434
+      }
+    },
+    "P072": {
+      "stage_points": {
+        "stage_1": 104,
+        "stage_2": 115,
+        "stage_3": 126,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 104,
+        "stage_2": 219,
+        "stage_3": 345,
+        "stage_4": 380
+      }
+    },
+    "P073": {
+      "stage_points": {
+        "stage_1": 106,
+        "stage_2": 87,
+        "stage_3": 107,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 106,
+        "stage_2": 193,
+        "stage_3": 300,
+        "stage_4": 300
+      }
+    },
+    "P074": {
+      "stage_points": {
+        "stage_1": 150,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 150,
+        "stage_2": 296,
+        "stage_3": 448,
+        "stage_4": 483
+      }
+    },
+    "P075": {
+      "stage_points": {
+        "stage_1": 80,
+        "stage_2": 107,
+        "stage_3": 126,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 80,
+        "stage_2": 187,
+        "stage_3": 313,
+        "stage_4": 348
+      }
+    },
+    "P076": {
+      "stage_points": {
+        "stage_1": 134,
+        "stage_2": 138,
+        "stage_3": 154,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 134,
+        "stage_2": 272,
+        "stage_3": 426,
+        "stage_4": 461
+      }
+    },
+    "P077": {
+      "stage_points": {
+        "stage_1": 120,
+        "stage_2": 132,
+        "stage_3": 127,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 120,
+        "stage_2": 252,
+        "stage_3": 379,
+        "stage_4": 414
+      }
+    },
+    "P078": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 260,
+        "stage_3": 401,
+        "stage_4": 436
+      }
+    },
+    "P079": {
+      "stage_points": {
+        "stage_1": 113,
+        "stage_2": 132,
+        "stage_3": 136,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 113,
+        "stage_2": 245,
+        "stage_3": 381,
+        "stage_4": 416
+      }
+    },
+    "P080": {
+      "stage_points": {
+        "stage_1": 94,
+        "stage_2": 103,
+        "stage_3": 138,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 94,
+        "stage_2": 197,
+        "stage_3": 335,
+        "stage_4": 370
+      }
+    },
+    "P081": {
+      "stage_points": {
+        "stage_1": 115,
+        "stage_2": 133,
+        "stage_3": 118,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 115,
+        "stage_2": 248,
+        "stage_3": 366,
+        "stage_4": 401
+      }
+    },
+    "P082": {
+      "stage_points": {
+        "stage_1": 124,
+        "stage_2": 81,
+        "stage_3": 99,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 124,
+        "stage_2": 205,
+        "stage_3": 304,
+        "stage_4": 304
+      }
+    },
+    "P083": {
+      "stage_points": {
+        "stage_1": 118,
+        "stage_2": 86,
+        "stage_3": 113,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 118,
+        "stage_2": 204,
+        "stage_3": 317,
+        "stage_4": 352
+      }
+    },
+    "P084": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 446
+      }
+    },
+    "P085": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 21
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 432
+      }
+    },
+    "P086": {
+      "stage_points": {
+        "stage_1": 160,
+        "stage_2": 140,
+        "stage_3": 146,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 160,
+        "stage_2": 300,
+        "stage_3": 446,
+        "stage_4": 446
+      }
+    },
+    "P087": {
+      "stage_points": {
+        "stage_1": 160,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 160,
+        "stage_2": 306,
+        "stage_3": 458,
+        "stage_4": 458
+      }
+    },
+    "P088": {
+      "stage_points": {
+        "stage_1": 121,
+        "stage_2": 139,
+        "stage_3": 147,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 121,
+        "stage_2": 260,
+        "stage_3": 407,
+        "stage_4": 407
+      }
+    },
+    "P089": {
+      "stage_points": {
+        "stage_1": 11,
+        "stage_2": 10,
+        "stage_3": 2,
+        "stage_4": 11
+      },
+      "cumulative": {
+        "stage_1": 11,
+        "stage_2": 21,
+        "stage_3": 23,
+        "stage_4": 34
+      }
+    },
+    "P090": {
+      "stage_points": {
+        "stage_1": 136,
+        "stage_2": 129,
+        "stage_3": 121,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 136,
+        "stage_2": 265,
+        "stage_3": 386,
+        "stage_4": 421
+      }
+    },
+    "P091": {
+      "stage_points": {
+        "stage_1": 109,
+        "stage_2": 133,
+        "stage_3": 132,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 109,
+        "stage_2": 242,
+        "stage_3": 374,
+        "stage_4": 374
+      }
+    },
+    "P092": {
+      "stage_points": {
+        "stage_1": 97,
+        "stage_2": 89,
+        "stage_3": 119,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 97,
+        "stage_2": 186,
+        "stage_3": 305,
+        "stage_4": 305
+      }
+    },
+    "P093": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 260,
+        "stage_3": 401,
+        "stage_4": 436
+      }
+    },
+    "P094": {
+      "stage_points": {
+        "stage_1": 95,
+        "stage_2": 94,
+        "stage_3": 123,
+        "stage_4": 56
+      },
+      "cumulative": {
+        "stage_1": 95,
+        "stage_2": 189,
+        "stage_3": 312,
+        "stage_4": 368
+      }
+    },
+    "P095": {
+      "stage_points": {
+        "stage_1": 153,
+        "stage_2": 154,
+        "stage_3": 146,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 153,
+        "stage_2": 307,
+        "stage_3": 453,
+        "stage_4": 453
+      }
+    },
+    "P096": {
+      "stage_points": {
+        "stage_1": 151,
+        "stage_2": 146,
+        "stage_3": 154,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 151,
+        "stage_2": 297,
+        "stage_3": 451,
+        "stage_4": 486
+      }
+    },
+    "P097": {
+      "stage_points": {
+        "stage_1": 101,
+        "stage_2": 85,
+        "stage_3": 94,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 101,
+        "stage_2": 186,
+        "stage_3": 280,
+        "stage_4": 280
+      }
+    },
+    "P098": {
+      "stage_points": {
+        "stage_1": 120,
+        "stage_2": 139,
+        "stage_3": 145,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 120,
+        "stage_2": 259,
+        "stage_3": 404,
+        "stage_4": 439
+      }
+    },
+    "P099": {
+      "stage_points": {
+        "stage_1": 149,
+        "stage_2": 134,
+        "stage_3": 135,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 149,
+        "stage_2": 283,
+        "stage_3": 418,
+        "stage_4": 453
+      }
+    },
+    "P100": {
+      "stage_points": {
+        "stage_1": 160,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 160,
+        "stage_2": 306,
+        "stage_3": 458,
+        "stage_4": 458
+      }
+    },
+    "P101": {
+      "stage_points": {
+        "stage_1": 105,
+        "stage_2": 87,
+        "stage_3": 105,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 105,
+        "stage_2": 192,
+        "stage_3": 297,
+        "stage_4": 332
+      }
+    },
+    "P102": {
+      "stage_points": {
+        "stage_1": 82,
+        "stage_2": 56,
+        "stage_3": 85,
+        "stage_4": 15
+      },
+      "cumulative": {
+        "stage_1": 82,
+        "stage_2": 138,
+        "stage_3": 223,
+        "stage_4": 238
+      }
+    },
+    "P103": {
+      "stage_points": {
+        "stage_1": 107,
+        "stage_2": 87,
+        "stage_3": 120,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 107,
+        "stage_2": 194,
+        "stage_3": 314,
+        "stage_4": 349
+      }
+    },
+    "P104": {
+      "stage_points": {
+        "stage_1": 108,
+        "stage_2": 81,
+        "stage_3": 116,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 108,
+        "stage_2": 189,
+        "stage_3": 305,
+        "stage_4": 340
+      }
+    },
+    "P105": {
+      "stage_points": {
+        "stage_1": 150,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 150,
+        "stage_2": 296,
+        "stage_3": 448,
+        "stage_4": 448
+      }
+    },
+    "P106": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 446
+      }
+    },
+    "P107": {
+      "stage_points": {
+        "stage_1": 145,
+        "stage_2": 128,
+        "stage_3": 141,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 145,
+        "stage_2": 273,
+        "stage_3": 414,
+        "stage_4": 414
+      }
+    },
+    "P108": {
+      "stage_points": {
+        "stage_1": 150,
+        "stage_2": 161,
+        "stage_3": 168,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 150,
+        "stage_2": 311,
+        "stage_3": 479,
+        "stage_4": 479
+      }
+    },
+    "P109": {
+      "stage_points": {
+        "stage_1": 92,
+        "stage_2": 82,
+        "stage_3": 106,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 92,
+        "stage_2": 174,
+        "stage_3": 280,
+        "stage_4": 315
+      }
+    },
+    "P110": {
+      "stage_points": {
+        "stage_1": 160,
+        "stage_2": 146,
+        "stage_3": 152,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 160,
+        "stage_2": 306,
+        "stage_3": 458,
+        "stage_4": 493
+      }
+    },
+    "P111": {
+      "stage_points": {
+        "stage_1": 136,
+        "stage_2": 148,
+        "stage_3": 146,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 136,
+        "stage_2": 284,
+        "stage_3": 430,
+        "stage_4": 430
+      }
+    },
+    "P112": {
+      "stage_points": {
+        "stage_1": 139,
+        "stage_2": 144,
+        "stage_3": 143,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 139,
+        "stage_2": 283,
+        "stage_3": 426,
+        "stage_4": 461
+      }
+    },
+    "P113": {
+      "stage_points": {
+        "stage_1": 150,
+        "stage_2": 161,
+        "stage_3": 168,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 150,
+        "stage_2": 311,
+        "stage_3": 479,
+        "stage_4": 514
+      }
+    },
+    "P114": {
+      "stage_points": {
+        "stage_1": 122,
+        "stage_2": 132,
+        "stage_3": 142,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 122,
+        "stage_2": 254,
+        "stage_3": 396,
+        "stage_4": 396
+      }
+    },
+    "P115": {
+      "stage_points": {
+        "stage_1": 124,
+        "stage_2": 103,
+        "stage_3": 115,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 124,
+        "stage_2": 227,
+        "stage_3": 342,
+        "stage_4": 342
+      }
+    },
+    "P116": {
+      "stage_points": {
+        "stage_1": 133,
+        "stage_2": 137,
+        "stage_3": 141,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 133,
+        "stage_2": 270,
+        "stage_3": 411,
+        "stage_4": 411
+      }
+    },
+    "P117": {
+      "stage_points": {
+        "stage_1": 121,
+        "stage_2": 84,
+        "stage_3": 99,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 121,
+        "stage_2": 205,
+        "stage_3": 304,
+        "stage_4": 339
+      }
+    },
+    "P118": {
+      "stage_points": {
+        "stage_1": 122,
+        "stage_2": 125,
+        "stage_3": 124,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 122,
+        "stage_2": 247,
+        "stage_3": 371,
+        "stage_4": 406
+      }
+    },
+    "P119": {
+      "stage_points": {
+        "stage_1": 123,
+        "stage_2": 143,
+        "stage_3": 132,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 123,
+        "stage_2": 266,
+        "stage_3": 398,
+        "stage_4": 398
+      }
+    },
+    "P120": {
+      "stage_points": {
+        "stage_1": 134,
+        "stage_2": 122,
+        "stage_3": 133,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 134,
+        "stage_2": 256,
+        "stage_3": 389,
+        "stage_4": 424
+      }
+    },
+    "P121": {
+      "stage_points": {
+        "stage_1": 144,
+        "stage_2": 128,
+        "stage_3": 139,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 144,
+        "stage_2": 272,
+        "stage_3": 411,
+        "stage_4": 411
+      }
+    },
+    "P122": {
+      "stage_points": {
+        "stage_1": 145,
+        "stage_2": 101,
+        "stage_3": 130,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 145,
+        "stage_2": 246,
+        "stage_3": 376,
+        "stage_4": 411
+      }
+    },
+    "P123": {
+      "stage_points": {
+        "stage_1": 108,
+        "stage_2": 92,
+        "stage_3": 119,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 108,
+        "stage_2": 200,
+        "stage_3": 319,
+        "stage_4": 354
+      }
+    },
+    "P124": {
+      "stage_points": {
+        "stage_1": 108,
+        "stage_2": 91,
+        "stage_3": 114,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 108,
+        "stage_2": 199,
+        "stage_3": 313,
+        "stage_4": 313
+      }
+    },
+    "P125": {
+      "stage_points": {
+        "stage_1": 104,
+        "stage_2": 121,
+        "stage_3": 132,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 104,
+        "stage_2": 225,
+        "stage_3": 357,
+        "stage_4": 392
+      }
+    },
+    "P126": {
+      "stage_points": {
+        "stage_1": 112,
+        "stage_2": 131,
+        "stage_3": 115,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 112,
+        "stage_2": 243,
+        "stage_3": 358,
+        "stage_4": 393
+      }
+    },
+    "P127": {
+      "stage_points": {
+        "stage_1": 156,
+        "stage_2": 149,
+        "stage_3": 132,
+        "stage_4": 0
+      },
+      "cumulative": {
+        "stage_1": 156,
+        "stage_2": 305,
+        "stage_3": 437,
+        "stage_4": 437
+      }
+    },
+    "P128": {
+      "stage_points": {
+        "stage_1": 150,
+        "stage_2": 153,
+        "stage_3": 170,
+        "stage_4": 35
+      },
+      "cumulative": {
+        "stage_1": 150,
+        "stage_2": 303,
+        "stage_3": 473,
+        "stage_4": 508
+      }
+    }
+  },
+  "directie_groups": {
+    "DJZ": [
+      "P001",
+      "P002",
+      "P030",
+      "P045",
+      "P052",
+      "P060",
+      "P062",
+      "P066",
+      "P067",
+      "P073",
+      "P077",
+      "P081",
+      "P082",
+      "P085",
+      "P086",
+      "P089",
+      "P102",
+      "P112",
+      "P127"
+    ],
+    "VRIENDEN VAN EN BUITEN DE ACM": [
+      "P003",
+      "P005",
+      "P006",
+      "P007",
+      "P008",
+      "P009",
+      "P010",
+      "P011",
+      "P014",
+      "P019",
+      "P021",
+      "P023",
+      "P027",
+      "P034",
+      "P053",
+      "P068",
+      "P072",
+      "P076",
+      "P079",
+      "P080",
+      "P091",
+      "P100",
+      "P116",
+      "P126"
+    ],
+    "DTE": [
+      "P004",
+      "P012",
+      "P013",
+      "P017",
+      "P018",
+      "P022",
+      "P024",
+      "P025",
+      "P026",
+      "P028",
+      "P031",
+      "P032",
+      "P036",
+      "P037",
+      "P038",
+      "P042",
+      "P046",
+      "P049",
+      "P054",
+      "P055",
+      "P059",
+      "P063",
+      "P064",
+      "P069",
+      "P070",
+      "P071",
+      "P075",
+      "P078",
+      "P083",
+      "P084",
+      "P087",
+      "P093",
+      "P098",
+      "P105",
+      "P113",
+      "P114",
+      "P115",
+      "P117",
+      "P124"
+    ],
+    "BBC": [
+      "P015",
+      "P029",
+      "P092",
+      "P095",
+      "P109",
+      "P122",
+      "P123"
+    ],
+    "DM": [
+      "P016",
+      "P039",
+      "P040",
+      "P047",
+      "P051",
+      "P057",
+      "P061",
+      "P074",
+      "P110",
+      "P118",
+      "P119"
+    ],
+    "DTVP": [
+      "P020",
+      "P108",
+      "P111",
+      "P120",
+      "P121"
+    ],
+    "EB": [
+      "P033",
+      "P043",
+      "P056",
+      "P058",
+      "P088",
+      "P094",
+      "P125"
+    ],
+    "DC": [
+      "P035",
+      "P041",
+      "P048",
+      "P050",
+      "P099",
+      "P106",
+      "P107"
+    ],
+    "DI - DBV - iDomein - TDA": [
+      "P044",
+      "P065",
+      "P090",
+      "P096",
+      "P097",
+      "P101",
+      "P103",
+      "P104"
+    ],
+    "CONSUMENTEN": [
+      "P128"
+    ]
+  },
+  "directie_scores_computed": {
+    "DJZ": 466.2,
+    "VRIENDEN VAN EN BUITEN DE ACM": 457.2,
+    "DTE": 471.0,
+    "BBC": 411.8,
+    "DM": 458.0,
+    "DTVP": 430.2,
+    "EB": 437.8,
+    "DC": 455.2,
+    "DI - DBV - iDomein - TDA": 400.0,
+    "CONSUMENTEN": 101.6
+  },
+  "directie_scores_sheet_table": [
+    {
+      "rank": 1,
+      "directie": "DTE",
+      "score": 471.0
+    },
+    {
+      "rank": 2,
+      "directie": "DJZ",
+      "score": 466.2
+    },
+    {
+      "rank": 3,
+      "directie": "DM",
+      "score": 458.0
+    },
+    {
+      "rank": 4,
+      "directie": "Vrienden van en buiten de ACM",
+      "score": 457.2
+    },
+    {
+      "rank": 5,
+      "directie": "DC",
+      "score": 455.2
+    },
+    {
+      "rank": 6,
+      "directie": "EB",
+      "score": 437.8
+    },
+    {
+      "rank": 7,
+      "directie": "DTVP",
+      "score": 430.2
+    },
+    {
+      "rank": 8,
+      "directie": "BBC",
+      "score": 411.8
+    },
+    {
+      "rank": 9,
+      "directie": "DI - DBV - iDomein - TDA",
+      "score": 280.0
+    }
+  ],
+  "notes": [
+    "directie score = average of the top-5 members' cumulative totals",
+    "sheet table shows 280 for 'DI - DBV - iDomein - TDA' but its own member block computes 400 (broken reference in the source Excel); directie_scores_computed holds the formula-correct value",
+    "the 'Consumenten' participant is missing from the sheet's directieklassement entirely (source-data omission); included in directie_scores_computed"
+  ]
+}

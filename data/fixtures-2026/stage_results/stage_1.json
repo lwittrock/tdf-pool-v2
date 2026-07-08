@@ -1,0 +1,93 @@
+{
+  "stage_number": 1,
+  "top_20": [
+    {
+      "position": 1,
+      "rider": "JONAS VINGEGAARD"
+    },
+    {
+      "position": 2,
+      "rider": "FILIPPO GANNA"
+    },
+    {
+      "position": 3,
+      "rider": "TADEJ POGACAR"
+    },
+    {
+      "position": 4,
+      "rider": "JUAN AYUSO"
+    },
+    {
+      "position": 5,
+      "rider": "REMCO EVENEPOEL"
+    },
+    {
+      "position": 6,
+      "rider": "ISAAC DEL TORO"
+    },
+    {
+      "position": 7,
+      "rider": "DAVIDE PIGANZOLI"
+    },
+    {
+      "position": 8,
+      "rider": "FLORIAN LIPOWITZ"
+    },
+    {
+      "position": 9,
+      "rider": "TOBIAS FOSS"
+    },
+    {
+      "position": 10,
+      "rider": "PAUL SEIXAS"
+    },
+    {
+      "position": 11,
+      "rider": "MATHIEU VAN DER POEL"
+    },
+    {
+      "position": 12,
+      "rider": "ROMAIN GREGOIRE"
+    },
+    {
+      "position": 13,
+      "rider": "ANTONIO TIBERI"
+    },
+    {
+      "position": 14,
+      "rider": "MATTHEW RICCITELLO"
+    },
+    {
+      "position": 15,
+      "rider": "LENNY MARTINEZ"
+    },
+    {
+      "position": 16,
+      "rider": "MICHAEL MATTHEWS"
+    },
+    {
+      "position": 17,
+      "rider": "ALEX BAUDIN"
+    },
+    {
+      "position": 18,
+      "rider": "TOM PIDCOCK"
+    },
+    {
+      "position": 19,
+      "rider": "ILAN VAN WILDER"
+    },
+    {
+      "position": 20,
+      "rider": "THYMEN ARENSMAN"
+    }
+  ],
+  "jerseys": {
+    "yellow": "JONAS VINGEGAARD",
+    "green": "EGAN BERNAL",
+    "polka_dot": "TADEJ POGACAR",
+    "white": "JUAN AYUSO"
+  },
+  "combativity": null,
+  "dagploeg": "NETCOMPANY INEOS CYCLING TEAM"
+}

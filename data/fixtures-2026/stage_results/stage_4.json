@@ -1,0 +1,93 @@
+{
+  "stage_number": 4,
+  "top_20": [
+    {
+      "position": 1,
+      "rider": "MADS PEDERSEN"
+    },
+    {
+      "position": 2,
+      "rider": "QUINN SIMMONS"
+    },
+    {
+      "position": 3,
+      "rider": "RAUL GARCIA"
+    },
+    {
+      "position": 4,
+      "rider": "MARCO FRIGO"
+    },
+    {
+      "position": 5,
+      "rider": "RAMSES DEBRUYNE"
+    },
+    {
+      "position": 6,
+      "rider": "KÉVIN VAUQUELIN"
+    },
+    {
+      "position": 7,
+      "rider": "SEAN QUINN"
+    },
+    {
+      "position": 8,
+      "rider": "TORSTEIN TRÆEN"
+    },
+    {
+      "position": 9,
+      "rider": "PABLO CASTRILLO"
+    },
+    {
+      "position": 10,
+      "rider": "MATHIAS VACEK"
+    },
+    {
+      "position": 11,
+      "rider": "MICHAEL MATTHEWS"
+    },
+    {
+      "position": 12,
+      "rider": "ALEXANDRE DELETTRE"
+    },
+    {
+      "position": 13,
+      "rider": "VLAD VAN MECHELEN"
+    },
+    {
+      "position": 14,
+      "rider": "JASPER STUYVEN"
+    },
+    {
+      "position": 15,
+      "rider": "ALEX MOLENAAR"
+    },
+    {
+      "position": 16,
+      "rider": "FRANK VAN DEN BROEK"
+    },
+    {
+      "position": 17,
+      "rider": "GEORG ZIMMERMANN"
+    },
+    {
+      "position": 18,
+      "rider": "QUINTEN HERMANS"
+    },
+    {
+      "position": 19,
+      "rider": "JOEL NICOLAU"
+    },
+    {
+      "position": 20,
+      "rider": "ION IZAGIRRE"
+    }
+  ],
+  "jerseys": {
+    "yellow": "TORSTEIN TRÆEN",
+    "green": "MADS PEDERSEN",
+    "polka_dot": "ALEX BAUDIN",
+    "white": "MATHIAS VACEK"
+  },
+  "combativity": "PABLO CASTRILLO",
+  "dagploeg": "LIDL-TREK"
+}

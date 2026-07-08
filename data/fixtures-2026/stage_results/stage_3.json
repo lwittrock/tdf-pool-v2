@@ -1,0 +1,93 @@
+{
+  "stage_number": 3,
+  "top_20": [
+    {
+      "position": 1,
+      "rider": "TADEJ POGACAR"
+    },
+    {
+      "position": 2,
+      "rider": "JONAS VINGEGAARD"
+    },
+    {
+      "position": 3,
+      "rider": "RICHARD CARAPAZ"
+    },
+    {
+      "position": 4,
+      "rider": "PAUL SEIXAS"
+    },
+    {
+      "position": 5,
+      "rider": "TOBIAS JOHANNESSEN"
+    },
+    {
+      "position": 6,
+      "rider": "LENNERT VAN EETVELT"
+    },
+    {
+      "position": 7,
+      "rider": "FLORIAN LIPOWITZ"
+    },
+    {
+      "position": 8,
+      "rider": "REMCO EVENEPOEL"
+    },
+    {
+      "position": 9,
+      "rider": "ISAAC DEL TORO"
+    },
+    {
+      "position": 10,
+      "rider": "JUAN AYUSO"
+    },
+    {
+      "position": 11,
+      "rider": "MATTIAS SKJELMOSE"
+    },
+    {
+      "position": 12,
+      "rider": "ILAN VAN WILDER"
+    },
+    {
+      "position": 13,
+      "rider": "LENNY MARTINEZ"
+    },
+    {
+      "position": 14,
+      "rider": "JORDAN JEGAT"
+    },
+    {
+      "position": 15,
+      "rider": "SERGIO HIGUITA"
+    },
+    {
+      "position": 16,
+      "rider": "TOM PIDCOCK"
+    },
+    {
+      "position": 17,
+      "rider": "EGAN BERNAL"
+    },
+    {
+      "position": 18,
+      "rider": "TIESJ BENOOT"
+    },
+    {
+      "position": 19,
+      "rider": "THYMEN ARENSMAN"
+    },
+    {
+      "position": 20,
+      "rider": "DAVIDE PIGANZOLI"
+    }
+  ],
+  "jerseys": {
+    "yellow": "TADEJ POGACAR",
+    "green": "TADEJ POGACAR",
+    "polka_dot": "ALEX BAUDIN",
+    "white": "ISAAC DEL TORO"
+  },
+  "combativity": "ALEX BAUDIN",
+  "dagploeg": "UAE TEAM EMIRATES XRG"
+}

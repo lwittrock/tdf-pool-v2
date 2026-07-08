@@ -1,0 +1,2434 @@
+[
+  {
+    "id": "P001",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MATHIEU VAN DER POEL",
+      "JUAN AYUSO",
+      "MADS PEDERSEN",
+      "THYMEN ARENSMAN",
+      "FLORIAN LIPOWITZ"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P002",
+    "directie": "DJZ",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Paul Seixas",
+      "ISAAC DEL TORO",
+      "Felix Grossschartner",
+      "Mattias Skjelmose",
+      "John Degenkolb",
+      "ION IZAGIRRE",
+      "EGAN BERNAL",
+      "BINIAM GIRMAY"
+    ],
+    "reserve": "XABIER AZPARREN IRURZUN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P003",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "Jonas Vingegaard",
+      "Jasper Philipsen",
+      "Tim Merlier",
+      "Isaac del Toro",
+      "Dylan van Baarle",
+      "Remco Evenepoel",
+      "Richard Carapaz",
+      "Lenny Martinez",
+      "Mathieu van der Poel"
+    ],
+    "reserve": "Juan Ayuso",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P004",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "ISAAC DEL TORO",
+      "TIM MERLIER",
+      "JONAS VINGEGAARD",
+      "OLAV KOOIJ",
+      "MATHIEU VAN DER POEL",
+      "THYMEN ARENSMAN",
+      "MAXIM VAN GILS",
+      "LENNY MARTINEZ",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "REMCO EVENEPOEL",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P005",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "ISAAC DEL TORO",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "OSCAR ONLEY",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P006",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "ISAAC DEL TORO",
+      "MATHIEU VAN DER POEL",
+      "OLAV KOOIJ",
+      "PAUL SEIXAS",
+      "WOUT VAN AERT",
+      "REMCO EVENEPOEL"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P007",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "BINIAM GIRMAY",
+      "DORIAN GODON",
+      "JUAN AYUSO",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "OLAV KOOIJ",
+    "reserve_active": false,
+    "ploeg": "RED BULL - BORA - HANSGROHE"
+  },
+  {
+    "id": "P008",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Paul Seixas",
+      "Isaac del Toro",
+      "Florian Lipowitz",
+      "Tim Merlier",
+      "Jasper Philipsen",
+      "Olav Kooij",
+      "Mads Pedersen",
+      "Remco Evenepoel"
+    ],
+    "reserve": "Juan Ayuso",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P009",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "Dorian Godon",
+      "Richard Carapaz",
+      "Olav Kooij",
+      "Jasper Philipsen",
+      "Florian Lipowitz",
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Paul Seixas",
+      "Isaac del Toro",
+      "Mads Pedersen"
+    ],
+    "reserve": "TOBIAS JOHANNESSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P010",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "JUAN AYUSO",
+      "ISAAC DEL TORO",
+      "OLAV KOOIJ",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN",
+      "TADEJ POGACAR",
+      "PAUL SEIXAS",
+      "KÉVIN VAUQUELIN",
+      "JONAS VINGEGAARD"
+    ],
+    "reserve": "REMCO EVENEPOEL",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P011",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "PAUL SEIXAS",
+      "MATHIAS VACEK",
+      "ISAAC DEL TORO",
+      "MADS PEDERSEN",
+      "JUAN AYUSO",
+      "MATHIEU VAN DER POEL",
+      "TIM MERLIER"
+    ],
+    "reserve": "JASPER PHILIPSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P012",
+    "directie": "DTE",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Biniam Girmay",
+      "Tim Merlier",
+      "Jasper Philipsen",
+      "Mathieu van der Poel",
+      "Mads Pedersen",
+      "Paul Seixas",
+      "Florian Lipowitz"
+    ],
+    "reserve": "Mattias Skjelmose",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P013",
+    "directie": "DTE",
+    "riders": [
+      "Tadej Pogacar",
+      "Remco Evenepoel",
+      "JONAS VINGEGAARD",
+      "Paul Seixas",
+      "Jasper Philipsen",
+      "Mathieu van der Poel",
+      "Richard Carapaz",
+      "Tom Pidcock",
+      "THYMEN ARENSMAN",
+      "Tim Merlier"
+    ],
+    "reserve": "Isaac Del Toro",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P014",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "ROMAIN GREGOIRE",
+      "LENNY MARTINEZ",
+      "TADEJ POGACAR",
+      "REMCO EVENEPOEL",
+      "JONAS VINGEGAARD",
+      "JASPER PHILIPSEN",
+      "MATHIEU VAN DER POEL",
+      "OLAV KOOIJ",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS"
+    ],
+    "reserve": "ISAAC DEL TORO",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P015",
+    "directie": "BBC",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "RICHARD CARAPAZ",
+      "OLAV KOOIJ"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P016",
+    "directie": "DM",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Paul Seixas",
+      "Jasper Philipsen",
+      "Tim Merlier",
+      "Mads Pedersen",
+      "Olav Kooij",
+      "Isaac del Toro",
+      "Lenny Martinez"
+    ],
+    "reserve": "Richard Carapaz",
+    "reserve_active": false,
+    "ploeg": "RED BULL - BORA - HANSGROHE"
+  },
+  {
+    "id": "P017",
+    "directie": "DTE",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Richard Carapaz",
+      "Ben O'Connor",
+      "Lenny Martinez",
+      "Thymen Arensman",
+      "Jasper Philipsen",
+      "Olav Kooij",
+      "Tim Merlier"
+    ],
+    "reserve": "Mads Pedersen",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P018",
+    "directie": "DTE",
+    "riders": [
+      "Tadej Pogacar",
+      "Remco Evenepoel",
+      "Paul Seixas",
+      "Jonas Vingegaard",
+      "Jasper Philipsen",
+      "Mathieu van der Poel",
+      "Tim Merlier",
+      "Olav Kooij",
+      "Quinn Simmons",
+      "Jonas Abrahamsen"
+    ],
+    "reserve": "Sepp Kuss",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P019",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "Mathieu van der Poel",
+      "TADEJ POGACAR",
+      "Remco Evenepoel",
+      "Tim Merlier",
+      "THYMEN ARENSMAN",
+      "Tom Pidcock",
+      "Jonas Vingegaard",
+      "Mads Pedersen",
+      "Jasper Philipsen",
+      "Paul Seixas"
+    ],
+    "reserve": "Florian Lipowitz",
+    "reserve_active": false,
+    "ploeg": "NETCOMPANY INEOS CYCLING TEAM"
+  },
+  {
+    "id": "P020",
+    "directie": "DTVP",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "JASPER PHILIPSEN",
+      "RICHARD CARAPAZ",
+      "THYMEN ARENSMAN",
+      "REMCO EVENEPOEL",
+      "MATTEO JORGENSON",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS"
+    ],
+    "reserve": "MADS PEDERSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P021",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "BINIAM GIRMAY",
+      "MATTEO JORGENSON",
+      "JONAS VINGEGAARD",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "PAUL SEIXAS",
+      "MATHIEU VAN DER POEL",
+      "TADEJ POGACAR"
+    ],
+    "reserve": "TOM PIDCOCK",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P022",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "LENNY MARTINEZ",
+      "RICHARD CARAPAZ",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ",
+      "BINIAM GIRMAY"
+    ],
+    "reserve": "ISAAC DEL TORO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P023",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "ISAAC DEL TORO",
+      "JONAS VINGEGAARD",
+      "FLORIAN LIPOWITZ",
+      "OLAV KOOIJ",
+      "DEREK JAMES GEE",
+      "PAUL SEIXAS",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "BINIAM GIRMAY"
+    ],
+    "reserve": "MICHAEL STORER",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P024",
+    "directie": "Dte",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ",
+      "MADS PEDERSEN",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P025",
+    "directie": "DTe",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "FLORIAN LIPOWITZ",
+      "MADS PEDERSEN",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P026",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "Jonas Vingegaard",
+      "Mathieu van der Poel",
+      "Tim Merlier",
+      "Jasper Philipsen",
+      "Olav Kooij",
+      "Biniam Girmay",
+      "Mads Pedersen",
+      "Jonathan Milan",
+      "Wout van Aert"
+    ],
+    "reserve": "Florian Lipowitz",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P027",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "FLORIAN LIPOWITZ",
+      "TIM MERLIER",
+      "MATHIEU VAN DER POEL",
+      "REMCO EVENEPOEL",
+      "JUAN AYUSO",
+      "LENNY MARTINEZ",
+      "JASPER PHILIPSEN",
+      "PAUL SEIXAS"
+    ],
+    "reserve": "THYMEN ARENSMAN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P028",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MATHIAS VACEK"
+    ],
+    "reserve": "RICHARD CARAPAZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P029",
+    "directie": "BBC",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "FLORIAN LIPOWITZ",
+      "RICHARD CARAPAZ",
+      "PAUL SEIXAS",
+      "MATHIEU VAN DER POEL",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P030",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P031",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "MADS PEDERSEN"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P032",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "RICHARD CARAPAZ",
+      "MADS PEDERSEN"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P033",
+    "name": "lars wittrock",
+    "directie": "EB",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "FLORIAN LIPOWITZ",
+      "LENNY MARTINEZ",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "MATHIAS VACEK"
+    ],
+    "reserve": "BEN HEALY",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P034",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "FLORIAN LIPOWITZ",
+      "REMCO EVENEPOEL",
+      "MATHIEU VAN DER POEL",
+      "PAUL SEIXAS",
+      "OLAV KOOIJ",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "JUAN AYUSO"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P035",
+    "directie": "DC",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Paul Seixas",
+      "Thymen Arensman",
+      "Jasper Philipsen",
+      "Tim Merlier",
+      "Olav Kooij",
+      "Mathieu van der Poel",
+      "Florian Lipowitz",
+      "Ben Healy"
+    ],
+    "reserve": null,
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P036",
+    "directie": "DTE",
+    "riders": [
+      "REMCO EVENEPOEL",
+      "TADEJ POGACAR",
+      "PAUL SEIXAS",
+      "JONAS VINGEGAARD",
+      "TOM PIDCOCK",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MATHIEU VAN DER POEL",
+      "MILAN FRETIN",
+      "MADS PEDERSEN"
+    ],
+    "reserve": "OLAV KOOIJ",
+    "reserve_active": false,
+    "ploeg": "COFIDIS"
+  },
+  {
+    "id": "P037",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "MATHIEU VAN DER POEL",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "BINIAM GIRMAY",
+      "FLORIAN LIPOWITZ",
+      "MATTEO JORGENSON",
+      "JOAO ALMEIDA"
+    ],
+    "reserve": "BEN HEALY",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P038",
+    "directie": "DTE",
+    "riders": [
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR",
+      "MATHIEU VAN DER POEL",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "LENNY MARTINEZ",
+      "BRANDON MCNULTY",
+      "MATTEO TRENTIN",
+      "SEPP KUSS",
+      "JASPER PHILIPSEN"
+    ],
+    "reserve": "ROMAIN GREGOIRE",
+    "reserve_active": false,
+    "ploeg": "PINARELLO-Q36.5 PRO CYCLING TEAM"
+  },
+  {
+    "id": "P039",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ",
+      "BEN HEALY",
+      "TOM PIDCOCK"
+    ],
+    "reserve": "MADS PEDERSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P040",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "TIM MERLIER",
+      "REMCO EVENEPOEL",
+      "BEN HEALY",
+      "TOM PIDCOCK",
+      "MATTEO TRENTIN",
+      "ANTONIO TIBERI",
+      "DAVIDE BALLERINI",
+      "DAMIANO CARUSO"
+    ],
+    "reserve": "DAVIDE PIGANZOLI",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P041",
+    "directie": "DC",
+    "riders": [
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "ISAAC DEL TORO",
+      "LENNY MARTINEZ",
+      "RICHARD CARAPAZ",
+      "JUAN AYUSO"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P042",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "ROMAIN GREGOIRE",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "BEN O'CONNOR",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P043",
+    "directie": "EB",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Isaac del Toro",
+      "Paul Seixas",
+      "Florian Lipowitz",
+      "Remco Evenepoel",
+      "Juan Ayuso",
+      "JASPER PHILIPSEN",
+      "Tim Merlier",
+      "Mads Pedersen"
+    ],
+    "reserve": "TOBIAS JOHANNESSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P044",
+    "directie": "Directie i-Domein",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "TIM MERLIER",
+      "BINIAM GIRMAY",
+      "MADS PEDERSEN"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P045",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "MATHIEU VAN DER POEL",
+      "JUAN AYUSO",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "FLORIAN LIPOWITZ",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ"
+    ],
+    "reserve": "JAI HINDLEY",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P046",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "FLORIAN LIPOWITZ",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "BINIAM GIRMAY"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P047",
+    "directie": "DM",
+    "riders": [
+      "PAUL SEIXAS",
+      "ROBBE DHONDT",
+      "VLAD VAN MECHELEN",
+      "JOSHUA TARLING",
+      "ISAAC DEL TORO",
+      "LENNY MARTINEZ",
+      "PER STRAND HAGENES",
+      "CIAN UIJTDEBROEKS",
+      "ROMAIN GREGOIRE",
+      "EWEN COSTIOU"
+    ],
+    "reserve": "DAMIANO CARUSO",
+    "reserve_active": false,
+    "ploeg": "TUDOR PRO CYCLING TEAM"
+  },
+  {
+    "id": "P048",
+    "directie": "DC",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Florian Lipowitz",
+      "Juan Ayuso",
+      "Adam Yates",
+      "Sepp Kuss",
+      "Jasper Philipsen",
+      "Mads Pedersen",
+      "Mathieu van der Poel"
+    ],
+    "reserve": "Biniam Girmay",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P049",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "Remco Evenepoel",
+      "Jasper Philipsen",
+      "Tim Merlier",
+      "Olav Kooij",
+      "Mathieu van der Poel",
+      "Mads Pedersen",
+      "Biniam Girmay",
+      "Richard Carapaz"
+    ],
+    "reserve": "Paul Seixas",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P050",
+    "directie": "DC",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "FLORIAN LIPOWITZ",
+      "JUAN AYUSO",
+      "LENNY MARTINEZ",
+      "RICHARD CARAPAZ",
+      "BINIAM GIRMAY",
+      "ANTHONY TURGIS",
+      "REMCO EVENEPOEL",
+      "SIMON YATES"
+    ],
+    "reserve": "ISAAC DEL TORO",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P051",
+    "directie": "DM",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Paul Seixas",
+      "Tim Merlier",
+      "Jasper Philipsen",
+      "Richard Carapaz",
+      "Thymen Arensman",
+      "Biniam Girmay",
+      "Mads Pedersen"
+    ],
+    "reserve": "Mattias Skjelmose",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P052",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "MATHIEU VAN DER POEL",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "BINIAM GIRMAY",
+      "MADS PEDERSEN",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P053",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "JUAN AYUSO",
+      "BINIAM GIRMAY",
+      "ROMAIN GREGOIRE",
+      "ISAAC DEL TORO"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P054",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "MATHIEU VAN DER POEL",
+      "MADS PEDERSEN",
+      "WOUT VAN AERT",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "JASPER PHILIPSEN"
+    ],
+    "reserve": "TOM PIDCOCK",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P055",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "MATHIEU VAN DER POEL",
+      "FLORIAN LIPOWITZ",
+      "MADS PEDERSEN",
+      "MATTEO JORGENSON",
+      "JASPER PHILIPSEN",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO"
+    ],
+    "reserve": "BEN O'CONNOR",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P056",
+    "directie": "EB",
+    "riders": [
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "LENNY MARTINEZ",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "DEREK JAMES GEE",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P057",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "LENNY MARTINEZ",
+      "RICHARD CARAPAZ",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P058",
+    "directie": "EB",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "MATHIEU VAN DER POEL",
+      "BINIAM GIRMAY",
+      "PAUL SEIXAS",
+      "JUAN AYUSO",
+      "ISAAC DEL TORO"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P059",
+    "directie": "DTE",
+    "riders": [
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR",
+      "MATHIEU VAN DER POEL",
+      "RICHARD CARAPAZ",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "VALENTIN PARET PEINTRE",
+      "THYMEN ARENSMAN"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P060",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MICHAEL MATTHEWS",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "OLAV KOOIJ",
+      "MATHIEU VAN DER POEL",
+      "LENNY MARTINEZ",
+      "KÉVIN VAUQUELIN"
+    ],
+    "reserve": "ISAAC DEL TORO",
+    "reserve_active": false,
+    "ploeg": "NETCOMPANY INEOS CYCLING TEAM"
+  },
+  {
+    "id": "P061",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "MATHIEU VAN DER POEL",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "BINIAM GIRMAY",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P062",
+    "directie": "DJZ",
+    "riders": [
+      "Mathieu van der Poel",
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Jasper Philipsen",
+      "Biniam Girmay",
+      "Mads Pedersen",
+      "Filippo Ganna",
+      "Ben Healy",
+      "Paul Seixas"
+    ],
+    "reserve": "ROMAIN GREGOIRE",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P063",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "LENNY MARTINEZ",
+      "ISAAC DEL TORO",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "THYMEN ARENSMAN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P064",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "ISAAC DEL TORO",
+      "JUAN AYUSO",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "OLAV KOOIJ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P065",
+    "directie": "DI",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "JASPER PHILIPSEN",
+      "BINIAM GIRMAY",
+      "OLAV KOOIJ",
+      "RICHARD CARAPAZ",
+      "SEPP KUSS",
+      "MATHIEU VAN DER POEL",
+      "ISAAC DEL TORO",
+      "MAX KANTER"
+    ],
+    "reserve": "SOREN WAERENSKJOLD",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P066",
+    "directie": "DJZ",
+    "riders": [
+      "FLORIAN LIPOWITZ",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "JONAS VINGEGAARD",
+      "JUAN AYUSO",
+      "MADS PEDERSEN",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "TADEJ POGACAR",
+      "TIM MERLIER"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P067",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "FLORIAN LIPOWITZ",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "RICHARD CARAPAZ",
+      "JUAN AYUSO",
+      "JASPER PHILIPSEN",
+      "WOUT VAN AERT"
+    ],
+    "reserve": "MATHIEU VAN DER POEL",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P068",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "LENNY MARTINEZ",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "THYMEN ARENSMAN",
+      "JUAN AYUSO",
+      "MADS PEDERSEN",
+      "BINIAM GIRMAY",
+      "ISAAC DEL TORO"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P069",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "ISAAC DEL TORO",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "RICHARD CARAPAZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P070",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "MATHIEU VAN DER POEL",
+      "JASPER PHILIPSEN",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "BINIAM GIRMAY",
+      "MADS PEDERSEN",
+      "SEPP KUSS"
+    ],
+    "reserve": "PAUL SEIXAS",
+    "reserve_active": false,
+    "ploeg": "RED BULL - BORA - HANSGROHE"
+  },
+  {
+    "id": "P071",
+    "directie": "DtE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "ALPECIN-PREMIER TECH"
+  },
+  {
+    "id": "P072",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Paul Seixas",
+      "Tim Merlier",
+      "Jasper Philipsen",
+      "Mads Pedersen",
+      "Olav Kooij",
+      "Isaac del Toro",
+      "Richard Carapaz",
+      "Mathieu van der Poel"
+    ],
+    "reserve": "TOBIAS JOHANNESSEN",
+    "reserve_active": false,
+    "ploeg": "DECATHLON CMA CGM TEAM"
+  },
+  {
+    "id": "P073",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "JASPER PHILIPSEN",
+      "REMCO EVENEPOEL",
+      "JONATHAN MILAN",
+      "BEN HEALY",
+      "TIM MERLIER",
+      "BINIAM GIRMAY",
+      "THYMEN ARENSMAN"
+    ],
+    "reserve": "PAUL SEIXAS",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P074",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "JUAN AYUSO"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P075",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "REMCO EVENEPOEL",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "MATHIEU VAN DER POEL",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN",
+      "BEN HEALY",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "JONAS VINGEGAARD",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P076",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "OLAV KOOIJ",
+      "JONAS VINGEGAARD",
+      "TIM MERLIER",
+      "FLORIAN LIPOWITZ",
+      "TADEJ POGACAR",
+      "MADS PEDERSEN",
+      "LENNERT VAN EETVELT",
+      "JUAN AYUSO"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P077",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ",
+      "MADS PEDERSEN",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P078",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "BINIAM GIRMAY"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P079",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "Jonas Vingegaard",
+      "Florian Lipowitz",
+      "Paul Seixas",
+      "Isaac Del Toro",
+      "Mads Pedersen",
+      "Jasper Philipsen",
+      "Tim Merlier",
+      "Olav Kooij",
+      "Lenny Martinez"
+    ],
+    "reserve": "Juan Ayuso",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P080",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "RICHARD CARAPAZ",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "BINIAM GIRMAY",
+      "TIM MERLIER",
+      "JUAN AYUSO",
+      "FLORIAN LIPOWITZ"
+    ],
+    "reserve": "REMCO EVENEPOEL",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P081",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JASPER PHILIPSEN",
+      "JONAS VINGEGAARD",
+      "TIM MERLIER",
+      "MATHIEU VAN DER POEL",
+      "MADS PEDERSEN",
+      "WOUT VAN AERT",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "BEN HEALY"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P082",
+    "directie": "DJZ",
+    "riders": [
+      "Jonas Vingegaard",
+      "Tadej Pogacar",
+      "Paul Seixas",
+      "Remco Evenepoel",
+      "Tim Merlier",
+      "Jasper Philipsen",
+      "Mathieu van der Poel",
+      "Filippo Ganna",
+      "Ben Healy",
+      "Olav Kooij"
+    ],
+    "reserve": "Mads Pedersen",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P083",
+    "directie": "DTE",
+    "riders": [
+      "Jonas Vingegaard",
+      "Tadej Pogacar",
+      "Paul Seixas",
+      "Florian Lipowitz",
+      "Remco Evenepoel",
+      "Tim Merlier",
+      "Jasper Philipsen",
+      "Olav Kooij",
+      "Mads Pedersen",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "Thymen Arensman",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P084",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "ISAAC DEL TORO",
+      "FLORIAN LIPOWITZ"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P085",
+    "directie": "DJZ",
+    "riders": [
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "FLORIAN LIPOWITZ",
+      "MATHIAS VACEK",
+      "MATHIEU VAN DER POEL",
+      "REMCO EVENEPOEL",
+      "SIMON YATES"
+    ],
+    "reserve": "BEN HEALY",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P086",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MATTEO JORGENSON",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "JUAN AYUSO",
+      "FLORIAN LIPOWITZ"
+    ],
+    "reserve": "TIM MERLIER",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P087",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "JUAN AYUSO"
+    ],
+    "reserve": "ADAM YATES",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P088",
+    "directie": "EB",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Isaac del Toro",
+      "Paul Seixas",
+      "Richard Carapaz",
+      "Thymen Arensman",
+      "Jai Hindley",
+      "Mathieu van der Poel",
+      "Remco Evenepoel",
+      "Tim Merlier"
+    ],
+    "reserve": "Davide Piganzoli",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P089",
+    "directie": "DJZ",
+    "riders": [
+      "Thymen Arensman",
+      "Dylan van Baarle",
+      "Frank van den Broek",
+      "Tim van Dijke",
+      "Olav Kooij",
+      "Alex Molenaar",
+      "Mathieu van der Poel",
+      "Rick Pluimers",
+      "Mike Teunissen",
+      "Huub Artz"
+    ],
+    "reserve": "Daan Hoole",
+    "reserve_active": false,
+    "ploeg": "TEAM PICNIC POSTNL"
+  },
+  {
+    "id": "P090",
+    "directie": "TDA",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "BINIAM GIRMAY",
+      "JUAN AYUSO",
+      "TIM MERLIER",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "PAUL SEIXAS",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P091",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "TOBIAS JOHANNESSEN",
+      "Mathieu van der Poel",
+      "Jasper Philipsen",
+      "Biniam Girmay",
+      "Isaac del Toro",
+      "Tom Pidcock",
+      "Florian Lipowitz",
+      "Tim Merlier"
+    ],
+    "reserve": "Remco Evenepoel",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P092",
+    "directie": "BBC",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "BINIAM GIRMAY",
+      "FLORIAN LIPOWITZ",
+      "TOBIAS JOHANNESSEN",
+      "OSCAR ONLEY",
+      "BEN HEALY",
+      "MATTEO JORGENSON"
+    ],
+    "reserve": "JORDAN JEGAT",
+    "reserve_active": true,
+    "ploeg": "RED BULL - BORA - HANSGROHE"
+  },
+  {
+    "id": "P093",
+    "directie": "DtE",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Isaac Del Toro",
+      "Florian Lipowitz",
+      "Jasper Philipsen",
+      "Tim Merlier",
+      "Olav Kooij",
+      "Mads Pedersen",
+      "Paul Seixas"
+    ],
+    "reserve": "Maxim Van Gils",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P094",
+    "directie": "EB",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "ARNAUD DE LIE",
+      "PAUL SEIXAS",
+      "RICHARD CARAPAZ",
+      "MATHIAS VACEK"
+    ],
+    "reserve": "BEN HEALY",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P095",
+    "directie": "BBC",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Remco Evenepoel",
+      "Isaac del Toro",
+      "Juan Ayuso",
+      "Paul Seixas",
+      "Jasper Philipsen",
+      "Mathieu van der Poel",
+      "Lenny Martinez",
+      "Ben Healy"
+    ],
+    "reserve": "Florian Lipowitz",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P096",
+    "directie": "DI",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "THYMEN ARENSMAN",
+      "ISAAC DEL TORO",
+      "MADS PEDERSEN",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "JUAN AYUSO",
+      "HAROLD TEJADA"
+    ],
+    "reserve": "ADAM YATES",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P097",
+    "directie": "DI",
+    "riders": [
+      "THYMEN ARENSMAN",
+      "Max Kanter",
+      "Mathieu van der Poel",
+      "Jasper Philipsen",
+      "Remco Evenepoel",
+      "Tadej Pogacar",
+      "JONAS VINGEGAARD",
+      "Ben Healy",
+      "Mattias Skjelmose",
+      "Matteo Jorgenson"
+    ],
+    "reserve": "Paul Seixas",
+    "reserve_active": false,
+    "ploeg": "NETCOMPANY INEOS CYCLING TEAM"
+  },
+  {
+    "id": "P098",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "MATHIEU VAN DER POEL",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "ADAM YATES",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P099",
+    "directie": "DC",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "JUAN AYUSO",
+      "ISAAC DEL TORO",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN",
+      "FLORIAN LIPOWITZ",
+      "MATHIEU VAN DER POEL",
+      "TIM MERLIER",
+      "REMCO EVENEPOEL"
+    ],
+    "reserve": "PAUL SEIXAS",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P100",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "JUAN AYUSO",
+      "REMCO EVENEPOEL"
+    ],
+    "reserve": "TOBIAS JOHANNESSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P101",
+    "directie": "TDA",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "MATHIEU VAN DER POEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MADS PEDERSEN",
+      "PAUL SEIXAS",
+      "BINIAM GIRMAY",
+      "MATTEO JORGENSON"
+    ],
+    "reserve": "ISAAC DEL TORO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P102",
+    "directie": "DJZ",
+    "riders": [
+      "KÉVIN VAUQUELIN",
+      "FELIX GALL",
+      "OSCAR ONLEY",
+      "THYMEN ARENSMAN",
+      "WOUT VAN AERT",
+      "SIMON YATES",
+      "PRIMOZ ROGLIC",
+      "FLORIAN LIPOWITZ",
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR"
+    ],
+    "reserve": "GERAINT THOMAS",
+    "reserve_active": false,
+    "ploeg": "RED BULL - BORA - HANSGROHE"
+  },
+  {
+    "id": "P103",
+    "directie": "DI",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "MADS PEDERSEN",
+      "MATHIEU VAN DER POEL",
+      "FLORIAN LIPOWITZ",
+      "BEN HEALY",
+      "RICHARD CARAPAZ"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P104",
+    "directie": "DBV",
+    "riders": [
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR",
+      "FLORIAN LIPOWITZ",
+      "JASPER PHILIPSEN",
+      "MATHIEU VAN DER POEL",
+      "THYMEN ARENSMAN",
+      "TIM WELLENS",
+      "RICHARD CARAPAZ",
+      "MADS PEDERSEN",
+      "REMCO EVENEPOEL"
+    ],
+    "reserve": "JOAO ALMEIDA",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P105",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "TIM MERLIER",
+      "JUAN AYUSO",
+      "ISAAC DEL TORO"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P106",
+    "directie": "DC",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "MATHIEU VAN DER POEL",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P107",
+    "directie": "DC",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "THYMEN ARENSMAN",
+      "JASPER PHILIPSEN",
+      "MATHIEU VAN DER POEL",
+      "TIM MERLIER",
+      "FLORIAN LIPOWITZ",
+      "JUAN AYUSO",
+      "ISAAC DEL TORO"
+    ],
+    "reserve": "MADS PEDERSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P108",
+    "directie": "DTVP",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "ISAAC DEL TORO",
+      "TOBIAS JOHANNESSEN",
+      "JUAN AYUSO",
+      "PAUL SEIXAS",
+      "OLAV KOOIJ",
+      "JASPER PHILIPSEN"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P109",
+    "directie": "BBC",
+    "riders": [
+      "Jasper Philipsen",
+      "Mads Pedersen",
+      "Olav Kooij",
+      "Ben Healy",
+      "Giulio Pellizzari",
+      "Antonio Tiberi",
+      "Remco Evenepoel",
+      "TADEJ POGACAR",
+      "Jonas Vingegaard",
+      "JOAO ALMEIDA"
+    ],
+    "reserve": "Richard Carapaz",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P110",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "MATHIEU VAN DER POEL",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "JUAN AYUSO",
+      "MADS PEDERSEN"
+    ],
+    "reserve": "ADAM YATES",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P111",
+    "directie": "DTVP",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "TOM PIDCOCK",
+      "JASPER PHILIPSEN",
+      "PAUL SEIXAS",
+      "MATHIEU VAN DER POEL",
+      "FLORIAN LIPOWITZ",
+      "OLAV KOOIJ"
+    ],
+    "reserve": "TIM MERLIER",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P112",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "JASPER PHILIPSEN",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "MATHIEU VAN DER POEL",
+      "LENNY MARTINEZ",
+      "MADS PEDERSEN"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "RED BULL - BORA - HANSGROHE"
+  },
+  {
+    "id": "P113",
+    "directie": "DTE",
+    "riders": [
+      "Tadej Pogacar",
+      "Jonas Vingegaard",
+      "Paul Seixas",
+      "Mads Pedersen",
+      "Jasper Philipsen",
+      "TOBIAS JOHANNESSEN",
+      "Juan Ayuso",
+      "Isaac del Toro",
+      "Remco Evenepoel",
+      "Florian Lipowitz"
+    ],
+    "reserve": "Ben Healy",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P114",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "REMCO EVENEPOEL",
+      "BEN HEALY",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "FLORIAN LIPOWITZ",
+      "RICHARD CARAPAZ",
+      "MATHIEU VAN DER POEL",
+      "TIM MERLIER"
+    ],
+    "reserve": "MATTEO JORGENSON",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P115",
+    "directie": "DTE",
+    "riders": [
+      "REMCO EVENEPOEL",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "TADEJ POGACAR",
+      "PELLO BILBAO",
+      "MATTIAS SKJELMOSE",
+      "MATHIEU VAN DER POEL",
+      "FILIPPO GANNA",
+      "JASPER PHILIPSEN"
+    ],
+    "reserve": "TIM MERLIER",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P116",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "BINIAM GIRMAY",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "JUAN AYUSO",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P117",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "TIM MERLIER",
+      "JONAS VINGEGAARD",
+      "MATHIEU VAN DER POEL",
+      "REMCO EVENEPOEL",
+      "MADS PEDERSEN",
+      "JUAN AYUSO",
+      "BINIAM GIRMAY"
+    ],
+    "reserve": "KADEN GROVES",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P118",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "MATHIEU VAN DER POEL",
+      "ISAAC DEL TORO",
+      "REMCO EVENEPOEL",
+      "FLORIAN LIPOWITZ"
+    ],
+    "reserve": "PAUL SEIXAS",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P119",
+    "directie": "DM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "MATHIEU VAN DER POEL",
+      "TOM PIDCOCK"
+    ],
+    "reserve": "MATTIAS SKJELMOSE",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P120",
+    "directie": "DTVP",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "JUAN AYUSO",
+      "ISAAC DEL TORO",
+      "JASPER PHILIPSEN",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": false,
+    "ploeg": "RED BULL - BORA - HANSGROHE"
+  },
+  {
+    "id": "P121",
+    "directie": "DTVP",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "OLAV KOOIJ",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "JUAN AYUSO",
+      "ISAAC DEL TORO",
+      "MATHIEU VAN DER POEL"
+    ],
+    "reserve": "REMCO EVENEPOEL",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P122",
+    "directie": "BBC",
+    "riders": [
+      "MATHIEU VAN DER POEL",
+      "PAUL SEIXAS",
+      "REMCO EVENEPOEL",
+      "JONAS VINGEGAARD",
+      "TADEJ POGACAR",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "JUAN AYUSO",
+      "FLORIAN LIPOWITZ"
+    ],
+    "reserve": "TOBIAS JOHANNESSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P123",
+    "directie": "BBC",
+    "riders": [
+      "Tadej Pogacar",
+      "Ben Healy",
+      "Paul Seixas",
+      "Biniam Girmay",
+      "Mads Pedersen",
+      "Joao Almeida",
+      "Remco Evenepoel",
+      "Florian Lipowitz",
+      "Jonas Vingegaard",
+      "Jasper Philipsen"
+    ],
+    "reserve": "Oscar Onley",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P124",
+    "directie": "DTE",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "JASPER PHILIPSEN",
+      "MATHIEU VAN DER POEL",
+      "FLORIAN LIPOWITZ",
+      "PAUL SEIXAS",
+      "BINIAM GIRMAY",
+      "BEN O'CONNOR",
+      "CIAN UIJTDEBROEKS",
+      "JORDI MEEUS"
+    ],
+    "reserve": "LENNY MARTINEZ",
+    "reserve_active": true,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P125",
+    "directie": "EB",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "MADS PEDERSEN",
+      "TIM MERLIER",
+      "JASPER PHILIPSEN",
+      "OLAV KOOIJ",
+      "PAUL SEIXAS",
+      "MATHIEU VAN DER POEL",
+      "RiCHARD CARAPAZ"
+    ],
+    "reserve": "FLORIAN LIPOWITZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P126",
+    "directie": "Vrienden van en buiten de ACM",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "MATHIEU VAN DER POEL",
+      "ISAAC DEL TORO",
+      "TOM PIDCOCK",
+      "MADS PEDERSEN",
+      "MATTEO JORGENSON",
+      "REMCO EVENEPOEL"
+    ],
+    "reserve": "RICHARD CARAPAZ",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  },
+  {
+    "id": "P127",
+    "directie": "DJZ",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "PAUL SEIXAS",
+      "MATHIEU VAN DER POEL",
+      "JASPER PHILIPSEN",
+      "TIM MERLIER",
+      "REMCO EVENEPOEL",
+      "ISAAC DEL TORO",
+      "ROMAIN GREGOIRE",
+      "JUAN AYUSO"
+    ],
+    "reserve": "TOBIAS JOHANNESSEN",
+    "reserve_active": false,
+    "ploeg": "TEAM VISMA | LEASE A BIKE"
+  },
+  {
+    "id": "P128",
+    "directie": "Consumenten",
+    "riders": [
+      "TADEJ POGACAR",
+      "JONAS VINGEGAARD",
+      "ISAAC DEL TORO",
+      "PAUL SEIXAS",
+      "FLORIAN LIPOWITZ",
+      "REMCO EVENEPOEL",
+      "JUAN AYUSO",
+      "RICHARD CARAPAZ",
+      "MADS PEDERSEN",
+      "JASPER PHILIPSEN"
+    ],
+    "reserve": "TOBIAS HALLAND JOHANNESSEN",
+    "reserve_active": false,
+    "ploeg": "UAE TEAM EMIRATES XRG"
+  }
+]
