@@ -77,7 +77,7 @@ Late in a Tour, one full recompute+regenerate executes on the order of **18,000+
 
 ## Scoring specification — verified against the live 2026 Excel
 
-*Added after analyzing the real poule administration (anonymized export, standings after stage 4 of the 2026 Tour, 137 participants). The repo's rider-level scoring was recomputed against 332 rider-stage cells with **zero mismatches**, and all 137 participants' stage totals recompute exactly — but only after applying three rules the app does not implement yet. This section is the authoritative rule set v2 must reproduce.*
+*Added after analyzing the real poule administration (anonymized export, standings after stage 4 of the 2026 Tour, 128 participants — the export also contains 9 empty spare blocks). The repo's rider-level scoring was recomputed against 332 rider-stage cells with **zero mismatches**, and all 128 participants' stage totals recompute exactly — but only after applying three rules the app does not implement yet. This section is the authoritative rule set v2 must reproduce.*
 
 ### Per stage
 
@@ -116,9 +116,14 @@ Verified formula: participants are grouped per directie; the group score is the 
 
 ### Why this matters beyond correctness
 
-The Excel itself contained a live data-entry defect: in one participant's block the per-rider point values are shifted one row relative to the rider names (totals happen to remain right). That's the failure mode manual spreadsheet administration invites, and exactly what the validated entry flow (F5) eliminates.
+The Excel administration contains live defects of exactly the kind manual spreadsheet bookkeeping invites — and the validated entry flow (F5) eliminates:
 
-**Schema/pipeline impact summary:** add a team pick per participant (column or table) + award Dagploeg points from `stages.winning_team`; add an end-of-Tour bonus entry + scoring pass; change directie aggregation to average-of-top-5-cumulative. Golden test fixtures can be extracted from the 2026 Excel (anonymized, P-coded) so the new engine must reproduce the real standings — planned as a follow-up.
+1. One participant has only **9 riders** (an empty selection slot nobody noticed).
+2. The directieklassement's ranking table shows **280** for the combined group "DI - DBV - iDomein - TDA" while the sheet's own member block — and its own stated formula — compute **400** (a broken cell reference); that group is ranked last incorrectly.
+3. One participant (directie "Consumenten") is **missing from the directieklassement entirely**.
+4. Directie codes are free text: "DTE" appears in four different capitalizations.
+
+**Schema/pipeline impact summary:** add a team pick per participant (column or table) + award Dagploeg points from `stages.winning_team`; add an end-of-Tour bonus entry + scoring pass; change directie aggregation to average-of-top-5-cumulative; make directie a proper reference, not free text. Golden test fixtures extracted from the 2026 Excel (anonymized, P-coded) live in `data/fixtures-2026/` — the new engine must reproduce them exactly (the extraction already does: 128 × 4 stage totals, zero mismatches).
 
 *Privacy note: the "anonymous" Excel export still contains two real participant names and one fully named block on the first sheet — regenerate the anonymization before sharing that file further.*
 
