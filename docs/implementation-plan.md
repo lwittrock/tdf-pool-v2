@@ -9,6 +9,10 @@ background rationale.*
 
 **How to use this document**
 
+0. A third review pass (full code read, July 2026) added the **Round 3 addendum** at the bottom of this
+   file: facts 23–37, corrections R13–R24, questions Q19–Q22, amendments to several WPs, and two
+   changes to the Phase-A execution order. Read it together with the sections it amends — where the
+   addendum contradicts the original text, the addendum wins.
 1. Read *Ground rules* and *Verified system map* first — they are the facts.
 2. Before starting a work package (WP), read its section **and** the open questions it references.
    Questions marked **BLOCKER** must be answered by the owner (Lars) before that WP is implemented;
@@ -465,3 +469,199 @@ output on current rules" plus unit tests, then B1 lands the rule changes against
   review; draft restores after tab kill; concurrency conflict shows the Dutch error; full pipeline
   < 10s at 21 stages; CI green on PR.
 - **Phase C:** fresh-clone season bootstrap via admin UI + docs only; go-live checklist complete.
+
+---
+---
+
+# Round 3 addendum — full code review (July 2026)
+
+*Third pass. The two documents above were verified claim-by-claim and then the entire codebase was
+read file by file looking for what they missed. Everything below is new or corrective; numbering
+continues the existing schemes (facts 23–37, R13–R24, Q19–Q22). File/line references are current as
+of commit `fb9d81c`.*
+
+## New verified facts (23–37)
+
+| # | Fact | Evidence |
+|---|------|----------|
+| 23 | **The entry UI can never enter stage 1.** `EtappeBeheer` feeds its rider autocompletes from the *public snapshot* `riders.json` (`useRiders()`, `EtappeBeheer.tsx:129,135-141`), and `generateRidersJSON` only includes riders with `total_points > 0` (`lib/json-generators.ts:341`). Before any stage is processed the file is empty → zero autocomplete options; after that, any rider who hasn't scored yet is unselectable as finisher/jersey/DNS. The correct source exists — `api/admin/riders-list.ts` returns the full riders table — but **nothing in `src/` or `scripts/` calls it** (grep: 0 hits). Same for `stages-list.ts`, `stage.ts`, `health.ts`: all four routes are dead code today. | as cited |
+| 24 | The same `total_points > 0` filter corrupts the public **Team Selectie** page: a rider picked by half the pool who hasn't scored is absent from the popularity list (`TeamSelectie.tsx:80-94` iterates `ridersData`), and in the "Team van X" view zero-scorers render as `'Onbekend Team'` / 0 pts (`:104-105`) because the lookup misses. | as cited |
+| 25 | **`stage_type` is a dead column being nulled on every save.** The entry form's "Type" select writes `difficulty` (`EtappeBeheer.tsx:750-757`); no input ever sets `stage_type`, so `manual-entry` upserts `stage_type: null` every time (`api/admin/manual-entry.ts:63`). Two overlapping columns, one meaning. |
+| 26 | **Lint and backend typecheck don't exist.** There is no ESLint config anywhere (no `.eslintrc*`, no `eslint.config.*`, no `eslintConfig` in `package.json`) → `npm run lint` errors out immediately. `tsconfig.json` has `"include": ["src"]`, so `npm run build`'s `tsc` checks `src/` plus only the `lib/` modules it transitively imports — **`api/**` and server-only `lib/` (json-generators, api-utils) are typechecked by nothing**, locally or at deploy (Vercel transpiles functions without the repo's strict flags). WP-B9's "lint + typecheck on PR" is currently impossible to wire up as written. |
+| 27 | `README.md` says `cp .env.example .env.local` — **`.env.example` does not exist** (add to the F8/WP-B8 README rewrite list). |
+| 28 | **`lib/` mixes two runtimes.** `lib/constants.ts` imports `lib/config.ts`, which reads `import.meta.env` — Vite-only syntax that crashes under Node. Today no `api/` file happens to import those two modules, so it works *by luck*; one innocent `import { JERSEY_LABELS } from '../../lib/constants'` in an API route would take the endpoint down. Import specifiers are also inconsistent: server files import lib modules both with `.js` extension (`json-generators.ts:16`) and without (`manual-entry.ts:9`) under `"type": "module"`. |
+| 29 | Every `api/` file and `json-generators.ts:34` create a Supabase client **at module scope** with `process.env.X!`. Importing any of these modules in a test without envs set throws at import time — this must be fixed for WP-B9's "pure functions fed with fixture data" to be possible. |
+| 30 | Because of the SPA catch-all rewrite (`vercel.json`), a missing `/data/*.json` returns **200 with `index.html`**, not 404 — `response.ok` passes and `response.json()` throws a `SyntaxError`, so the user-facing error for the F2 breakage is a cryptic JSON parse message rather than "file not found". |
+| 31 | **A shared component library exists and is almost entirely unused.** `src/components/shared/` contains `JerseyIcons`, `CombativityIcon`, `MedalDisplay`, `RankChange`, `StageBreakdown` — but `RennerPunten.tsx:17-44` defines its own duplicate `CombativeIcon`, three pages carry three near-identical inline `getStageJerseys` helpers (`RennerPunten.tsx:102-118`, `TeamSelectie.tsx:120-130`, plus `lib/data-transforms.ts:74-108` which has *two* overlapping versions), and the per-stage breakdown UI is hand-rolled in each page instead of using `StageBreakdown`. Only `RankChange` is actually imported (by Klassement). |
+| 32 | `Klassement.tsx:10-30` declares local `LeaderboardEntry`/`DirectieEntry` interfaces that duplicate-and-drift from `lib/types.ts`, then bridges with `filteredResults as LeaderboardEntry[]` casts; `RennerPunten` maps rows as `rider: any`. The "type-safe throughout" header comments are aspirational. |
+| 33 | `getParticipantMedals` (`lib/data-transforms.ts:159-173`) is called **per table row inside render** and scans every stage's full leaderboard with `.find()` — O(rows × stages × participants) ≈ 350k operations per render at 128×21. Riders get `medal_counts` precomputed in their snapshot; participants don't. |
+| 34 | The `dnf_status` enum includes `OTL` and `DSQ` (`supabase-schema.sql:30`) but no UI, scoring, or substitution path handles them — and OTL/DSQ genuinely happen in real Tours (a missed time cut is functionally a DNF for the pool). `participant_stage_points.stage_rank_change` (`supabase-schema.sql:182`) is never written by any code. |
+| 35 | **Preview deployments share production state.** Vercel env vars, unless explicitly scoped per environment, give preview builds the same `SUPABASE_SERVICE_ROLE_KEY` and `BLOB_READ_WRITE_TOKEN` as production — a stage submitted on a preview URL overwrites the production DB and published snapshots. (Extends R8, which only covered the self-fetch auth page.) |
+| 36 | **TeamSelectie search hijacks the view.** Any search term matching *any* participant name **or directie** flips the whole page from the popularity ranking to "Team van <first match>" (`TeamSelectie.tsx:58-73`, first `.find()` wins) — searching for a *rider* is impossible, and a directie query shows one arbitrary member's team. |
+| 37 | Small but real: `index.html` references favicon `/vite.svg` which isn't in `public/`; routes are case-sensitive capitalized paths (`/Klassement`) with exact-match highlighting; `api/health.ts:44-49` reports "0 riders" always (`head: true` returns no rows); `useTdfData.ts:183-185` exports a `refreshTdfData()` that does `window.location.reload()` (dead); Supabase **free-tier projects pause after ~1 week of inactivity** — relevant for the off-season gap between Phase B and Phase C. |
+
+## Corrections to this plan itself (P-items — where the plan is wrong or optimistic)
+
+- **P1 — Phase A puts auth last; that's the wrong order.** WP-A4 sits at the end of a strictly-ordered
+  phase, meaning the fixed publish pipeline (A1) and the new one-click entry endpoint (A2) run for
+  days-to-weeks on a live, publicly deployed site with **zero** authentication and the admin page in the
+  public nav — F1 is the review's own top 🔴. The full OTP flow can stay at A4, but an **interim
+  lockdown belongs in WP-A0**: (a) remove Etappe Beheer from the public nav, (b) require a static
+  bearer token (constant-time compare vs an `ADMIN_TOKEN` env) on every write route — ~1 hour of work,
+  and A2's new endpoint should be born with that check rather than added later. A4 then swaps the
+  token for OTP sessions.
+- **P2 — WP-A1's "~2 min" acceptance criterion doesn't hold as designed.** Worst case is browser cache
+  on the pointer (60s) + poll interval (60s) + Blob CDN overwrite propagation (up to 60s) ≈ **3 min**.
+  Fix rather than relax: fetch the pointer with `cache: 'no-store'` (it's a few hundred bytes; the CDN
+  still absorbs the load) so only propagation + poll remain, and keep the ~2 min criterion honest.
+- **P3 — Q18's suggested default imports the wrong names.** `data/fixtures-2026/team_selections.json`
+  is **anonymized** (`P001`…`P128` — verified). Importing it as suggested makes the public PoC show a
+  leaderboard of P-codes. The real names exist only in the owner's Excel, kept out of the repo
+  deliberately. The import script must therefore read a **local, gitignored** file (real-name export)
+  with the same shape, and the committed fixture stays test-only. Whether the PoC shows real names at
+  all is a privacy call the owner must make → Q19.
+- **P4 — WP-B2's "one query each … whole tables" will silently truncate.** Supabase/PostgREST returns
+  **max 1000 rows per request by default**. At full scale: `participant_stage_points` = 128 × 21 =
+  2 688 rows, `rider_stage_points` ≈ 1 500+, and `participant_rider_contributions` ≈ 128 × 10 × 21 ≈
+  **27 000 rows** — every one of these exceeds the cap, and supabase-js gives no error, just fewer
+  rows. The bulk loader must paginate with `.range()` (or raise the project's `db-max-rows` and still
+  assert `data.length < limit`). Also: the plan's "a few thousand tiny rows" undersells the
+  contributions table by an order of magnitude — still trivially fine in memory, but don't let the
+  1000-row default turn the refactor into a subtle data-loss bug. Golden tests at 128 participants
+  will catch this **only if** they run against a real Supabase instance at least once; the pure
+  in-memory suite won't.
+- **P5 — WP-B9 assumes tooling that doesn't exist (fact 26).** CI is listed as a Phase-B nicety, but
+  lint is unrunnable and the backend is un-typechecked *today*, while Phase A rewrites exactly that
+  backend. Pull the tooling into Phase A (see amended execution order): add an ESLint flat config, a
+  `tsconfig.api.json` (or a solution config) covering `api/` + `lib/` with the same strict flags, make
+  `npm run build` (or a `check` script) cover both, and a 10-line GitHub Actions workflow. Half a day,
+  and every subsequent WP benefits.
+
+## New corrections and additions (R13–R24)
+
+- **R13 — Entry UI must read riders from the admin API, not the snapshot** (fact 23). WP-A2/WP-B3:
+  `EtappeBeheer` loads its autocomplete options from `api/admin/riders-list` (behind `requireAdmin`,
+  per R12). Either adopt the three dead admin GET routes (`riders-list`, `stages-list`, `stage`) as
+  that surface, or delete them in WP-B8 — the current state (built, wired to nothing) is the worst of
+  both.
+- **R14 — `riders.json` must include all startlist riders, zero scores included** (fact 24). ~180
+  entries with empty `stages` maps cost nothing and fix both Team Selectie defects. Alternatively key
+  the popularity view off `team_selections.json` + a name→team map — but "include everyone" is
+  simpler and also what Q14's `is_active = 'on current startlist'` semantics imply.
+- **R15 — Split `lib/` by runtime before WP-B2 builds on it** (facts 28, 29). Proposed layout:
+  `lib/shared/` (types, scoring-constants, pure transforms — importable everywhere, no env access, no
+  I/O), `lib/server/` (supabase client factory, generators, publish, require-admin — Node only),
+  `src/lib/` or keep `lib/config.ts` frontend-only (anything touching `import.meta.env`). Enforce
+  with an ESLint `no-restricted-imports` rule once P5's config exists. Standardize ESM import
+  specifiers (pick NodeNext + always-`.js`, matching what `api/` needs at runtime). Replace all
+  module-scope `createClient` calls with a `getServiceClient()` factory so tests can import scoring
+  code without env vars.
+- **R16 — Publish must not run from previews** (fact 35). Cheapest: scope `BLOB_READ_WRITE_TOKEN` and
+  the service-role key to the Production environment in Vercel (previews then fail loudly), or guard
+  in code (`if (process.env.VERCEL_ENV !== 'production')` → write to a `preview/` blob prefix and skip
+  the pointer). Decide in WP-A0, verify in WP-A1 acceptance.
+- **R17 — Precompute participant `medal_counts` into `leaderboards.json`** during WP-B2 (fact 33) and
+  render via the existing `MedalDisplay`; drop the render-time recomputation.
+- **R18 — Consolidate `stage_type` vs `difficulty`** (fact 25): keep one column (suggest `stage_type`,
+  typed by the Q12 calendar import: vlak/heuvels/bergen/tijdrit), drop the other, and remove the
+  free-text "won_how" from the results flow (it's editorial color, not scoring input — make it
+  optional or move it to the content table).
+- **R19 — Extend Q3 to OTL/DSQ** (fact 34): the reserve/roster rule needs an answer for "out of time
+  limit" and "disqualified", not just DNF vs DNS — for pool purposes they almost certainly behave like
+  DNF (rider gone from stage N+1 onward), and the entry UI needs a way to record them (a status
+  dropdown on the uitvallers field instead of two separate DNF/DNS boxes). Also delete or start
+  writing `stage_rank_change`.
+- **R20 — "Next stage" derivation breaks once stages are pre-seeded** (WP-B4): `getNextStageNumber` =
+  max(stage_number)+1 (`EtappeBeheer.tsx:83-87`) returns 21 forever once all 21 calendar rows exist.
+  WP-B3's status model replaces it: "next" = lowest stage with status *leeg* (or by date). Note it so
+  the calendar import doesn't silently kill the entry entry-point.
+- **R21 — WP-A4 needs two new frontend envs.** There is no supabase-js client in `src/` today; the OTP
+  login requires `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` at build time. Add both to the WP-A0
+  env checklist and the Phase-C go-live list (which currently lists neither).
+- **R22 — Fix the F2 failure mode while fixing F2** (fact 30): after WP-A1, data fetches go to the Blob
+  origin so the SPA-rewrite masking disappears for those — but keep a guard anyway (`content-type`
+  check before `.json()`) so a future misconfiguration says "kon data niet laden" instead of
+  `Unexpected token '<'`.
+- **R23 — Directie decimals are a frontend concern too** (extends R2): scores like 437.8 must render
+  with **one decimal, Dutch comma** (`Intl.NumberFormat('nl-NL', { minimumFractionDigits: 1 })` →
+  "437,8"), including in the expanded contributions panel. Both current leaderboard UIs assume
+  integers.
+- **R24 — Dagploeg +6 needs explicit UI representation** (extends WP-B1): the participant expanded row
+  ("Punten per Etappe" / rider contributions) can only show rider rows; add a distinct "Dagploeg +6"
+  line item in the breakdown and a field in the snapshot, or participants will see totals that don't
+  match the sum of the visible rows — exactly the kind of mismatch that erodes trust in a pool.
+
+## New open questions (Q19–Q22)
+
+| # | Question | Suggested default | Gates |
+|---|----------|-------------------|-------|
+| Q19 | **PoC participant naming** (see P3): does the 2026 public site show real names (imported from a local, never-committed export) or the P-codes? Real names of colleagues on a public URL is a privacy decision only the owner can make. **BLOCKER** for WP-A3's import step | Import real names from a gitignored local file; site is obscure and low-stakes, but confirm first | WP-A3 |
+| Q20 | **OTL/DSQ semantics** (R19): treat as DNF for roster purposes? | Yes — same as DNF from the next stage | WP-A3, WP-B1 |
+| Q21 | **Preview-deploy policy** (R16): scope prod secrets to Production only, or code-guard? | Env scoping in Vercel (no code needed) | WP-A0/A1 |
+| Q22 | **Supabase pausing in the off-season** (fact 37): free projects pause after ~1 week idle; between the 2026 Tour and Phase-B work the project will pause (harmless, resumable) but the team should know. Upgrade, or document "restore from dashboard" in the runbook? | Document it; free tier is fine at this scale | WP-B7 runbook |
+
+## WP amendments (deltas to the packages above)
+
+- **WP-A0 (amended):** add the P1 interim lockdown (admin out of nav + `ADMIN_TOKEN` bearer check on all
+  write routes) and the P5 tooling baseline (ESLint flat config; `tsconfig` coverage for `api/`+`lib/`;
+  `npm run check` = lint+typecheck; GitHub Actions running it). Decide Q21 (preview env scoping). Add
+  `VITE_SUPABASE_*` to the env inventory (R21). Create `.env.example` (fact 27).
+- **WP-A1 (amended):** pointer fetched with `cache: 'no-store'` (P2); content-type guard on data fetches
+  (R22); verify preview scoping (R16); delete the legacy fixed-path blobs (`data/*.json`) after the
+  pointer pattern is live so nothing can read half-old data.
+- **WP-A2 (amended):** the new endpoint requires auth from birth (P1); riders for the entry UI come from
+  `riders-list` behind `requireAdmin` (R13); log the raw payload to `stage_entry_log` **also when
+  validation rejects it** (flag `accepted: boolean`) — failed attempts are exactly what you want in the
+  audit trail when a non-technical editor calls for help.
+- **WP-A3 (amended):** import script reads a gitignored real-name file, P-coded fixture stays test-only
+  (P3/Q19); OTL/DSQ folded into the roster rule decision (Q20).
+- **WP-B2 (amended):** paginate every bulk read (`.range()` loop) and assert-not-truncated (P4); run the
+  golden suite once against a seeded real Supabase instance, not only in-memory; add participant
+  `medal_counts` to the leaderboards snapshot (R17); write or drop `stage_rank_change` (R19).
+- **WP-B3 (amended):** replace `getNextStageNumber` with status-derived "next" (R20); replace
+  `window.confirm` reprocess prompt with an in-UI Dutch confirmation (works in all mobile browsers,
+  styleable, testable); flatten the `setTimeout`-chained success choreography in `EtappeBeheer.tsx:266-274`
+  into a simple state machine; uitvallers entry becomes rider+status (DNF/DNS/OTL/DSQ).
+- **WP-B8 (amended, concrete additions):** delete or adopt the four dead API routes (fact 23);
+  `lib/` runtime split + import-specifier standardization + client factory (R15); fix favicon
+  (`icon_jersey.svg` is right there); lowercase route paths with redirects; fix `health.ts` count;
+  remove `refreshTdfData`/`window.location.reload` leftover; `.env.example`; consolidate
+  `stage_type`/`difficulty` (R18).
+
+### New WP-B11 — Frontend consistency & accessibility pass (fits the owner's "polish" track)
+
+Not blocking anything, but currently three pages hand-roll the same UI with three private copies of
+everything (facts 31, 32, 33, 36):
+
+1. **Adopt the existing shared components** (`JerseyList`, `CombativityIcon`, `MedalDisplay`,
+   `StageBreakdown`, `RankChange`) everywhere; delete the inline duplicates in `RennerPunten` and the
+   duplicated jersey-extraction helpers (keep exactly one, in `lib/shared`).
+2. **Extract the repeated page skeleton**: segmented view-toggle buttons, search input, and the
+   mobile-card/desktop-table pair with expandable rows appear nearly identically in `Klassement`,
+   `RennerPunten`, `TeamSelectie`. One `SegmentedControl` + one `RankedTable` (renders cards < lg,
+   table ≥ lg, owns the expand state) removes several hundred lines and makes the 2027 "Eind" column
+   (Q7) a one-place change. Use `Layout` on `Klassement` too (it's the only page that doesn't).
+3. **Single source of types**: delete `Klassement.tsx`'s local interfaces, import from `lib/types`,
+   remove the `as LeaderboardEntry[]` casts and the `rider: any` maps (fact 32) — that's what makes
+   snapshot-shape changes in Phase B compile-time-checked instead of silently wrong.
+4. **Accessibility minimum**: expandable rows/cards become real `<button>`s (or get
+   `role="button"`, `tabIndex`, Enter/Space handling) with `aria-expanded`; the three view toggles get
+   `aria-pressed`; nav links get `aria-current="page"`; jersey `<img>`s get Dutch alt texts ("gele
+   trui" not "yellow jersey"). Small effort, and 3–5 non-technical editors on phones benefit directly.
+5. **One route-level error boundary** with a Dutch message + retry, instead of relying on per-page
+   error branches (and fact 30's guard makes those errors say something useful).
+6. **Locale consistency**: all numbers/dates through `nl-NL` formatting (R23's decimal comma; dates
+   already use `toLocaleDateString('nl-NL')` in some places and raw strings in others).
+
+## Amended execution order
+
+```
+WP-A0+ (env check • interim lockdown P1 • tooling P5 • Q21) ─► WP-A1 ─► WP-A2 ─► WP-A3 ─► WP-A4
+Phase B unchanged, except:
+  R15 lib split lands at the START of B2 (it's the refactor's foundation)
+  WP-B11 (frontend pass) — anytime after B2's snapshot-shape changes settle; before new UI (B3) reuses it
+```
+
+The original A-order rationale ("A1 first so every change is visible") survives — the lockdown and
+tooling additions to A0 are hours, not days, and remove the indefensible window where a fixed,
+convenient, still-unauthenticated write path runs on a public URL during the live Tour.
