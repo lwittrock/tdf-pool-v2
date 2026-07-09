@@ -600,6 +600,34 @@ of commit `fb9d81c`.*
 | Q21 | **Preview-deploy policy** (R16): scope prod secrets to Production only, or code-guard? | Env scoping in Vercel (no code needed) | WP-A0/A1 |
 | Q22 | **Supabase pausing in the off-season** (fact 37): free projects pause after ~1 week idle; between the 2026 Tour and Phase-B work the project will pause (harmless, resumable) but the team should know. Upgrade, or document "restore from dashboard" in the runbook? | Document it; free tier is fine at this scale | WP-B7 runbook |
 
+## Owner decisions (answered in chat, July 2026 — these override the corresponding Q-rows)
+
+- **Q1 — RESOLVED: yes, ook mid-Tour.** A DNS at any point activates the reserve for all remaining
+  stages (matches the current code's intent). Keep it a named constant anyway.
+- **Q3/Q20 — RESOLVED: alleen DNS.** DNF, OTL and DSQ do **not** activate the reserve — the rider
+  simply stops scoring. The current DNS-only trigger is the correct rule. R19 narrows to: the entry UI
+  should still be able to *record* OTL/DSQ (they affect who can appear in later results), but they have
+  no roster/substitution effect.
+- **Q7 — RESOLVED: default confirmed.** End-of-Tour bonuses get a separate "Eind" pass/column, count in
+  cumulative totals and directie averages.
+- **Q8 — RESOLVED: samenvoeging blijft.** The combined group "DI - DBV - iDomein - TDA" is structural,
+  not a 2026 one-off — seed the directie + alias tables from the fixture mapping as durable reference
+  data (still keep it editable at season import for organisational changes).
+- **Q11 — RESOLVED: alleen procyclingstats.** The paste parser supports **one** format
+  (procyclingstats); NOS support is dropped. Owner still needs to supply ≥2 real procyclingstats paste
+  samples (with accents and DNF markers) as fixtures before the parser sub-task starts. Amend WP-B3 and
+  WP-B9 accordingly (one format, one fixture set).
+- **Q13 — RESOLVED: 2026 wordt het eerste archief.** No complete 2025 source; drop the 2025-archive
+  goal (R11 closed). `data/stage_results/` (2025, stages 1–12) remains useful only as realistic
+  rider-name input for parser/fuzzy tests.
+- **Q16 — RESOLVED:** `ADMIN_EMAILS = lars.login@pm.me`, single pre-created account for 2026.
+- **Q19 — RESOLVED (for now): voornamen only.** The 2026 test imports **first names only** from a
+  local, gitignored file; the naming approach may change later (not blocking anything yet). The
+  P-coded fixture stays test-only.
+
+Still open with safe defaults (implement the default, no owner input needed): Q2, Q4, Q5, Q6, Q9,
+Q10, Q12, Q14, Q18-mechanics, Q21, Q22. Q15/Q17 are verification tasks, not decisions.
+
 ## WP amendments (deltas to the packages above)
 
 - **WP-A0 (amended):** add the P1 interim lockdown (admin out of nav + `ADMIN_TOKEN` bearer check on all
