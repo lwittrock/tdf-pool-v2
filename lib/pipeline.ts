@@ -14,11 +14,12 @@
 
 import { getServiceClient } from './supabase-server.js';
 import {
-  POINTS_FOR_RANK,
-  JERSEY_POINTS,
-  COMBATIVITY_POINTS,
-  type JerseyType,
-} from './scoring-constants.js';
+  computeRiderStagePoints,
+  computeParticipantStagePoints,
+  RESERVE_ACTIVATES_MID_TOUR,
+  type SelectionInput,
+  type StageJerseyInput,
+} from './scoring.js';
 import {
   generateMetadataJSON,
   generateLeaderboardsJSON,
@@ -66,6 +67,10 @@ async function getStageId(stageNumber: number): Promise<string> {
 export async function updateActiveSelections(stageNumber: number): Promise<UpdateSelectionsResult> {
   const supabase = getServiceClient();
   const stageId = await getStageId(stageNumber);
+
+  if (!RESERVE_ACTIVATES_MID_TOUR && stageNumber > 1) {
+    return { dnsRiders: [], substitutions: [], participantsAffected: 0 };
+  }
 
   const { data: dnsRecords } = await supabase
     .from('stage_dnf')
@@ -165,77 +170,36 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
     supabase.from('participant_rider_contributions').delete().eq('stage_id', stageId),
   ]);
 
-  // ---- Rider points -------------------------------------------------------
-  const { data: riders } = await supabase.from('riders').select('id, name');
-  if (!riders) throw new Error('Renners laden mislukt');
-
-  interface RiderPoints {
-    stage_finish_points: number;
-    yellow_points: number;
-    green_points: number;
-    polka_dot_points: number;
-    white_points: number;
-    combativity_points: number;
-    total_points: number;
-  }
-  const riderPointsMap = new Map<string, RiderPoints>();
-  for (const rider of riders) {
-    riderPointsMap.set(rider.id, {
-      stage_finish_points: 0,
-      yellow_points: 0,
-      green_points: 0,
-      polka_dot_points: 0,
-      white_points: 0,
-      combativity_points: 0,
-      total_points: 0,
-    });
-  }
-
+  // ---- Rider points (pure core: lib/scoring.ts) ----------------------------
   const { data: stageResults } = await supabase
     .from('stage_results')
     .select('rider_id, position')
     .eq('stage_id', stageId)
     .order('position');
-  for (const result of stageResults ?? []) {
-    const points = POINTS_FOR_RANK[result.position] || 0;
-    const rp = riderPointsMap.get(result.rider_id);
-    if (rp) {
-      rp.stage_finish_points = points;
-      rp.total_points += points;
-    }
-  }
 
   const { data: jerseys } = await supabase
     .from('stage_jerseys')
     .select('rider_id, jersey_type')
     .eq('stage_id', stageId);
-  for (const jersey of jerseys ?? []) {
-    const points = JERSEY_POINTS[jersey.jersey_type as JerseyType];
-    const rp = riderPointsMap.get(jersey.rider_id);
-    if (!rp) continue;
-    if (jersey.jersey_type === 'yellow') rp.yellow_points = points;
-    else if (jersey.jersey_type === 'green') rp.green_points = points;
-    else if (jersey.jersey_type === 'polka_dot') rp.polka_dot_points = points;
-    else if (jersey.jersey_type === 'white') rp.white_points = points;
-    rp.total_points += points;
-  }
 
   const { data: combativity } = await supabase
     .from('stage_combativity')
     .select('rider_id')
     .eq('stage_id', stageId)
     .maybeSingle();
-  if (combativity) {
-    const rp = riderPointsMap.get(combativity.rider_id);
-    if (rp) {
-      rp.combativity_points = COMBATIVITY_POINTS;
-      rp.total_points += COMBATIVITY_POINTS;
-    }
-  }
 
-  const riderInserts = [...riderPointsMap.entries()]
-    .filter(([, p]) => p.total_points > 0)
-    .map(([riderId, p]) => ({ stage_id: stageId, rider_id: riderId, ...p, stage_rank: null }));
+  const riderPointsMap = computeRiderStagePoints(
+    stageResults ?? [],
+    (jerseys ?? []) as StageJerseyInput[],
+    combativity?.rider_id ?? null
+  );
+
+  const riderInserts = [...riderPointsMap.entries()].map(([riderId, p]) => ({
+    stage_id: stageId,
+    rider_id: riderId,
+    ...p,
+    stage_rank: null,
+  }));
 
   if (riderInserts.length > 0) {
     const { error } = await supabase.from('rider_stage_points').insert(riderInserts);
@@ -258,33 +222,25 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
   const { data: participants } = await supabase.from('participants').select('id, name');
   if (!participants) throw new Error('Deelnemers laden mislukt');
 
-  // NOTE(WP-A3): roster derivation still uses the global is_active flag and
-  // position <= 10 here; WP-A3 replaces this with roster-as-of-stage.
-  const { data: activeSelections } = await supabase
+  // Roster-as-of-stage (WP-A3, fixes F3): scoring no longer trusts the
+  // global is_active flag or position <= 10 — it derives each stage's
+  // roster from replaced_at_stage, so a substituted reserve scores from
+  // its activation stage and a force-reprocessed early stage uses the
+  // roster as it was then.
+  const { data: allSelections } = await supabase
     .from('participant_rider_selections')
-    .select('participant_id, rider_id, position')
-    .eq('is_active', true)
-    .lte('position', 10);
-  if (!activeSelections) throw new Error('Selecties laden mislukt');
+    .select('participant_id, rider_id, position, replaced_at_stage');
+  if (!allSelections) throw new Error('Selecties laden mislukt');
 
-  const participantPointsMap = new Map<
-    string,
-    { total_points: number; rider_contributions: Map<string, number> }
-  >();
+  const participantPointsMap = computeParticipantStagePoints(
+    riderPointsMap,
+    allSelections as SelectionInput[],
+    stageNumber
+  );
+  // Participants without any selection row still get a 0-point row.
   for (const participant of participants) {
-    participantPointsMap.set(participant.id, {
-      total_points: 0,
-      rider_contributions: new Map(),
-    });
-  }
-  for (const selection of activeSelections) {
-    const rp = riderPointsMap.get(selection.rider_id);
-    if (rp && rp.total_points > 0) {
-      const pd = participantPointsMap.get(selection.participant_id);
-      if (pd) {
-        pd.total_points += rp.total_points;
-        pd.rider_contributions.set(selection.rider_id, rp.total_points);
-      }
+    if (!participantPointsMap.has(participant.id)) {
+      participantPointsMap.set(participant.id, { total_points: 0, contributions: new Map() });
     }
   }
 
@@ -308,7 +264,7 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
     points_contributed: number;
   }> = [];
   for (const [participantId, d] of participantPointsMap.entries()) {
-    for (const [riderId, points] of d.rider_contributions.entries()) {
+    for (const [riderId, points] of d.contributions.entries()) {
       contributionInserts.push({
         participant_id: participantId,
         stage_id: stageId,

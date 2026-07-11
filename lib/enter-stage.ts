@@ -9,17 +9,13 @@
 
 import { getServiceClient } from './supabase-server.js';
 import { processStage, type ProcessStageResult } from './pipeline.js';
+import { riderNameKey } from './rider-names.js';
 import type { ManualStageEntry, DNFStatus, JerseyType } from './types.js';
 
 export interface RiderRecord {
   id: string;
   name: string;
   team: string;
-}
-
-/** Case-insensitive, whitespace-normalized key for rider-name matching. */
-export function riderNameKey(name: string): string {
-  return name.trim().replace(/\s+/g, ' ').toUpperCase();
 }
 
 export interface ValidatedEntry {

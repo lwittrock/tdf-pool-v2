@@ -17,7 +17,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["api", "lib", "scripts/**/*.ts"],
+  "include": ["api", "lib", "scripts/**/*.ts", "tests"],
   // Frontend-only modules (import.meta.env) — excluded until the lib/ runtime
   // split (R15, WP-B2) moves them out of lib/.
   "exclude": ["lib/config.ts", "lib/constants.ts"]

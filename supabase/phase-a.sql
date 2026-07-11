@@ -27,6 +27,14 @@ ALTER TABLE stage_entry_log ENABLE ROW LEVEL SECURITY;
 -- Intentionally no policies: only the service role reads/writes this table.
 
 -- ----------------------------------------------------------------------------
+-- Ploeg pick (WP-A3 import): every participant also picks one team; the +6
+-- Dagploeg rule (WP-B1) needs it. Free text for now; WP-B1 turns teams into
+-- reference data (teams table + ploeg_team_id, Q5).
+-- ----------------------------------------------------------------------------
+
+ALTER TABLE participants ADD COLUMN IF NOT EXISTS ploeg TEXT;
+
+-- ----------------------------------------------------------------------------
 -- Transactional swap of one stage's result rows (R7): validate happens in
 -- the API layer BEFORE this is called; the function deletes and re-inserts
 -- atomically, so a failure halfway can never leave a half-empty stage.

@@ -1,0 +1,170 @@
+/**
+ * Scoring core tests (WP-A3).
+ *
+ * The DNS-substitution scenario is the test that would have caught the F3
+ * bug (a substituted reserve scoring 0 forever); the force-reprocess
+ * scenario proves roster-as-of-stage (an early stage recomputed after a
+ * later substitution uses the roster as it was then).
+ */
+
+import { describe, expect, it } from 'vitest';
+import {
+  computeRiderStagePoints,
+  computeParticipantStagePoints,
+  selectionCountsForStage,
+  type SelectionInput,
+} from '../lib/scoring';
+
+const P1 = 'participant-1';
+
+function selection(overrides: Partial<SelectionInput> & { rider_id: string }): SelectionInput {
+  return {
+    participant_id: P1,
+    position: 1,
+    replaced_at_stage: null,
+    ...overrides,
+  };
+}
+
+/** 10 main riders r1..r10 plus reserve r11. */
+function fullTeam(replacedMain?: { rider: string; atStage: number }): SelectionInput[] {
+  const selections: SelectionInput[] = [];
+  for (let i = 1; i <= 10; i++) {
+    selections.push(
+      selection({
+        rider_id: `r${i}`,
+        position: i,
+        replaced_at_stage: replacedMain?.rider === `r${i}` ? replacedMain.atStage : null,
+      })
+    );
+  }
+  selections.push(
+    selection({
+      rider_id: 'r11',
+      position: 11,
+      replaced_at_stage: replacedMain ? replacedMain.atStage : null,
+    })
+  );
+  return selections;
+}
+
+describe('computeRiderStagePoints', () => {
+  it('awards 25/19/18…1 for positions, jerseys stack, combativity optional', () => {
+    const points = computeRiderStagePoints(
+      [
+        { rider_id: 'a', position: 1 },
+        { rider_id: 'b', position: 2 },
+        { rider_id: 'c', position: 20 },
+      ],
+      [
+        { rider_id: 'a', jersey_type: 'yellow' },
+        { rider_id: 'a', jersey_type: 'polka_dot' },
+        { rider_id: 'b', jersey_type: 'green' },
+      ],
+      null // combativity can be absent (2026 stage 1)
+    );
+
+    expect(points.get('a')!.total_points).toBe(25 + 15 + 10);
+    expect(points.get('b')!.total_points).toBe(19 + 10);
+    expect(points.get('c')!.total_points).toBe(1);
+  });
+
+  it('awards 5 for combativity, also to riders outside the top 20', () => {
+    const points = computeRiderStagePoints([{ rider_id: 'a', position: 1 }], [], 'x');
+    expect(points.get('x')!.combativity_points).toBe(5);
+    expect(points.get('x')!.total_points).toBe(5);
+  });
+});
+
+describe('roster-as-of-stage (F3 fix)', () => {
+  // r1 DNSes before stage 2 → reserve r11 takes over from stage 2 onward.
+  const team = fullTeam({ rider: 'r1', atStage: 2 });
+
+  it('substituted reserve scores from the activation stage (the F3 bug)', () => {
+    // Stage 2: reserve r11 wins the stage.
+    const riderPoints = computeRiderStagePoints([{ rider_id: 'r11', position: 1 }], [], null);
+    const result = computeParticipantStagePoints(riderPoints, team, 2);
+
+    // Old engine: reserve stuck at position 11 → 0 points forever.
+    expect(result.get(P1)!.total_points).toBe(25);
+    expect(result.get(P1)!.contributions.get('r11')).toBe(25);
+  });
+
+  it('the replaced rider no longer scores from the DNS stage', () => {
+    // Hypothetical: r1 somehow appears in results for stage 2 (bad entry) —
+    // roster logic must not count a replaced rider.
+    const riderPoints = computeRiderStagePoints([{ rider_id: 'r1', position: 1 }], [], null);
+    const result = computeParticipantStagePoints(riderPoints, team, 2);
+    expect(result.get(P1)!.total_points).toBe(0);
+  });
+
+  it('force-reprocessing an earlier stage uses the roster as of that stage', () => {
+    // Stage 1 (before the DNS): r1 scored, r11 did not count yet.
+    const riderPoints = computeRiderStagePoints(
+      [
+        { rider_id: 'r1', position: 1 },
+        { rider_id: 'r11', position: 2 },
+      ],
+      [],
+      null
+    );
+    const result = computeParticipantStagePoints(riderPoints, team, 1);
+
+    // Only r1's 25 counts; the reserve's 19 must NOT (Q2: never retroactive).
+    expect(result.get(P1)!.total_points).toBe(25);
+    expect(result.get(P1)!.contributions.has('r11')).toBe(false);
+  });
+
+  it('an untouched reserve never scores', () => {
+    const untouched = fullTeam();
+    const riderPoints = computeRiderStagePoints([{ rider_id: 'r11', position: 1 }], [], null);
+    for (const stage of [1, 2, 21]) {
+      const result = computeParticipantStagePoints(riderPoints, untouched, stage);
+      expect(result.get(P1)!.total_points).toBe(0);
+    }
+  });
+
+  it('selectionCountsForStage boundary: DNS stage itself excludes the main rider', () => {
+    const main = selection({ rider_id: 'r1', position: 1, replaced_at_stage: 5 });
+    const reserve = selection({ rider_id: 'r11', position: 11, replaced_at_stage: 5 });
+    expect(selectionCountsForStage(main, 4)).toBe(true);
+    expect(selectionCountsForStage(main, 5)).toBe(false);
+    expect(selectionCountsForStage(reserve, 4)).toBe(false);
+    expect(selectionCountsForStage(reserve, 5)).toBe(true);
+  });
+});
+
+describe('roster edge cases', () => {
+  it('a 9-rider roster sums what exists (the 2026 pool has one)', () => {
+    const nineRiders: SelectionInput[] = [];
+    for (let i = 1; i <= 9; i++) {
+      nineRiders.push(selection({ rider_id: `r${i}`, position: i }));
+    }
+    const riderPoints = computeRiderStagePoints(
+      [
+        { rider_id: 'r1', position: 1 },
+        { rider_id: 'r9', position: 2 },
+      ],
+      [],
+      null
+    );
+    const result = computeParticipantStagePoints(riderPoints, nineRiders, 1);
+    expect(result.get(P1)!.total_points).toBe(25 + 19);
+  });
+
+  it('second casualty: no second substitution, participant rides with 9 scorers (Q4)', () => {
+    // r1 replaced at stage 2 (reserve used); r2 DNSes later — nothing to
+    // substitute, r2 simply stops appearing in results and scores 0.
+    const team = fullTeam({ rider: 'r1', atStage: 2 });
+    const riderPoints = computeRiderStagePoints(
+      [
+        { rider_id: 'r3', position: 1 },
+        { rider_id: 'r11', position: 2 },
+      ],
+      [],
+      null
+    );
+    const result = computeParticipantStagePoints(riderPoints, team, 3);
+    expect(result.get(P1)!.total_points).toBe(25 + 19);
+  });
+});

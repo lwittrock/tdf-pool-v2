@@ -514,6 +514,7 @@ export async function generateTeamSelectionsJSON(): Promise<Record<string, TeamS
       participant_rider_selections!inner(
         rider_id,
         position,
+        replaced_at_stage,
         riders:rider_id(name)
       )
     `)
@@ -527,8 +528,13 @@ export async function generateTeamSelectionsJSON(): Promise<Record<string, TeamS
 
   for (const participant of participants) {
     const selections = (participant as any).participant_rider_selections || [];
+    // Current active roster (WP-A3): main riders that have not been
+    // replaced, plus the reserve once activated — a substitution must be
+    // visible in the UI (fact 10).
     const riderNames = selections
-      .filter((s: any) => s.position <= 10) // Only main 10, not backup
+      .filter((s: any) =>
+        s.position <= 10 ? s.replaced_at_stage == null : s.replaced_at_stage != null
+      )
       .sort((a: any, b: any) => a.position - b.position)
       .map((s: any) => s.riders?.name)
       .filter(Boolean);
