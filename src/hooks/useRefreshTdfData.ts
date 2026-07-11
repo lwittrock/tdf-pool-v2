@@ -36,12 +36,9 @@ export function useRefreshTdfData() {
    * Refresh all TdF data (metadata, leaderboards, riders, stages, team selections)
    */
   const refreshAll = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: ['metadata'] });
-    await queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
-    await queryClient.invalidateQueries({ queryKey: ['riders'] });
-    await queryClient.invalidateQueries({ queryKey: ['stagesData'] });
-    await queryClient.invalidateQueries({ queryKey: ['teamSelections'] });
-    await queryClient.invalidateQueries({ queryKey: ['riderRankings'] });
+    // Re-fetch the pointer; data queries are keyed on run_id and follow it.
+    await queryClient.invalidateQueries({ queryKey: ['snapshot-pointer'] });
+    await queryClient.invalidateQueries({ queryKey: ['snapshot'] });
   }, [queryClient]);
 
   /**

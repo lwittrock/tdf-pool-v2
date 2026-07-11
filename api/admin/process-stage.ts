@@ -9,7 +9,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { put } from '@vercel/blob';
+import { publishSnapshots } from '../../lib/publish.js';
 import {
   generateMetadataJSON,
   generateLeaderboardsJSON,
@@ -131,52 +131,27 @@ export default async function handler(
       generateRiderRankingsJSON(),
     ]);
 
-    // STEP 5: Upload to Vercel Blob
-    console.log('[Process Stage] Step 5: Uploading JSON files to Vercel Blob...');
+    // STEP 5: Publish versioned snapshot set + pointer (WP-A1)
+    console.log('[Process Stage] Step 5: Publishing snapshots to Vercel Blob...');
 
-    const uploadResults = await Promise.all([
-      put('data/metadata.json', JSON.stringify(metadata), {
-        access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: true,
-      }),
-      put('data/leaderboards.json', JSON.stringify(leaderboards), {
-        access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: true,
-      }),
-      put('data/riders.json', JSON.stringify(riders), {
-        access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: true,
-      }),
-      put('data/stages_data.json', JSON.stringify(stages), {
-        access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: true,
-      }),
-      put('data/team_selections.json', JSON.stringify(teamSelections), {
-        access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: true,
-      }),
-      put('data/rider_rankings.json', JSON.stringify(riderRankings), {
-        access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: true,
-      }),
-    ]);
+    const publishResult = await publishSnapshots({
+      metadata,
+      leaderboards,
+      riders,
+      stages_data: stages,
+      team_selections: teamSelections,
+      rider_rankings: riderRankings,
+    });
 
-    console.log('[Process Stage] JSON files uploaded successfully');
-    console.log('[Process Stage] File URLs:', uploadResults.map((r) => r.url));
+    console.log(`[Process Stage] Published run ${publishResult.runId}`);
 
     return res.status(200).json(
       createSuccessResponse({
         stage_number,
         selections_result: selectionsResult,
         points_result: pointsResult,
-        files_generated: uploadResults.map((r) => r.pathname),
-        blob_urls: uploadResults.map((r) => r.url),
+        run_id: publishResult.runId,
+        pointer_url: publishResult.pointerUrl,
       }, `Stage ${stage_number} processed successfully`)
     );
   } catch (error: any) {

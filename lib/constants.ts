@@ -119,27 +119,8 @@ export const BREAKPOINTS = {
 } as const;
 
 // ============================================================================
-// Data Fetch Configuration
+// Data Fetch Configuration (WP-A1)
 // ============================================================================
 
-export const DATA_PATHS = {
-  METADATA: config.data.metadata(),
-  LEADERBOARDS: config.data.leaderboards(),
-  RIDERS: config.data.riders(),
-  STAGES: config.data.stages(),
-  TEAM_SELECTIONS: config.data.teamSelections(),
-  RIDER_RANKINGS: config.data.riderRankings(),
-} as const;
-
-// ============================================================================
-// Cache Configuration
-// ============================================================================
-
-export const CACHE_CONFIG = {
-  STALE_TIME: Infinity,
-  GC_TIME: Infinity,
-  REFETCH_ON_WINDOW_FOCUS: false,
-  REFETCH_ON_MOUNT: false,
-  REFETCH_ON_RECONNECT: false,
-  RETRY: 1,
-} as const;
+/** How often the public site polls the snapshot pointer (only while visible). */
+export const POINTER_POLL_INTERVAL_MS = 60_000;
