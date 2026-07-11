@@ -16,7 +16,9 @@ import { Autocomplete, MultiAutocomplete } from '../components/Autocomplete';
 import { useRefreshTdfData } from '../hooks/useRefreshTdfData';
 import { useStagesData } from '../hooks/useTdfData';
 import { useAdminRiders } from '../hooks/useAdminData';
-import { getAdminToken, setAdminToken, adminAuthHeaders } from '../lib/adminAuth';
+import { useAdminSession } from '../hooks/useAdminSession';
+import { AdminLogin } from '../components/AdminLogin';
+import { getAdminToken, getAdminAuthHeaders, signOutAdmin } from '../lib/adminAuth';
 import { JERSEY_ICONS } from '../../lib/constants';
 import type { StageData, SubstitutionMade } from '../../lib/types';
 
@@ -127,7 +129,9 @@ function createFormDataFromStage(stage: StageData): StageFormData {
 // ============================================================================
 
 function StageManagementPage() {
+  const session = useAdminSession();
   const [token, setToken] = useState(getAdminToken());
+  const authenticated = Boolean(session.email || token);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -139,7 +143,7 @@ function StageManagementPage() {
 
   // Fetch data. Riders come from the admin API (full startlist), NOT from the
   // public snapshot — that file only contains riders with points (fact 23).
-  const { data: adminRiders, isLoading: ridersLoading, error: ridersError } = useAdminRiders(!!token);
+  const { data: adminRiders, isLoading: ridersLoading, error: ridersError } = useAdminRiders(authenticated);
   const { data: stagesData, isLoading: stagesLoading } = useStagesData();
 
   // Memoized calculations
@@ -241,7 +245,7 @@ function StageManagementPage() {
       // One atomic call: validate → save → recalculate → publish (WP-A2)
       const response = await fetch('/api/admin/enter-stage', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
+        headers: { 'Content-Type': 'application/json', ...(await getAdminAuthHeaders()) },
         body: JSON.stringify({
           ...formData,
           top_20_finishers: validFinishers,
@@ -285,41 +289,19 @@ function StageManagementPage() {
     }
   }, [formData, stages, refreshAll]);
 
-  // Token gate: zonder beheertoken geen toegang tot het invoerscherm
-  if (!token) {
+  // Login gate (WP-A4): OTP-sessie of beheertoken vereist
+  if (session.loading) {
     return (
       <Layout title="Etappe Beheer">
-        <div className="max-w-md mx-auto mt-12 bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-lg font-semibold mb-2 text-tdf-primary">Beheertoken vereist</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Voer het beheertoken in om etappes te kunnen invoeren.
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const value = new FormData(e.currentTarget).get('token');
-              const entered = typeof value === 'string' ? value.trim() : '';
-              if (entered) {
-                setAdminToken(entered);
-                setToken(entered);
-              }
-            }}
-          >
-            <input
-              name="token"
-              type="password"
-              autoComplete="off"
-              placeholder="Beheertoken"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4"
-            />
-            <button
-              type="submit"
-              className="w-full px-6 py-3 bg-tdf-accent text-white rounded-lg hover:bg-yellow-600 font-semibold"
-            >
-              Doorgaan
-            </button>
-          </form>
-        </div>
+        <div className="text-center py-12">Laden...</div>
+      </Layout>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <Layout title="Etappe Beheer">
+        <AdminLogin onTokenLogin={setToken} />
       </Layout>
     );
   }
@@ -336,6 +318,19 @@ function StageManagementPage() {
   return (
     <Layout title="Etappe Beheer">
       <main>
+        <div className="flex justify-end items-center gap-3 mb-2 text-sm text-gray-500">
+          <span>Ingelogd{session.email ? ` als ${session.email}` : ' met beheertoken'}</span>
+          <button
+            onClick={async () => {
+              await signOutAdmin();
+              setToken('');
+            }}
+            className="text-tdf-primary hover:underline"
+          >
+            Uitloggen
+          </button>
+        </div>
+
         {/* LIST VIEW */}
         {viewMode === 'list' && (
           <StageListView

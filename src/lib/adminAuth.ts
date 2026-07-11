@@ -1,11 +1,13 @@
 /**
  * Admin credential for the beheer UI.
  *
- * Interim lockdown (WP-A0): a static beheertoken, bewaard in localStorage,
- * meegestuurd als Authorization-header naar alle beheer-API's.
- * WP-A4 vervangt dit door een Supabase OTP-sessie; alleen dit module hoeft
- * dan te veranderen.
+ * WP-A4: the primary credential is the Supabase OTP session; the static
+ * beheertoken (localStorage) remains as fallback for when Supabase Auth is
+ * not configured yet, and for scripts. The server accepts both
+ * (lib/require-admin.ts).
  */
+
+import { supabaseAuth } from './supabase-client';
 
 const STORAGE_KEY = 'tdf-admin-token';
 
@@ -29,7 +31,18 @@ export function setAdminToken(token: string): void {
   }
 }
 
-export function adminAuthHeaders(): Record<string, string> {
+/** Authorization header: OTP session first, beheertoken as fallback. */
+export async function getAdminAuthHeaders(): Promise<Record<string, string>> {
+  if (supabaseAuth) {
+    const { data } = await supabaseAuth.auth.getSession();
+    const accessToken = data.session?.access_token;
+    if (accessToken) return { Authorization: `Bearer ${accessToken}` };
+  }
   const token = getAdminToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function signOutAdmin(): Promise<void> {
+  if (supabaseAuth) await supabaseAuth.auth.signOut();
+  setAdminToken('');
 }

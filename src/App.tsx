@@ -99,6 +99,7 @@ function App() {
           <Route path="/RennerPunten" element={<RennerPunten />} />
           <Route path="/TeamSelectie" element={<TeamSelectie />} />
           <Route path="/EtappeBeheer" element={<EtappeBeheer />} />
+          <Route path="/admin" element={<EtappeBeheer />} />
           <Route path="/OverDezePoule" element={<OverDezePoule />} />
         </Routes>
       </main>

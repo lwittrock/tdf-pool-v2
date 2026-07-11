@@ -8,7 +8,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { adminAuthHeaders } from '../lib/adminAuth';
+import { getAdminAuthHeaders } from '../lib/adminAuth';
 
 export interface AdminRider {
   id: string;
@@ -21,10 +21,10 @@ export function useAdminRiders(enabled: boolean) {
     queryKey: ['admin-riders'],
     queryFn: async () => {
       const response = await fetch('/api/admin/riders-list', {
-        headers: adminAuthHeaders(),
+        headers: await getAdminAuthHeaders(),
       });
       if (response.status === 401 || response.status === 403) {
-        throw new Error('Geen toegang: controleer het beheertoken');
+        throw new Error('Geen toegang: log opnieuw in');
       }
       if (!response.ok) {
         throw new Error(`Renners laden mislukt (${response.status})`);
