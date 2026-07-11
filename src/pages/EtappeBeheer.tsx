@@ -14,10 +14,11 @@ import { useState, useMemo, useCallback } from 'react';
 import Layout from '../components/Layout';
 import { Autocomplete, MultiAutocomplete } from '../components/Autocomplete';
 import { useRefreshTdfData } from '../hooks/useRefreshTdfData';
-import { useStagesData, useRiders } from '../hooks/useTdfData';
+import { useStagesData } from '../hooks/useTdfData';
+import { useAdminRiders } from '../hooks/useAdminData';
 import { getAdminToken, setAdminToken, adminAuthHeaders } from '../lib/adminAuth';
 import { JERSEY_ICONS } from '../../lib/constants';
-import type { StageData, RidersData } from '../../lib/types';
+import type { StageData, SubstitutionMade } from '../../lib/types';
 
 // ============================================================================
 // Types
@@ -45,6 +46,14 @@ interface StageFormData {
 }
 
 type ViewMode = 'list' | 'entry' | 'view';
+
+/** Uitkomst van een verwerkte etappe — waarschuwingen blijven zichtbaar. */
+interface SubmitResult {
+  winning_team: string;
+  warnings: string[];
+  dns_riders: string[];
+  substitutions: SubstitutionMade[];
+}
 
 // ============================================================================
 // Constants
@@ -123,24 +132,20 @@ function StageManagementPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
   const { refreshAll } = useRefreshTdfData();
 
   const [formData, setFormData] = useState<StageFormData>(EMPTY_FORM_DATA);
 
-  // Fetch data
-  const { data: ridersData, isLoading: ridersLoading } = useRiders();
+  // Fetch data. Riders come from the admin API (full startlist), NOT from the
+  // public snapshot — that file only contains riders with points (fact 23).
+  const { data: adminRiders, isLoading: ridersLoading, error: ridersError } = useAdminRiders(!!token);
   const { data: stagesData, isLoading: stagesLoading } = useStagesData();
 
   // Memoized calculations
   const loading = ridersLoading || stagesLoading;
 
-  const riders = useMemo(() => {
-    if (!ridersData) return [];
-    return Object.keys(ridersData as RidersData).map(name => ({ 
-      id: name,  // Use name as ID since riders are keyed by name
-      name 
-    }));
-  }, [ridersData]);
+  const riders = useMemo(() => adminRiders ?? [], [adminRiders]);
 
   const stages = useMemo(() => {
     return stagesData || [];
@@ -159,6 +164,7 @@ function StageManagementPage() {
     setViewMode('entry');
     setSuccessMessage('');
     setErrorMessage('');
+    setSubmitResult(null);
   }, []);
 
   const handleViewStage = useCallback((stageNumber: number) => {
@@ -209,6 +215,7 @@ function StageManagementPage() {
 
     setSubmitting(true);
     setErrorMessage('');
+    setSubmitResult(null);
 
     try {
       // Check if stage is already complete
@@ -221,18 +228,18 @@ function StageManagementPage() {
           `Wil je deze etappe opnieuw invoeren en verwerken?\n\n` +
           `Dit zal de bestaande resultaten overschrijven.`
         );
-        
+
         if (!confirmReprocess) {
           setSubmitting(false);
           setErrorMessage('Bewerking geannuleerd');
           return;
         }
-        
+
         shouldForce = true;
       }
 
-      // Step 1: Save stage data
-      const saveResponse = await fetch('/api/admin/manual-entry', {
+      // One atomic call: validate → save → recalculate → publish (WP-A2)
+      const response = await fetch('/api/admin/enter-stage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
         body: JSON.stringify({
@@ -242,39 +249,34 @@ function StageManagementPage() {
         }),
       });
 
-      if (!saveResponse.ok) {
-        const error = await saveResponse.json();
-        throw new Error(error.error || 'Failed to save stage');
+      const body = await response.json();
+
+      if (!response.ok) {
+        if (Array.isArray(body.validation_errors)) {
+          setErrorMessage(
+            ['Niet opgeslagen — er is niets gewijzigd:', ...body.validation_errors].join('\n')
+          );
+          return;
+        }
+        throw new Error(body.error || 'Verwerken mislukt');
       }
 
-      // Step 2: Process stage (calculate points)
-      const processResponse = await fetch('/api/admin/process-stage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
-        body: JSON.stringify({
-          stage_number: formData.stage_number,
-          force: shouldForce
-        }),
-      });
-
-      if (!processResponse.ok) {
-        const error = await processResponse.json();
-        throw new Error(error.error || 'Failed to process stage');
-      }
-
+      const data: SubmitResult = body.data;
+      setSubmitResult(data);
       setSuccessMessage(`Etappe ${formData.stage_number} succesvol opgeslagen en verwerkt!`);
-      
-      // Refresh data and return to list
-      setTimeout(async () => {
-        setViewMode('list');
-        setSuccessMessage('Data wordt vernieuwd...');
-        
-        await refreshAll();
-        
-        setSuccessMessage('✅ Data succesvol bijgewerkt!');
-        setTimeout(() => setSuccessMessage(''), 2000);
-      }, 2000);
+      await refreshAll();
 
+      // Warnings and substitutions must stay on screen (fact 5): only
+      // return to the list automatically when there is nothing to review.
+      const nothingToReview =
+        (data.warnings?.length ?? 0) === 0 && (data.substitutions?.length ?? 0) === 0;
+      if (nothingToReview) {
+        setTimeout(() => {
+          setViewMode('list');
+          setSuccessMessage('✅ Data succesvol bijgewerkt!');
+          setTimeout(() => setSuccessMessage(''), 2000);
+        }, 1500);
+      }
     } catch (error: any) {
       console.error('Submit error:', error);
       setErrorMessage(error.message || 'Er is een fout opgetreden');
@@ -362,7 +364,8 @@ function StageManagementPage() {
             stages={stages}
             submitting={submitting}
             successMessage={successMessage}
-            errorMessage={errorMessage}
+            errorMessage={ridersError ? String(ridersError) : errorMessage}
+            submitResult={submitResult}
             onBack={() => setViewMode('list')}
             onSubmit={handleSubmit}
             onUpdateFormData={setFormData}
@@ -606,11 +609,12 @@ function StageViewMode({ formData, onBack, onEdit }: StageViewModeProps) {
 
 interface StageEntryModeProps {
   formData: StageFormData;
-  riders: Array<{ id: string; name: string }>;
+  riders: Array<{ id: string; name: string; team?: string }>;
   stages: StageData[];
   submitting: boolean;
   successMessage: string;
   errorMessage: string;
+  submitResult: SubmitResult | null;
   onBack: () => void;
   onSubmit: (e: React.FormEvent) => void;
   onUpdateFormData: (data: StageFormData) => void;
@@ -624,6 +628,7 @@ function StageEntryMode({
   submitting,
   successMessage,
   errorMessage,
+  submitResult,
   onBack,
   onSubmit,
   onUpdateFormData,
@@ -654,7 +659,7 @@ function StageEntryMode({
       )}
 
       {errorMessage && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg whitespace-pre-line">
           {errorMessage}
         </div>
       )}
@@ -662,6 +667,45 @@ function StageEntryMode({
       {successMessage && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
           {successMessage}
+        </div>
+      )}
+
+      {/* Verwerkingsresultaat: waarschuwingen en vervangingen blijven staan
+          tot de invoerder ze gezien heeft (fact 5) */}
+      {submitResult && (
+        <div className="mb-4 space-y-3">
+          <div className="p-4 bg-blue-50 text-blue-800 rounded-lg text-sm">
+            Dagploeg (team van de winnaar): <strong>{submitResult.winning_team}</strong>
+          </div>
+          {submitResult.warnings.length > 0 && (
+            <div className="p-4 bg-orange-100 text-orange-800 rounded-lg text-sm">
+              <div className="font-semibold mb-1">Waarschuwingen:</div>
+              <ul className="list-disc list-inside space-y-1">
+                {submitResult.warnings.map((warning, i) => (
+                  <li key={i}>{warning}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {submitResult.substitutions.length > 0 && (
+            <div className="p-4 bg-orange-100 text-orange-800 rounded-lg text-sm">
+              <div className="font-semibold mb-1">Reserves geactiveerd (DNS):</div>
+              <ul className="list-disc list-inside space-y-1">
+                {submitResult.substitutions.map((sub, i) => (
+                  <li key={i}>
+                    {sub.participant_name}: {sub.rider_in} vervangt {sub.rider_out}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={onBack}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+          >
+            Terug naar overzicht
+          </button>
         </div>
       )}
 

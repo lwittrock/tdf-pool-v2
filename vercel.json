@@ -1,6 +1,10 @@
 {
   "buildCommand": "npm run build",
   "framework": "vite",
+  "functions": {
+    "api/admin/enter-stage.ts": { "maxDuration": 300 },
+    "api/admin/process-stage.ts": { "maxDuration": 300 }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
