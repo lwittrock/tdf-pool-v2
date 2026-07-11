@@ -8,15 +8,11 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "seed-participants": "tsx scripts/seed-participants.ts",
-    "seed-stages": "tsx scripts/seed-stages.ts",
-    "deploy:data": "node scripts/manage-data.js",
-    "deploy:data:download": "node scripts/manage-data.js download",
-    "deploy:data:upload": "node scripts/manage-data.js upload",
-    "deploy:data:list": "node scripts/manage-data.js list",
-    "deploy:data:sync": "node scripts/manage-data.js download && npm run build",
-    "predeploy": "npm run deploy:data:download",
-    "deploy": "npm run build"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.api.json",
+    "check": "npm run lint && npm run typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "import:fixtures": "tsx scripts/import-fixtures-2026.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
@@ -47,6 +43,7 @@
     "tailwindcss": "^4.0.0-alpha.25",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "vite": "^5.0.12",
+    "vitest": "^4.1.10"
   }
 }

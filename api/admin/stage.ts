@@ -4,7 +4,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { StageData, ApiError, ApiSuccess } from '../../lib/types';
+import { requireAdmin } from '../../lib/require-admin.js';
+import type { StageData } from '../../lib/types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -15,6 +16,8 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  if (!(await requireAdmin(req, res))) return;
+
   if (req.method !== 'GET') {
     return res.status(405).json({ 
       success: false,

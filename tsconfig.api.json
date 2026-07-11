@@ -1,0 +1,24 @@
+{
+  // Typechecks the serverless functions and the server-side lib/ modules,
+  // which the Vite tsconfig (include: ["src"]) never sees. Vercel bundles
+  // functions per-file, hence moduleResolution "bundler" here too.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["api", "lib", "scripts/**/*.ts", "tests"],
+  // Frontend-only modules (import.meta.env) — excluded until the lib/ runtime
+  // split (R15, WP-B2) moves them out of lib/.
+  "exclude": ["lib/config.ts", "lib/constants.ts"]
+}

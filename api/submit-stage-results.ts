@@ -11,6 +11,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { requireAdmin } from '../lib/require-admin.js';
 import type { 
   SubmitStageResultsRequest, 
   SubmitStageResultsSuccess,
@@ -101,6 +102,8 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  if (!(await requireAdmin(req, res))) return;
+
   if (req.method !== 'POST') {
     return res.status(405).json({ 
       success: false,

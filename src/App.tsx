@@ -6,12 +6,12 @@ import TeamSelectie from './pages/TeamSelectie';
 import OverDezePoule from './pages/OverDezePoule';
 import EtappeBeheer from './pages/EtappeBeheer';
 
-// Navigation items
+// Navigation items (public site only — beheer is bereikbaar via /EtappeBeheer,
+// achter login; bewust niet in de publieke navigatie)
 const navItems = [
   { path: '/Klassement', label: 'Klassement' },
   { path: '/RennerPunten', label: 'Renner Punten' },
   { path: '/TeamSelectie', label: 'Team Selectie' },
-  { path: '/EtappeBeheer', label: 'Etappe Beheer' },
   { path: '/OverDezePoule', label: 'Over deze Poule' },
 ];
 
@@ -99,6 +99,7 @@ function App() {
           <Route path="/RennerPunten" element={<RennerPunten />} />
           <Route path="/TeamSelectie" element={<TeamSelectie />} />
           <Route path="/EtappeBeheer" element={<EtappeBeheer />} />
+          <Route path="/admin" element={<EtappeBeheer />} />
           <Route path="/OverDezePoule" element={<OverDezePoule />} />
         </Routes>
       </main>

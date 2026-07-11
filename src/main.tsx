@@ -4,15 +4,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App.tsx'
 import './index.css'
 
-// Create a query client
+// Create a query client. Snapshot queries configure their own caching in
+// useTdfData (pointer polls every 60s; versioned data is immutable).
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity, // Data never goes stale automatically
-      gcTime: Infinity, // Keep in cache forever (until page refresh)
-      refetchOnWindowFocus: false,
-      refetchOnMount: false, // Don't refetch when component remounts
-      refetchOnReconnect: false, // Don't refetch on network reconnect
       retry: 1,
     },
   },

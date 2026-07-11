@@ -23,15 +23,15 @@ export const config = {
   },
   
   /**
-   * Data paths - points to static JSON files from Vercel Blob
+   * Data source (WP-A1: versioned snapshots + pointer).
+   * The pointer lives on the public Blob store; its base URL comes from the
+   * build-time env VITE_DATA_BASE_URL. When unset (local dev) the pointer is
+   * fetched from the dev origin at /data/current.json.
+   * Snapshot file URLs come out of the pointer itself, never from config.
    */
   data: {
-    metadata: () => '/data/metadata.json',
-    leaderboards: () => '/data/leaderboards.json',
-    riders: () => '/data/riders.json',
-    stages: () => '/data/stages_data.json',
-    teamSelections: () => '/data/team_selections.json',
-    riderRankings: () => '/data/rider_rankings.json',
+    pointer: () =>
+      `${(import.meta.env.VITE_DATA_BASE_URL ?? '').replace(/\/+$/, '')}/data/current.json`,
   },
   
   /**
