@@ -20,15 +20,12 @@ import type {
   LeaderboardEntry,
   DirectieLeaderboardEntry,
   RiderStageData,
-  RiderMedalCounts,
-  RiderData,
   RidersData,
   RiderRankingsStageEntry,
   RiderRankingsTotalEntry,
   RiderRankingsData,
   StageData,
   TeamSelection,
-  JerseyPoints
 } from './types.js';
 
 const supabase = createClient(
@@ -355,7 +352,7 @@ export async function generateRidersJSON(): Promise<RidersData> {
   const rankedRiders = Object.entries(ridersJSON)
     .sort(([, a], [, b]) => b.total_points - a.total_points);
 
-  rankedRiders.forEach(([name, data], index) => {
+  rankedRiders.forEach(([name], index) => {
     ridersJSON[name].overall_rank = index + 1;
   });
 

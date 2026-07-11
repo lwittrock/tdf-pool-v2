@@ -15,6 +15,7 @@ import Layout from '../components/Layout';
 import { Autocomplete, MultiAutocomplete } from '../components/Autocomplete';
 import { useRefreshTdfData } from '../hooks/useRefreshTdfData';
 import { useStagesData, useRiders } from '../hooks/useTdfData';
+import { getAdminToken, setAdminToken, adminAuthHeaders } from '../lib/adminAuth';
 import { JERSEY_ICONS } from '../../lib/constants';
 import type { StageData, RidersData } from '../../lib/types';
 
@@ -117,6 +118,7 @@ function createFormDataFromStage(stage: StageData): StageFormData {
 // ============================================================================
 
 function StageManagementPage() {
+  const [token, setToken] = useState(getAdminToken());
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -232,7 +234,7 @@ function StageManagementPage() {
       // Step 1: Save stage data
       const saveResponse = await fetch('/api/admin/manual-entry', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
         body: JSON.stringify({
           ...formData,
           top_20_finishers: validFinishers,
@@ -248,10 +250,10 @@ function StageManagementPage() {
       // Step 2: Process stage (calculate points)
       const processResponse = await fetch('/api/admin/process-stage', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
+        body: JSON.stringify({
           stage_number: formData.stage_number,
-          force: shouldForce 
+          force: shouldForce
         }),
       });
 
@@ -280,6 +282,45 @@ function StageManagementPage() {
       setSubmitting(false);
     }
   }, [formData, stages, refreshAll]);
+
+  // Token gate: zonder beheertoken geen toegang tot het invoerscherm
+  if (!token) {
+    return (
+      <Layout title="Etappe Beheer">
+        <div className="max-w-md mx-auto mt-12 bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-lg font-semibold mb-2 text-tdf-primary">Beheertoken vereist</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Voer het beheertoken in om etappes te kunnen invoeren.
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const value = new FormData(e.currentTarget).get('token');
+              const entered = typeof value === 'string' ? value.trim() : '';
+              if (entered) {
+                setAdminToken(entered);
+                setToken(entered);
+              }
+            }}
+          >
+            <input
+              name="token"
+              type="password"
+              autoComplete="off"
+              placeholder="Beheertoken"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4"
+            />
+            <button
+              type="submit"
+              className="w-full px-6 py-3 bg-tdf-accent text-white rounded-lg hover:bg-yellow-600 font-semibold"
+            >
+              Doorgaan
+            </button>
+          </form>
+        </div>
+      </Layout>
+    );
+  }
 
   // Loading state
   if (loading) {

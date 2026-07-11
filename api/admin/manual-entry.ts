@@ -6,7 +6,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { ManualStageEntry, ApiError, ApiSuccess } from '../../lib/types';
+import { requireAdmin } from '../../lib/require-admin.js';
+import type { ManualStageEntry } from '../../lib/types';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -18,11 +19,13 @@ export default async function handler(
   res: VercelResponse
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
+    return res.status(405).json({
       success: false,
-      error: 'Method not allowed' 
+      error: 'Method not allowed'
     });
   }
+
+  if (!(await requireAdmin(req, res))) return;
 
   try {
     const stageData: ManualStageEntry = req.body;

@@ -115,6 +115,55 @@ npm run preview  # Preview production build
 npm run lint     # Run ESLint
 ```
 
+## Phase A — omgeving & runbook (juli 2026)
+
+> NB: de rest van deze README is verouderd (herschrijven staat gepland in WP-B8).
+> Deze sectie is actueel en hoort bij `docs/implementation-plan.md`.
+
+### Environment variables
+
+Zie `.env.example` voor de volledige lijst met uitleg. Samengevat:
+
+| Variabele | Waar | Doel |
+|---|---|---|
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Vercel (server) | DB-toegang voor API-routes |
+| `BLOB_READ_WRITE_TOKEN` | Vercel (server) | Snapshots publiceren naar Vercel Blob |
+| `ADMIN_TOKEN` | Vercel (server) | Interim beheertoken (WP-A0); vereist op alle schrijf-routes |
+| `SCRAPER_TOKEN` | Vercel (server) | Optioneel token voor scripts/scraper |
+| `ADMIN_EMAILS` | Vercel (server) | Allowlist voor OTP-login (WP-A4) |
+| `SEASON` | Vercel (server) | Seizoen in snapshot-paden (default 2026) |
+| `VITE_DATA_BASE_URL` | Vercel (build) | Publieke Blob-store origin voor de frontend |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Vercel (build) | OTP-loginscherm (WP-A4) |
+
+### Dashboard-checklist (eenmalig, handmatig — WP-A0/Q15/Q17/Q21)
+
+Deze stappen kan alleen de eigenaar in de dashboards doen; vink af en noteer de uitkomst hier:
+
+- [ ] **Vercel plan + Fluid compute**: controleer in Project Settings dat Fluid compute aanstaat
+      en welke `maxDuration` het plan toelaat (plan gaat uit van Hobby + Fluid, 300s).
+- [ ] **Blob store URL + CORS**: noteer de publieke store-origin (voor `VITE_DATA_BASE_URL`) en
+      verifieer met `curl -I <store-url>/data/current.json` dat `access-control-allow-origin: *`
+      en een `cache-control` ≤ 60s op de pointer staan.
+- [ ] **Supabase tier**: bevestig free tier (geen backups → entry-log is de audit trail;
+      let op: free projecten pauzeren na ~1 week inactiviteit — hervatten kan via het dashboard).
+- [ ] **Preview-scoping (Q21/R16)**: zet `SUPABASE_SERVICE_ROLE_KEY`, `BLOB_READ_WRITE_TOKEN` en
+      `ADMIN_TOKEN` in Vercel op **Production only**, zodat preview-deployments nooit
+      productie-data kunnen overschrijven.
+- [ ] **`ADMIN_TOKEN` genereren**: `openssl rand -hex 32`, in Vercel zetten én eenmalig invoeren
+      op de beheerpagina (wordt in localStorage bewaard).
+- [ ] **Supabase Auth (WP-A4)**: public signups uitzetten (Authentication → Providers → Email),
+      het beheeraccount vooraf aanmaken (Authentication → Users → Invite), en
+      `ADMIN_EMAILS` + `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` in Vercel zetten.
+- [ ] **SQL uitvoeren**: draai `supabase/phase-a.sql` in de Supabase SQL-editor
+      (entry-log-tabel + transactionele swap-functie voor WP-A2).
+
+### Checks
+
+```bash
+npm run check   # lint + typecheck (web én api/lib)
+npm test        # vitest (scoring golden tests, vanaf WP-A3)
+```
+
 ## License
 
 Private project

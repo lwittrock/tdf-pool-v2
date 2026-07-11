@@ -7,6 +7,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { requireAdmin } from '../../lib/require-admin.js';
 import {
   POINTS_FOR_RANK,
   JERSEY_POINTS,
@@ -24,6 +25,8 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  if (!(await requireAdmin(req, res))) return;
+
   if (req.method !== 'POST') {
     return res.status(405).json({ 
       success: false,
@@ -89,8 +92,6 @@ export default async function handler(
         error: 'Failed to fetch riders',
       });
     }
-
-    const riderMap = new Map(riders.map((r) => [r.id, r.name]));
 
     // Initialize rider points map
     const riderPointsMap = new Map<

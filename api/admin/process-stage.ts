@@ -19,6 +19,7 @@ import {
   generateRiderRankingsJSON,
 } from '../../lib/json-generators.js';
 import { getApiUrl, createErrorResponse, createSuccessResponse } from '../../lib/api-utils.js';
+import { requireAdmin, getBearerToken } from '../../lib/require-admin.js';
 import type { ProcessStageRequest } from '../../lib/types.js';
 
 const supabase = createClient(
@@ -33,6 +34,8 @@ export default async function handler(
   if (req.method !== 'POST') {
     return res.status(405).json(createErrorResponse('Method not allowed'));
   }
+
+  if (!(await requireAdmin(req, res))) return;
 
   try {
     const { stage_number, force }: ProcessStageRequest = req.body;
@@ -63,7 +66,10 @@ export default async function handler(
     const updateSelectionsUrl = getApiUrl('/api/admin/update-active-selections');
     const updateSelectionsResponse = await fetch(updateSelectionsUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getBearerToken(req)}`,
+      },
       body: JSON.stringify({ stage_number }),
     });
 
@@ -74,7 +80,7 @@ export default async function handler(
       );
     }
 
-    const selectionsResult = await updateSelectionsResponse.json();
+    const selectionsResult = (await updateSelectionsResponse.json()) as { participants_affected?: number };
     console.log(`[Process Stage] Active selections updated: ${selectionsResult.participants_affected} participants affected`);
 
     // STEP 2: Calculate points
@@ -83,7 +89,10 @@ export default async function handler(
     const calculatePointsUrl = getApiUrl('/api/admin/calculate-points');
     const calculatePointsResponse = await fetch(calculatePointsUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getBearerToken(req)}`,
+      },
       body: JSON.stringify({ stage_number, force }),
     });
 

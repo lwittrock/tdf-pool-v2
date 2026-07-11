@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.api.json",
+    "check": "npm run lint && npm run typecheck",
     "seed-participants": "tsx scripts/seed-participants.ts",
     "seed-stages": "tsx scripts/seed-stages.ts",
     "deploy:data": "node scripts/manage-data.js",

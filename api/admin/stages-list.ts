@@ -4,26 +4,19 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { ApiError, ApiSuccess } from '../../lib/types';
+import { requireAdmin } from '../../lib/require-admin.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-interface StageListItem {
-  id: string;
-  stage_number: number;
-  date: string | null;
-  departure_city: string | null;
-  arrival_city: string | null;
-  is_complete: boolean;
-}
-
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  if (!(await requireAdmin(req, res))) return;
+
   if (req.method !== 'GET') {
     return res.status(405).json({ 
       success: false,
