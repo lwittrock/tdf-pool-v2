@@ -1,7 +1,7 @@
 /**
  * One-off idempotent import of the 2026 pool (WP-A3, Q18).
  *
- * Imports data/fixtures-2026/team_selections.json — the ANONYMIZED P-coded
+ * Imports data/2026/fixtures/team_selections.json — the ANONYMIZED P-coded
  * set, per owner decision (July 2026): the PoC shows P-codes for now.
  *
  * What it does, idempotently (safe to re-run):
@@ -61,7 +61,7 @@ async function main(): Promise<void> {
   }
   const supabase = createClient(url, key);
 
-  const fixturePath = join(root, 'data', 'fixtures-2026', 'team_selections.json');
+  const fixturePath = join(root, 'data', '2026', 'fixtures', 'team_selections.json');
   const participants = JSON.parse(readFileSync(fixturePath, 'utf8')) as FixtureParticipant[];
   console.log(`Fixture: ${participants.length} deelnemers`);
 

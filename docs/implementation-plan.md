@@ -19,7 +19,7 @@ background rationale.*
    questions marked *default OK* have a safe suggested default you may implement without asking.
 3. Implement WPs in the order given in *Execution order* — dependencies are real (e.g. the bulk
    refactor must precede the atomic single-call pipeline).
-4. The golden fixtures in `data/fixtures-2026/` are the acceptance test for all scoring work. The new
+4. The golden fixtures in `data/2026/fixtures/` are the acceptance test for all scoring work. The new
    engine must reproduce `expected_standings.json` exactly. Do not "fix" the fixtures to match the code.
 
 ---
@@ -93,7 +93,7 @@ Missing or wrong (all fixture-verified — see next section):
 ## Authoritative scoring specification (fixture-verified)
 
 This restates the planning doc's spec **plus clarifications discovered while inspecting the fixtures**.
-The fixtures in `data/fixtures-2026/` are the ground truth (128 participants, stages 1–4 of the 2026
+The fixtures in `data/2026/fixtures/` are the ground truth (128 participants, stages 1–4 of the 2026
 Tour, extracted from the live Excel; all 128×4 stage totals recompute exactly).
 
 ### Per rider, per stage
@@ -155,13 +155,13 @@ can reference them.
   `directie_stage_points` integer columns can't hold this; see WP-B1 schema notes).
 - **R3 — Golden-fixture inconsistency in the planning doc.** F9 and the roadmap say golden tests run
   "against real **2025** fixtures", but the authoritative fixtures with expected outputs are the **2026**
-  set (`data/fixtures-2026/`). The legacy `data/stage_results/` (2025, stages 1–12 only, scraped JSON
+  set (`data/2026/fixtures/`). The legacy `data/2025/stage_results/` (2025, stages 1–12 only, scraped JSON
   with `team`/`bib`/accented names) has **no expected standings** and can't serve as a golden set.
-  Resolution: golden scoring tests = `fixtures-2026`; the 2025 files are useful only as *realistic
+  Resolution: golden scoring tests = `data/2026/fixtures`; the 2025 files are useful only as *realistic
   rider-name input* for parser/fuzzy-matching tests. Update F9's wording mentally wherever you see it.
 - **R4 — Paste-parser fixtures do not exist yet.** F5 mandates two paste formats (procyclingstats
   table, NOS-style list) with golden fixtures — but the repo contains **no raw paste-text samples**;
-  `data/stage_results/*.json` is structured scraper output, not paste text. Real paste samples must be
+  `data/2025/stage_results/*.json` is structured scraper output, not paste text. Real paste samples must be
   collected before the parser is built (see Q11, BLOCKER for that sub-task only).
 - **R5 — OTP + "disable public signups" interact.** `supabase.auth.signInWithOtp()` **creates** a user
   by default. With signups disabled, sign-in fails for users that don't exist yet. Correct recipe: call
@@ -192,7 +192,7 @@ can reference them.
   entry flow pre-seeds stage metadata (F5) and should stop accepting metadata from the entry form
   altogether (results-only payload), which dissolves this.
 - **R11 — 2025 archive source is incomplete in-repo.** The plan says "archive the 2025 data as the
-  first historical entry", but the repo only holds 2025 stages 1–12 (`data/stage_results/`) in v1
+  first historical entry", but the repo only holds 2025 stages 1–12 (`data/2025/stage_results/`) in v1
   format, and no final standings. Whether complete 2025 data exists elsewhere (production DB? blob?
   Excel?) is unknown → Q13.
 - **R12 — Admin reads must bypass public RLS.** Public RLS hides incomplete stages; the admin stage
@@ -225,7 +225,7 @@ can reference them.
 | Q15 | **Vercel plan & Fluid compute:** planning doc assumes Hobby + Fluid (300s ceiling). Verify in the dashboard; also confirm Supabase tier (free tier = no backups, which motivates the entry log / pg_dump) | Check during WP-A0; record in README | WP-A0 |
 | Q16 | **`ADMIN_EMAILS` initial value:** presumably `lars.login@pm.me` for 2026. Confirm and configure in Vercel env | As stated | WP-A4 |
 | Q17 | **Blob base URL exposure:** frontend needs the Blob store origin as a build-time env (`VITE_DATA_BASE_URL`). Confirm the store URL and that CORS (`access-control-allow-origin: *`) holds — verify with `curl -I` | Standard Vercel Blob public store; verify during WP-A1 | WP-A1 |
-| Q18 | **Where do 2026 team selections enter the DB?** The PoC needs the 128 participants + selections + ploeg + directie in Supabase for the live demo. Import `data/fixtures-2026/team_selections.json` via a one-off script, or wait for the WP-B4 UI? | One-off idempotent script (`scripts/import-fixtures-2026.ts`) — the PoC shouldn't wait for the admin import UI | WP-A3 |
+| Q18 | **Where do 2026 team selections enter the DB?** The PoC needs the 128 participants + selections + ploeg + directie in Supabase for the live demo. Import `data/2026/fixtures/team_selections.json` via a one-off script, or wait for the WP-B4 UI? | One-off idempotent script (`scripts/import-fixtures-2026.ts`) — the PoC shouldn't wait for the admin import UI | WP-A3 |
 
 Also inherited-but-unresolved from the planning doc: the *privacy note* — the "anonymous" Excel export
 (outside this repo) still contains two real participant names; regenerate before sharing. The repo
@@ -407,15 +407,15 @@ at 6 files); tiny admin editor (textarea + preview is enough).
 
 #### WP-B8 — Repo hygiene (fixes F8) — concrete list
 Remove: `zustand`, `date-fns`, `tree` deps; `src/hooks/useBusinessLogic.ts`; `tailwind.config.ts`;
-top-level legacy `data/*.json` (keep `data/fixtures-2026/` and — if kept as parser inputs —
-`data/stage_results/` moved under `data/fixtures-2025-raw/` or similar); dead `package.json` scripts
+top-level legacy `data/*.json` (keep `data/2026/fixtures/` and — if kept as parser inputs —
+`data/2025/stage_results/` moved under `data/fixtures-2025-raw/` or similar); dead `package.json` scripts
 (`seed-*`, `deploy:data*`, `predeploy`). Upgrade Tailwind `4.0.0-alpha.25` → v4 **stable** (breaking
 changes between alpha and stable are real: check `@theme` syntax, renamed utilities; visually verify
 every page after). Rewrite README to match reality (current tree, correct schema/migrations path, env
 var list, runbooks). Add `vitest` config and a `test` script (started in WP-A3).
 
 #### WP-B9 — Tests + CI (fixes F9)
-- Golden scoring suite on `fixtures-2026` (see WP-B1 acceptance) incl. the WP-A3 substitution and
+- Golden scoring suite on `data/2026/fixtures` (see WP-B1 acceptance) incl. the WP-A3 substitution and
   force-reprocess scenarios, the 9-rider participant, null combativity, dagploeg award, directie
   divisor-5 group, end-bonus stacking (synthetic — fixtures end at stage 4).
 - Parser fixtures for both paste formats incl. accents (blocked on Q11 samples).
@@ -464,7 +464,7 @@ output on current rules" plus unit tests, then B1 lands the rule changes against
 - **Phase A:** enter a real 2026 stage in a browser end-to-end; public site updates within ~2 min
   without redeploy; DNS-substitution golden test green; unauthenticated POST to every write route → 401;
   empty submit leaves DB untouched.
-- **Phase B:** engine reproduces `data/fixtures-2026/expected_standings.json` exactly (128×4 totals +
+- **Phase B:** engine reproduces `data/2026/fixtures/expected_standings.json` exactly (128×4 totals +
   directie scores incl. the divisor-5 single-member group); both paste formats with accents match in
   review; draft restores after tab kill; concurrency conflict shows the Dutch error; full pipeline
   < 10s at 21 stages; CI green on PR.
@@ -514,7 +514,7 @@ of commit `fb9d81c`.*
   on the pointer (60s) + poll interval (60s) + Blob CDN overwrite propagation (up to 60s) ≈ **3 min**.
   Fix rather than relax: fetch the pointer with `cache: 'no-store'` (it's a few hundred bytes; the CDN
   still absorbs the load) so only propagation + poll remain, and keep the ~2 min criterion honest.
-- **P3 — Q18's suggested default imports the wrong names.** `data/fixtures-2026/team_selections.json`
+- **P3 — Q18's suggested default imports the wrong names.** `data/2026/fixtures/team_selections.json`
   is **anonymized** (`P001`…`P128` — verified). Importing it as suggested makes the public PoC show a
   leaderboard of P-codes. The real names exist only in the owner's Excel, kept out of the repo
   deliberately. The import script must therefore read a **local, gitignored** file (real-name export)
@@ -618,7 +618,7 @@ of commit `fb9d81c`.*
   samples (with accents and DNF markers) as fixtures before the parser sub-task starts. Amend WP-B3 and
   WP-B9 accordingly (one format, one fixture set).
 - **Q13 — RESOLVED: 2026 wordt het eerste archief.** No complete 2025 source; drop the 2025-archive
-  goal (R11 closed). `data/stage_results/` (2025, stages 1–12) remains useful only as realistic
+  goal (R11 closed). `data/2025/stage_results/` (2025, stages 1–12) remains useful only as realistic
   rider-name input for parser/fuzzy tests.
 - **Q16 — RESOLVED:** `ADMIN_EMAILS = lars.login@pm.me`, single pre-created account for 2026.
 - **Q19 — RESOLVED (for now): voornamen only.** The 2026 test imports **first names only** from a

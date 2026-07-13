@@ -2,7 +2,7 @@
  * Golden fixture test (WP-A3 seed of the full WP-B9 suite).
  *
  * Recomputes all 128 participants × stages 1–4 of the 2026 Tour from
- * data/fixtures-2026/ and compares against expected_standings.json (the
+ * data/2026/fixtures/ and compares against expected_standings.json (the
  * live Excel administration). The fixtures are the acceptance test for all
  * scoring work: never "fix" the fixtures to match the code.
  *
@@ -24,7 +24,7 @@ import {
 import { foldedRiderNameKey, riderNameKey } from '../lib/rider-names';
 import type { JerseyType } from '../lib/types';
 
-const FIXTURES = join(__dirname, '..', 'data', 'fixtures-2026');
+const FIXTURES = join(__dirname, '..', 'data', '2026', 'fixtures');
 
 interface FixtureParticipant {
   id: string;
