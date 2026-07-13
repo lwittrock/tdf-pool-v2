@@ -200,13 +200,18 @@ The import script runs **from your machine** against Supabase directly.
 ## 5. Recompute stages 1–4 and publish
 
 > **Fresh Supabase project:** the DB has no stage rows, so there is nothing
-> to force-reprocess. Rebuild stages 1–4 by replaying
-> `data/2026/fixtures/stage_results/stage_N.json` through
-> `POST /api/admin/enter-stage` (the payloads need a small field mapping:
-> `top_20[].rider` → `top_20_finishers[].rider_name`; no DNS/DNF lists in
-> the fixtures), or enter the four stages by hand in the beheer UI. Name
-> matching works because `--create-missing` created the riders from the
-> same ASCII-folded fixture names. Then skip the loop below.
+> to force-reprocess. Replay the fixture stage results instead — add
+> `ADMIN_TOKEN=<token>` and `APP_URL=https://<your-domain>` to `.env.local`,
+> then:
+>
+> ```bash
+> npm run replay:stages              # dry run: reports what it would do
+> npm run replay:stages -- --apply   # enter + publish stages 1–4 in order
+> ```
+>
+> The script also creates riders that appear in the results but were never
+> picked by a participant (team ONBEKEND) — the import in step 4 only
+> creates picked riders. Then skip the curl loop below.
 
 If migrating from the old project (stage rows exist): force-reprocess each
 stage so points, ranks, and snapshots are rebuilt with the new engine:

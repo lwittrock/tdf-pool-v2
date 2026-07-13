@@ -12,7 +12,8 @@
     "check": "npm run lint && npm run typecheck",
     "test": "vitest run",
     "test:watch": "vitest",
-    "import:fixtures": "tsx scripts/import-fixtures-2026.ts"
+    "import:fixtures": "tsx scripts/import-fixtures-2026.ts",
+    "replay:stages": "tsx scripts/enter-fixture-stages.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
