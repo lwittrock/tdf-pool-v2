@@ -57,3 +57,5 @@ __pycache__/
 # Test data
 test-data/
 .test/
+# Real administration exports (contain participant names - keep out of git)
+data/2026/*.xlsx

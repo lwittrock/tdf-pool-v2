@@ -41,6 +41,8 @@ interface FixtureStage {
   jerseys: Record<JerseyType, string>;
   combativity: string | null;
   dagploeg: string;
+  /** Mid-Tour DNS riders (activate the reserve, Q1/Q3). */
+  dns?: string[];
 }
 
 interface ExpectedStandings {
@@ -81,13 +83,38 @@ for (const participant of teamSelections) {
       participant_id: participant.id,
       rider_id: foldedRiderNameKey(participant.reserve),
       position: 11,
-      // All observed activations are pre-race non-starters → from stage 1.
+      // Pre-race activations (non-starters, or P115's 9-rider roster where
+      // the reserve counts from the start) → from stage 1.
       replaced_at_stage: participant.reserve_active ? 1 : null,
     });
   }
 }
 
-describe('golden fixtures 2026 (128 participants × 4 stages)', () => {
+// Mid-Tour DNS substitutions (Q1: also mid-race; Q2: from that stage on;
+// Q4: at most one — the reserve only activates while still unused), driven
+// by the fixtures' dns lists exactly like lib/pipeline updateActiveSelections.
+const byParticipant = new Map<string, SelectionInput[]>();
+for (const selection of selections) {
+  const list = byParticipant.get(selection.participant_id) ?? [];
+  list.push(selection);
+  byParticipant.set(selection.participant_id, list);
+}
+for (const stage of stages) {
+  const dns = new Set((stage.dns ?? []).map(foldedRiderNameKey));
+  if (dns.size === 0) continue;
+  for (const list of byParticipant.values()) {
+    const reserve = list.find((s) => s.position === 11);
+    for (const main of list) {
+      if (main.position > 10 || !dns.has(main.rider_id) || main.replaced_at_stage != null) continue;
+      main.replaced_at_stage = stage.stage_number;
+      if (reserve && reserve.replaced_at_stage == null && !dns.has(reserve.rider_id)) {
+        reserve.replaced_at_stage = stage.stage_number;
+      }
+    }
+  }
+}
+
+describe(`golden fixtures 2026 (128 participants × ${expected.stages_completed} stages)`, () => {
   it('reproduces every stage total and cumulative total exactly', () => {
     const cumulative = new Map<string, number>();
     let checked = 0;
