@@ -85,26 +85,30 @@ Vite build. Until then: test entry flows against production, per the go-live
 doc.
 
 ### 8a. R1's "Dagploeg = stage winner's team" assumption is wrong — for WP-B1
-Discovered while transcribing the Excel's stage columns (July 2026): the
-sheet's **Dagploeg row does not match the stage winner's team** (stage 1:
-winner Vingegaard/Visma, Dagploeg = Netcompany INEOS; stage 5: winner
-Kooij/Decathlon, Dagploeg = XDS Astana). The Dagploeg is a separate daily
-outcome (best team of the day), entered in the sheet, and the fixture stage
-files carry it as their own `dagploeg` field. `stages.winning_team` (derived
-from the position-1 finisher per R1) is therefore **not** the input for the
-+6 rule. WP-B1 must add Dagploeg as its own entry field / column instead of
-reading `winning_team`. Until then the published standings simply exclude
-the +6, as already documented for the golden test.
+Discovered while transcribing the Excel's stage columns; **confirmed by the
+owner** (July 2026): the Dagploeg is the winner of the stage's **team day
+classification** (PCS "Complementary results" per stage — e.g. stage 9: team
+day winner EF Education–EasyPost = the sheet's Dagploeg, while the stage
+winner was Van der Poel/Alpecin). `stages.winning_team` (derived from the
+position-1 finisher per R1) is therefore **not** the input for the +6 rule.
+WP-B1 must add Dagploeg as its own entry field; the fixture stage files
+already carry it as their own `dagploeg` field. Until then the published
+standings simply exclude the +6, as documented for the golden test.
 
-### 8b. The pool Excel's rider naming is inconsistent — data quirk, decided
-Both `TOBIAS JOHANNESSEN` and `TOBIAS HALLAND JOHANNESSEN` occur as picks
+### 8b. The pool Excel's rider naming is inconsistent — data quirk, ruled
+Both `TOBIAS JOHANNESSEN` and `TOBIAS HALLAND JOHANNESSEN` occurred as picks
 (same physical rider); the sheet treated them as different strings, so the
-Halland-form pickers received 0 for his results — the golden fixtures
-verify the sheet really scored it that way, so the DB reproduces it
-faithfully. Both spellings exist as rider rows (both Uno-X). Similar
-Excel-specific spellings are canonical in the DB: `AARON MURRAY GATE`,
-`RAUL GARCIA`, `DEREK JAMES GEE`, `VALENTIN PARET PEINTRE`,
-`XABIER AZPARREN IRURZUN`. `data/2026/startlist.json` documents this.
+one Halland-form picker (P128) received 0 for his stage 2/3/9 results — the
+golden fixtures verify the sheet really scored it that way. **Owner ruling
+(July 2026): merged** via `npm run merge:riders` + `npm run process:stages`;
+the site therefore deliberately diverges from the sheet for P128 from stage
+2 onward. The golden fixtures stay verbatim-Excel (unmerged); a fresh
+fixture import recreates both rows, so redo the merge after any full
+rebuild. Excel-specific spellings remain canonical in the DB:
+`AARON MURRAY GATE`, `RAUL GARCIA`, `DEREK JAMES GEE`,
+`VALENTIN PARET PEINTRE`, `XABIER AZPARREN IRURZUN` — see
+`data/2026/startlist.json`. The structural fix (rider aliases / canonical
+IDs so free-text names stop being join keys) belongs in WP-B1/WP-B4.
 
 ### 8. Force-reprocessing an earlier stage does not ripple forward — NOTE
 Pre-existing v1 semantics, kept by the port: `calculatePointsForStage(N)`

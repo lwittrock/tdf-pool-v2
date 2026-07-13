@@ -14,7 +14,9 @@
     "test:watch": "vitest",
     "import:fixtures": "tsx scripts/import-fixtures-2026.ts",
     "replay:stages": "tsx scripts/enter-fixture-stages.ts",
-    "apply:startlist": "tsx scripts/apply-startlist.ts"
+    "apply:startlist": "tsx scripts/apply-startlist.ts",
+    "merge:riders": "tsx scripts/merge-riders.ts",
+    "process:stages": "tsx scripts/process-stages.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
