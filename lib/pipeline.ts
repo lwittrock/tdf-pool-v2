@@ -140,6 +140,9 @@ export async function updateActiveSelections(stageNumber: number): Promise<Updat
             replacement_for_rider_id: selection.rider_id,
           })
           .eq('id', backupRider.id);
+        // Keep the in-memory row in sync: a second DNS'd main in the same
+        // stage (e.g. a team withdrawal) must not re-activate the reserve.
+        backupRider.replaced_at_stage = stageNumber;
 
         substitutions.push({
           participant_name: participant.name,
@@ -294,10 +297,14 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
   }
 
   // ---- Cumulative totals + overall ranks ----------------------------------
+  // The stage being processed is included regardless of is_complete:
+  // processStage only marks it complete AFTER this runs, so filtering on
+  // is_complete alone would publish the fresh stage with cumulative 0 and
+  // arbitrary overall ranks.
   const { data: completedStages } = await supabase
     .from('stages')
     .select('id, stage_number')
-    .eq('is_complete', true)
+    .or(`is_complete.eq.true,stage_number.eq.${stageNumber}`)
     .lte('stage_number', stageNumber)
     .order('stage_number');
   if (!completedStages) throw new Error('Etappes laden mislukt');

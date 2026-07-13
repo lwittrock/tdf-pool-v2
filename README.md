@@ -137,6 +137,9 @@ Zie `.env.example` voor de volledige lijst met uitleg. Samengevat:
 
 ### Dashboard-checklist (eenmalig, handmatig — WP-A0/Q15/Q17/Q21)
 
+> Uitgebreide stap-voor-stap instructies (met verificatie per stap):
+> `docs/phase-a-go-live.md`.
+
 Deze stappen kan alleen de eigenaar in de dashboards doen; vink af en noteer de uitkomst hier:
 
 - [ ] **Vercel plan + Fluid compute**: controleer in Project Settings dat Fluid compute aanstaat

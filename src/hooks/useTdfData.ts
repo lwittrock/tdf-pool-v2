@@ -83,6 +83,9 @@ function useSnapshot<T>(name: SnapshotName) {
   const pointerQuery = useSnapshotPointer();
   const url = pointerQuery.data?.files?.[name];
   const runId = pointerQuery.data?.run_id;
+  // Pointer loaded but doesn't list this file (schema drift, hand-edited
+  // rollback): surface an error instead of rendering an empty page.
+  const missingFile = pointerQuery.isSuccess && !url;
 
   const dataQuery = useQuery<T>({
     queryKey: ['snapshot', name, runId],
@@ -98,8 +101,11 @@ function useSnapshot<T>(name: SnapshotName) {
   return {
     ...dataQuery,
     isLoading: pointerQuery.isLoading || dataQuery.isLoading,
-    isError: pointerQuery.isError || dataQuery.isError,
-    error: pointerQuery.error ?? dataQuery.error,
+    isError: pointerQuery.isError || dataQuery.isError || missingFile,
+    error:
+      pointerQuery.error ??
+      dataQuery.error ??
+      (missingFile ? new Error('Kon data niet laden (snapshot ontbreekt)') : null),
   };
 }
 
