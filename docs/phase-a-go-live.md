@@ -18,6 +18,20 @@ Each step says how to verify it before moving on.
 
 ## 1. Supabase — database
 
+### 1.0 Fresh project? Base schema first
+
+`phase-a.sql` is **incremental**: it assumes the base tables and enum types
+already exist. On a brand-new Supabase project, first run the full contents
+of [`supabase/supabase-schema.sql`](../supabase/supabase-schema.sql) in the
+SQL Editor (it drops-and-recreates everything, so it's written for exactly
+this). Then continue with 1.1.
+
+A fresh project also means an **empty database** — no startlist and no
+stage rows. Steps 4–5 change accordingly: run the fixture import with
+`--create-missing`, and rebuild stages 1–4 by replaying the fixture stage
+results through `/api/admin/enter-stage` (or entering them in the beheer
+UI) instead of force-reprocessing rows that aren't there.
+
 ### 1.1 Run the Phase A SQL
 
 1. Open https://supabase.com/dashboard → your project → **SQL Editor**.
@@ -49,13 +63,19 @@ has a `ploeg` column. In SQL Editor:
 
 ### 1.3 Collect the keys
 
-**Project Settings → API** — note these for step 2:
+**Project Settings → API Keys** (Project URL is under **Settings → Data
+API** / General). New projects show the new-style keys; the legacy JWT keys
+are on the "Legacy API keys" tab. **Either style works** with this codebase
+(supabase-js v2) — just be consistent:
 
 | Value | Used as |
 |---|---|
-| Project URL | `SUPABASE_URL` **and** `VITE_SUPABASE_URL` |
-| `anon` `public` key | `VITE_SUPABASE_ANON_KEY` |
-| `service_role` key (secret) | `SUPABASE_SERVICE_ROLE_KEY` |
+| Project URL (`https://<ref>.supabase.co`) | `SUPABASE_URL` **and** `VITE_SUPABASE_URL` |
+| `sb_publishable_…` (or legacy `anon` key) | `VITE_SUPABASE_ANON_KEY` |
+| `sb_secret_…` (or legacy `service_role` key) | `SUPABASE_SERVICE_ROLE_KEY` |
+
+If this replaces an earlier project, update the values **everywhere they
+live**: Vercel env vars (step 2.3) *and* your local `.env.local` (step 4).
 
 Also confirm the project is on the **free tier** expectation from the plan:
 no automatic backups (the entry log is the audit trail) and the project
@@ -179,8 +199,17 @@ The import script runs **from your machine** against Supabase directly.
 
 ## 5. Recompute stages 1–4 and publish
 
-The fixture stages' result rows are already in the DB; force-reprocess each
-one so points, ranks, and snapshots are rebuilt with the new engine:
+> **Fresh Supabase project:** the DB has no stage rows, so there is nothing
+> to force-reprocess. Rebuild stages 1–4 by replaying
+> `data/2026/fixtures/stage_results/stage_N.json` through
+> `POST /api/admin/enter-stage` (the payloads need a small field mapping:
+> `top_20[].rider` → `top_20_finishers[].rider_name`; no DNS/DNF lists in
+> the fixtures), or enter the four stages by hand in the beheer UI. Name
+> matching works because `--create-missing` created the riders from the
+> same ASCII-folded fixture names. Then skip the loop below.
+
+If migrating from the old project (stage rows exist): force-reprocess each
+stage so points, ranks, and snapshots are rebuilt with the new engine:
 
 ```bash
 TOKEN=<ADMIN_TOKEN>
