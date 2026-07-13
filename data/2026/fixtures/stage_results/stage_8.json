@@ -1,0 +1,33 @@
+{
+  "stage_number": 8,
+  "top_20": [
+    { "position": 1, "rider": "TIM MERLIER" },
+    { "position": 2, "rider": "BINIAM GIRMAY" },
+    { "position": 3, "rider": "OLAV KOOIJ" },
+    { "position": 4, "rider": "JASPER PHILIPSEN" },
+    { "position": 5, "rider": "PAVEL BITTNER" },
+    { "position": 6, "rider": "RICK PLUIMERS" },
+    { "position": 7, "rider": "PASCAL ACKERMANN" },
+    { "position": 8, "rider": "CLEMENT RUSSO" },
+    { "position": 9, "rider": "MAX KANTER" },
+    { "position": 10, "rider": "MILAN FRETIN" },
+    { "position": 11, "rider": "SOREN WAERENSKJOLD" },
+    { "position": 12, "rider": "MADS PEDERSEN" },
+    { "position": 13, "rider": "FERNANDO GAVIRIA" },
+    { "position": 14, "rider": "DORIAN GODON" },
+    { "position": 15, "rider": "ANTHONY TURGIS" },
+    { "position": 16, "rider": "MATHIEU VAN DER POEL" },
+    { "position": 17, "rider": "PHIL BAUHAUS" },
+    { "position": 18, "rider": "JENNO BERCKMOES" },
+    { "position": 19, "rider": "FRED WRIGHT" },
+    { "position": 20, "rider": "QUENTIN PACHER" }
+  ],
+  "jerseys": {
+    "yellow": "TADEJ POGACAR",
+    "green": "MADS PEDERSEN",
+    "polka_dot": "TADEJ POGACAR",
+    "white": "ISAAC DEL TORO"
+  },
+  "combativity": "LIAM SLOCK",
+  "dagploeg": "TEAM PICNIC POSTNL"
+}

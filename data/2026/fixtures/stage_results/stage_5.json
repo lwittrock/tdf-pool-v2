@@ -1,0 +1,33 @@
+{
+  "stage_number": 5,
+  "top_20": [
+    { "position": 1, "rider": "OLAV KOOIJ" },
+    { "position": 2, "rider": "MAX KANTER" },
+    { "position": 3, "rider": "TIM MERLIER" },
+    { "position": 4, "rider": "HUUB ARTZ" },
+    { "position": 5, "rider": "JASPER PHILIPSEN" },
+    { "position": 6, "rider": "BINIAM GIRMAY" },
+    { "position": 7, "rider": "MADS PEDERSEN" },
+    { "position": 8, "rider": "MILAN FRETIN" },
+    { "position": 9, "rider": "ANTHONY TURGIS" },
+    { "position": 10, "rider": "SOREN WAERENSKJOLD" },
+    { "position": 11, "rider": "JENNO BERCKMOES" },
+    { "position": 12, "rider": "PASCAL ACKERMANN" },
+    { "position": 13, "rider": "CLEMENT RUSSO" },
+    { "position": 14, "rider": "RICK PLUIMERS" },
+    { "position": 15, "rider": "DORIAN GODON" },
+    { "position": 16, "rider": "PAVEL BITTNER" },
+    { "position": 17, "rider": "FERNANDO GAVIRIA" },
+    { "position": 18, "rider": "PHIL BAUHAUS" },
+    { "position": 19, "rider": "MIKE TEUNISSEN" },
+    { "position": 20, "rider": "AARON MURRAY GATE" }
+  ],
+  "jerseys": {
+    "yellow": "TORSTEIN TRÆEN",
+    "green": "MADS PEDERSEN",
+    "polka_dot": "ALEX BAUDIN",
+    "white": "MATHIAS VACEK"
+  },
+  "combativity": "BAPTISTE VEISTROFFER",
+  "dagploeg": "XDS ASTANA TEAM"
+}

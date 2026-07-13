@@ -167,13 +167,20 @@ async function main(): Promise<void> {
       });
     });
     if (p.reserve && p.reserve.trim()) {
-      rows.push({
-        participant_id: participant.id,
-        rider_id: riderIdByKey.get(foldedRiderNameKey(p.reserve)),
-        position: 11,
-        is_active: p.reserve_active,
-        replaced_at_stage: p.reserve_active ? 1 : null,
-      });
+      const reserveRiderId = riderIdByKey.get(foldedRiderNameKey(p.reserve));
+      if (rows.some((row) => row.rider_id === reserveRiderId)) {
+        // Source-sheet quirk: reserve duplicates a main rider. A duplicate can
+        // never legally activate (UNIQUE participant+rider), so skip the row.
+        console.log(`  let op: ${p.id} heeft ${p.reserve.trim()} als renner én reserve — reserve overgeslagen`);
+      } else {
+        rows.push({
+          participant_id: participant.id,
+          rider_id: reserveRiderId,
+          position: 11,
+          is_active: p.reserve_active,
+          replaced_at_stage: p.reserve_active ? 1 : null,
+        });
+      }
     }
 
     const { error: insertError } = await supabase

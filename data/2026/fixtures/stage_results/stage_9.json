@@ -1,0 +1,33 @@
+{
+  "stage_number": 9,
+  "top_20": [
+    { "position": 1, "rider": "MATHIEU VAN DER POEL" },
+    { "position": 2, "rider": "TOBIAS JOHANNESSEN" },
+    { "position": 3, "rider": "TOM PIDCOCK" },
+    { "position": 4, "rider": "ALEX BAUDIN" },
+    { "position": 5, "rider": "FILIPPO GANNA" },
+    { "position": 6, "rider": "MADS PEDERSEN" },
+    { "position": 7, "rider": "MICHAEL MATTHEWS" },
+    { "position": 8, "rider": "NICOLAS BREUILLARD" },
+    { "position": 9, "rider": "JORDAN JEGAT" },
+    { "position": 10, "rider": "QUINN SIMMONS" },
+    { "position": 11, "rider": "TADEJ POGACAR" },
+    { "position": 12, "rider": "REMCO EVENEPOEL" },
+    { "position": 13, "rider": "ISAAC DEL TORO" },
+    { "position": 14, "rider": "ALEX ARANBURU" },
+    { "position": 15, "rider": "PAUL SEIXAS" },
+    { "position": 16, "rider": "TIESJ BENOOT" },
+    { "position": 17, "rider": "RAMSES DEBRUYNE" },
+    { "position": 18, "rider": "YANNIS VOISARD" },
+    { "position": 19, "rider": "JONAS VINGEGAARD" },
+    { "position": 20, "rider": "FLORIAN LIPOWITZ" }
+  ],
+  "jerseys": {
+    "yellow": "TADEJ POGACAR",
+    "green": "MADS PEDERSEN",
+    "polka_dot": "TADEJ POGACAR",
+    "white": "ISAAC DEL TORO"
+  },
+  "combativity": "MATHIEU VAN DER POEL",
+  "dagploeg": "EF EDUCATION - EASYPOST"
+}

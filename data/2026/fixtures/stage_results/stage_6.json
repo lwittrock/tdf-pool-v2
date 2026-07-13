@@ -1,0 +1,35 @@
+{
+  "stage_number": 6,
+  "top_20": [
+    { "position": 1, "rider": "TADEJ POGACAR" },
+    { "position": 2, "rider": "JONAS VINGEGAARD" },
+    { "position": 3, "rider": "ISAAC DEL TORO" },
+    { "position": 4, "rider": "REMCO EVENEPOEL" },
+    { "position": 5, "rider": "PAUL SEIXAS" },
+    { "position": 6, "rider": "FLORIAN LIPOWITZ" },
+    { "position": 7, "rider": "JUAN AYUSO" },
+    { "position": 8, "rider": "MATTIAS SKJELMOSE" },
+    { "position": 9, "rider": "LENNY MARTINEZ" },
+    { "position": 10, "rider": "SEPP KUSS" },
+    { "position": 11, "rider": "EGAN BERNAL" },
+    { "position": 12, "rider": "JORDAN JEGAT" },
+    { "position": 13, "rider": "HAROLD TEJADA" },
+    { "position": 14, "rider": "ILAN VAN WILDER" },
+    { "position": 15, "rider": "TOM PIDCOCK" },
+    { "position": 16, "rider": "YANNIS VOISARD" },
+    { "position": 17, "rider": "ADAM YATES" },
+    { "position": 18, "rider": "TOBIAS JOHANNESSEN" },
+    { "position": 19, "rider": "LENNERT VAN EETVELT" },
+    { "position": 20, "rider": "BRANDON MCNULTY" }
+  ],
+  "jerseys": {
+    "yellow": "TADEJ POGACAR",
+    "green": "MADS PEDERSEN",
+    "polka_dot": "TADEJ POGACAR",
+    "white": "ISAAC DEL TORO"
+  },
+  "combativity": "TADEJ POGACAR",
+  "dagploeg": "UAE TEAM EMIRATES XRG",
+  "dns": ["ALEX MOLENAAR"],
+  "dnf": ["BERT VAN LERBERGHE", "CIAN UIJTDEBROEKS", "ARVID DE KLEIJN"]
+}

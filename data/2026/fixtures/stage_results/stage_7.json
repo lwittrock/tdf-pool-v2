@@ -1,0 +1,34 @@
+{
+  "stage_number": 7,
+  "top_20": [
+    { "position": 1, "rider": "TIM MERLIER" },
+    { "position": 2, "rider": "SOREN WAERENSKJOLD" },
+    { "position": 3, "rider": "BINIAM GIRMAY" },
+    { "position": 4, "rider": "MAX KANTER" },
+    { "position": 5, "rider": "JASPER PHILIPSEN" },
+    { "position": 6, "rider": "PHIL BAUHAUS" },
+    { "position": 7, "rider": "HUUB ARTZ" },
+    { "position": 8, "rider": "DORIAN GODON" },
+    { "position": 9, "rider": "MADS PEDERSEN" },
+    { "position": 10, "rider": "TOM VAN ASBROECK" },
+    { "position": 11, "rider": "PAVEL BITTNER" },
+    { "position": 12, "rider": "PASCAL ACKERMANN" },
+    { "position": 13, "rider": "MILAN FRETIN" },
+    { "position": 14, "rider": "FERNANDO GAVIRIA" },
+    { "position": 15, "rider": "ANTHONY TURGIS" },
+    { "position": 16, "rider": "CLEMENT RUSSO" },
+    { "position": 17, "rider": "JENNO BERCKMOES" },
+    { "position": 18, "rider": "RICK PLUIMERS" },
+    { "position": 19, "rider": "FRED WRIGHT" },
+    { "position": 20, "rider": "AARON MURRAY GATE" }
+  ],
+  "jerseys": {
+    "yellow": "TADEJ POGACAR",
+    "green": "MADS PEDERSEN",
+    "polka_dot": "TADEJ POGACAR",
+    "white": "ISAAC DEL TORO"
+  },
+  "combativity": "BAPTISTE VEISTROFFER",
+  "dagploeg": "XDS ASTANA TEAM",
+  "dns": ["TORSTEIN TRÆEN"]
+}

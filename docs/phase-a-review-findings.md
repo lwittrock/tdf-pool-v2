@@ -84,6 +84,28 @@ correct; fixing the read side needs the Vercel `VERCEL_ENV` exposed to the
 Vite build. Until then: test entry flows against production, per the go-live
 doc.
 
+### 8a. R1's "Dagploeg = stage winner's team" assumption is wrong — for WP-B1
+Discovered while transcribing the Excel's stage columns (July 2026): the
+sheet's **Dagploeg row does not match the stage winner's team** (stage 1:
+winner Vingegaard/Visma, Dagploeg = Netcompany INEOS; stage 5: winner
+Kooij/Decathlon, Dagploeg = XDS Astana). The Dagploeg is a separate daily
+outcome (best team of the day), entered in the sheet, and the fixture stage
+files carry it as their own `dagploeg` field. `stages.winning_team` (derived
+from the position-1 finisher per R1) is therefore **not** the input for the
++6 rule. WP-B1 must add Dagploeg as its own entry field / column instead of
+reading `winning_team`. Until then the published standings simply exclude
+the +6, as already documented for the golden test.
+
+### 8b. The pool Excel's rider naming is inconsistent — data quirk, decided
+Both `TOBIAS JOHANNESSEN` and `TOBIAS HALLAND JOHANNESSEN` occur as picks
+(same physical rider); the sheet treated them as different strings, so the
+Halland-form pickers received 0 for his results — the golden fixtures
+verify the sheet really scored it that way, so the DB reproduces it
+faithfully. Both spellings exist as rider rows (both Uno-X). Similar
+Excel-specific spellings are canonical in the DB: `AARON MURRAY GATE`,
+`RAUL GARCIA`, `DEREK JAMES GEE`, `VALENTIN PARET PEINTRE`,
+`XABIER AZPARREN IRURZUN`. `data/2026/startlist.json` documents this.
+
 ### 8. Force-reprocessing an earlier stage does not ripple forward — NOTE
 Pre-existing v1 semantics, kept by the port: `calculatePointsForStage(N)`
 recomputes cumulative totals for stages ≤ N only. If you re-enter stage 2

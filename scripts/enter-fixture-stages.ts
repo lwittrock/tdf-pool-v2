@@ -13,14 +13,18 @@
  *      and publishes — so after the last stage the site is live.
  *
  * Usage:
- *   npm run replay:stages                 # dry run: report, no writes
- *   npm run replay:stages -- --apply      # create missing riders + POST
- *   npm run replay:stages -- --apply 3 4  # only stages 3 and 4
+ *   npm run replay:stages                    # dry run: report, no writes
+ *   npm run replay:stages -- --apply         # create missing riders + POST
+ *   npm run replay:stages -- --apply 3 4     # only stages 3 and 4
+ *   npm run replay:stages -- --apply --local 5 6 7 8 9
+ *       runs the pipeline in-process instead of via the deployed endpoint —
+ *       no Vercel maxDuration limit (the N+1 pipeline outgrows 300s around
+ *       stage 4 until WP-B2 lands). Requires BLOB_READ_WRITE_TOKEN.
  *
  * Requires in .env.local (or .env):
- *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY  — rider check/create
- *   ADMIN_TOKEN                              — auth for enter-stage
- *   APP_URL                                  — e.g. https://tdf-pool.vercel.app
+ *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY  — rider check/create (+ --local)
+ *   ADMIN_TOKEN, APP_URL                     — endpoint mode only
+ *   BLOB_READ_WRITE_TOKEN                    — --local mode only (publish)
  */
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -40,6 +44,7 @@ for (const envFile of ['.env.local', '.env']) {
 }
 
 const APPLY = process.argv.includes('--apply');
+const LOCAL = process.argv.includes('--local');
 const stageArgs = process.argv.slice(2).filter((a) => /^\d+$/.test(a)).map(Number);
 const STAGES = stageArgs.length > 0 ? stageArgs : [1, 2, 3, 4];
 
@@ -49,6 +54,9 @@ interface FixtureStage {
   jerseys: { yellow: string; green: string; polka_dot: string; white: string };
   combativity: string | null;
   dagploeg: string;
+  /** DNS riders (activate the reserve, Q1/Q3); source: PCS startlist annotations. */
+  dns?: string[];
+  dnf?: string[];
 }
 
 function toEntry(fixture: FixtureStage): ManualStageEntry {
@@ -60,6 +68,8 @@ function toEntry(fixture: FixtureStage): ManualStageEntry {
     })),
     jerseys: fixture.jerseys,
     combativity: fixture.combativity ?? undefined,
+    dns_riders: fixture.dns,
+    dnf_riders: fixture.dnf,
     force: true,
   };
 }
@@ -69,6 +79,8 @@ function stageNames(fixture: FixtureStage): string[] {
     ...fixture.top_20.map((f) => f.rider),
     ...Object.values(fixture.jerseys),
     ...(fixture.combativity ? [fixture.combativity] : []),
+    ...(fixture.dns ?? []),
+    ...(fixture.dnf ?? []),
   ];
 }
 
@@ -77,10 +89,16 @@ async function main(): Promise<void> {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const adminToken = process.env.ADMIN_TOKEN;
   const appUrl = (process.env.APP_URL ?? '').replace(/\/+$/, '');
-  if (!url || !key || !adminToken || !appUrl) {
-    console.error(
-      'SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ADMIN_TOKEN en APP_URL zijn vereist (zet ze in .env.local)'
-    );
+  if (!url || !key) {
+    console.error('SUPABASE_URL en SUPABASE_SERVICE_ROLE_KEY zijn vereist (zet ze in .env.local)');
+    process.exit(1);
+  }
+  if (LOCAL && !process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error('--local vereist BLOB_READ_WRITE_TOKEN in .env.local (Vercel → Settings → Environment Variables)');
+    process.exit(1);
+  }
+  if (!LOCAL && (!adminToken || !appUrl)) {
+    console.error('ADMIN_TOKEN en APP_URL zijn vereist (of gebruik --local)');
     process.exit(1);
   }
   const supabase = createClient(url, key);
@@ -126,40 +144,63 @@ async function main(): Promise<void> {
 
   if (!APPLY) {
     console.log(
-      `\nDry run klaar: etappes ${STAGES.join(', ')} → POST ${appUrl}/api/admin/enter-stage. ` +
-        'Draai met --apply om in te sturen.'
+      `\nDry run klaar: etappes ${STAGES.join(', ')} → ` +
+        (LOCAL ? 'lokale pipeline (enterStage)' : `POST ${appUrl}/api/admin/enter-stage`) +
+        '. Draai met --apply om in te sturen.'
     );
     return;
   }
 
-  // ---- 2. Enter stages in order (each call recalculates + publishes) -------
+  // ---- 2. Enter stages in order (each one recalculates + publishes) --------
   for (const fixture of fixtures) {
     const entry = toEntry(fixture);
-    console.log(`\nEtappe ${entry.stage_number} insturen...`);
-    const response = await fetch(`${appUrl}/api/admin/enter-stage`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${adminToken}`,
-      },
-      body: JSON.stringify(entry),
-    });
-    const body = (await response.json()) as {
-      success: boolean;
-      error?: string;
-      validation_errors?: string[];
-      data?: { run_id: string; warnings: string[]; substitutions: unknown[] };
-    };
-    if (!response.ok || !body.success) {
-      console.error(`Etappe ${entry.stage_number} geweigerd (${response.status}):`);
-      for (const err of body.validation_errors ?? [body.error ?? 'onbekende fout']) {
-        console.error(`  - ${err}`);
+    console.log(`\nEtappe ${entry.stage_number} insturen${LOCAL ? ' (lokaal)' : ''}...`);
+
+    let runId: string | undefined;
+    let warnings: string[] = [];
+    let substitutions: unknown[] = [];
+    if (LOCAL) {
+      const { enterStage } = await import('../lib/enter-stage.js');
+      const result = await enterStage(entry, 'replay-script-local');
+      if (!result.ok) {
+        console.error(`Etappe ${entry.stage_number} geweigerd (${result.status}):`);
+        for (const err of result.errors) console.error(`  - ${err}`);
+        process.exit(1);
       }
-      process.exit(1);
+      runId = result.process.runId;
+      warnings = result.warnings;
+      substitutions = result.process.selections.substitutions;
+    } else {
+      const response = await fetch(`${appUrl}/api/admin/enter-stage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify(entry),
+      });
+      const body = (await response.json()) as {
+        success: boolean;
+        error?: string;
+        validation_errors?: string[];
+        data?: { run_id: string; warnings: string[]; substitutions: unknown[] };
+      };
+      if (!response.ok || !body.success) {
+        console.error(`Etappe ${entry.stage_number} geweigerd (${response.status}):`);
+        for (const err of body.validation_errors ?? [body.error ?? 'onbekende fout']) {
+          console.error(`  - ${err}`);
+        }
+        process.exit(1);
+      }
+      runId = body.data?.run_id;
+      warnings = body.data?.warnings ?? [];
+      substitutions = body.data?.substitutions ?? [];
     }
+
     console.log(
-      `  OK — run ${body.data?.run_id}` +
-        (body.data?.warnings?.length ? ` — waarschuwingen: ${body.data.warnings.join('; ')}` : '')
+      `  OK — run ${runId}` +
+        (warnings.length ? ` — waarschuwingen: ${warnings.join('; ')}` : '') +
+        (substitutions.length ? ` — vervangingen: ${JSON.stringify(substitutions)}` : '')
     );
   }
 
