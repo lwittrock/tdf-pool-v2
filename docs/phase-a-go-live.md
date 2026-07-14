@@ -1,5 +1,9 @@
 # Phase A go-live — manual steps
 
+> **EXECUTED (July 2026).** The app is live; kept as the dashboard runbook
+> reference (env vars, auth setup). Note: `SCRAPER_TOKEN` was removed in the
+> cleanup phase. Current references: [README.md](../README.md).
+
 Everything in this document is a step **only the project owner can do** in the
 Supabase and Vercel dashboards (plus two commands from this repo). The code
 side of Phase A (WP-A0–A4) is merged; nothing here requires touching code.

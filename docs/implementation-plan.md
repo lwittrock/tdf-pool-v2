@@ -1,5 +1,11 @@
 # TdF Pool v2 — Implementation Plan (handoff document)
 
+> **SUPERSEDED (July 2026).** This plan was executed; the WP numbering is
+> still referenced by commits and other docs, but nothing here should drive
+> new work. Current references: [README.md](../README.md) (architecture,
+> operations) and [handoff-cleanup.md](handoff-cleanup.md) (the live
+> backlog). File/line references below predate the WP-B2 rewrite.
+
 *Written July 2026. Companion to `docs/architecture-review.md` (the "planning doc"). This document is the
 execution-ready version: every claim below was re-verified against the code in this repo, file/line
 references are current as of commit `a750f77`, and everything that is still ambiguous is flagged

@@ -1,5 +1,8 @@
 # Next steps — execution plan (July 2026, after stage 9)
 
+> **DONE (July 2026).** All steps executed; kept for history. Current
+> references: [README.md](../README.md) and [handoff-cleanup.md](handoff-cleanup.md).
+
 The practical follow-up to [`implementation-plan.md`](implementation-plan.md)
 (which stays the reference for WP numbering and decisions) and
 [`phase-a-review-findings.md`](phase-a-review-findings.md). Ordered by

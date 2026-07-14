@@ -49,8 +49,14 @@ now says to set the Blob store URL in `.env.local` for local dev too.
 
 ## Deferred — documented, not fixed
 
-### 5. A retracted DNS is never rolled back — MEDIUM, → WP-B2/WP-B4
-`lib/pipeline.ts`, `updateActiveSelections` only ever *sets*
+### 5. A retracted DNS is never rolled back — FIXED (cleanup phase, July 14)
+Fixed by reconciliation: `scoring.deriveRosterStamps` derives every
+participant's stamps from the full `stage_dnf` history on each run and
+`updateActiveSelections` diffs them against the stored rows, clearing
+stamps whose casualty was retracted (pre-race stamp-1 reserves excluded).
+Original finding below.
+
+`lib/pipeline.ts`, `updateActiveSelections` only ever *set*
 `replaced_at_stage`. If a rider is mistakenly entered as DNS and the stage is
 force re-entered with the corrected payload, the selection rows keep the
 substitution: the main scores 0 from that stage on and the reserve stays

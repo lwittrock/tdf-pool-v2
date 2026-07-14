@@ -5,9 +5,12 @@ features. The app is live and trusted; don't break it for elegance.
 
 ## Where things stand
 
-- **The app IS the administration.** Stages 1–9 replayed from fixtures;
-  stage 10 was entered by the owner via the beheer UI (July 14) — the Excel
-  is retired. Site: https://tdf-pool.vercel.app, beheer at `/admin`
+- **The app is live as a demo** (owner clarification, July 14): the Excel is
+  retired and stages are entered in the app, but it is not yet a system of
+  record with an audience — cleanup can be aggressive; a broken deploy is
+  an inconvenience, not an incident. Stages 1–9 replayed from fixtures;
+  stage 10 entered by the owner via the beheer UI (July 14).
+  Site: https://tdf-pool.vercel.app, beheer at `/admin`
   (e-mail login or beheertoken).
 - **Standings are sheet-exact** including the Dagploeg +6:
   `npm run verify:standings` checks all cells against
@@ -34,50 +37,46 @@ features. The app is live and trusted; don't break it for elegance.
 5. Rules changes need an owner ruling first (current rules: README
    "How it works"; substitution: DNS → that stage, DNF/OTL/DSQ → next
    stage, max one).
-6. The Tour is LIVE (stages 11–21 remain, until July 26). Deploys happen on
-   push to main. Don't leave main broken; the owner enters a stage daily.
+6. The Tour runs until July 26 (stages 11–21 remain) and the owner enters a
+   stage daily; deploys happen on push to main. Keep main working — but the
+   app is a demo (see above), so this is hygiene, not a freeze.
 
 ## Cleanup backlog (the actual work)
 
 Ordered by value; verify each with the invariant-3 loop.
 
-1. **Dead v1 API routes.** The Python scrapers are deleted, but their
-   endpoints remain: `api/submit-stage-results.ts`, `api/submit-startlist.ts`
-   (+ `lib/scraper-types.ts`). `api/admin/process-stage.ts` is also likely
-   unused by the UI now (entry goes through `enter-stage`; local repair uses
-   `process:stages`). Check what `api/admin/stage.ts` / `stages-list.ts`
-   serve. Confirm no callers (the UI + scripts), then delete routes + types
-   + the `SCRAPER_TOKEN` mentions. *Ask the owner* before deleting
-   submit-startlist — next season's startlist import may want an endpoint,
-   though `apply:startlist` covers it.
+1. ~~**Dead v1 API routes.**~~ **DONE (July 14).** All six dead files deleted
+   (`submit-stage-results`, `submit-startlist`, `admin/process-stage`,
+   `admin/stage`, `admin/stages-list`, `lib/scraper-types`) plus the
+   `SCRAPER_TOKEN` credential path — the owner approved deleting
+   submit-startlist (2027 reworks intake anyway; git history has it).
 2. **ESLint 9 flat config + dependency bumps** (React Router, TanStack
    Query, Vite, @vercel/blob…). Churn-heavy: do it in one dedicated pass,
    verify with the full loop plus a manual smoke of `/admin` entry and the
    public pages (dev server against production data).
-3. **Finding 5 — roster reconciliation.** `replaced_at_stage` is write-only
-   today: a retracted DNS/DNF doesn't undo a substitution. Fix: derive
-   desired stamps from the full `stage_dnf` history on every
-   `updateActiveSelections` run (diff-based updates incl. clearing).
-   **Trap:** pre-race activations have stamp `1` with no `stage_dnf` rows
-   (P115's 9-rider roster, non-starting picks) — never clear stamp-1 rows.
-   Acceptance: golden suite + `verify:standings` + a manual
-   retract-DNS-and-reprocess test on a copy.
-4. **`is_active` on `participant_rider_selections` is transitional debris**
-   — written, never read by scoring (roster derives from
-   `replaced_at_stage`). Only `generateTeamSelectionsJSON` filters on
-   position/stamps. Decide: drop the column (migration) or document it.
+3. ~~**Finding 5 — roster reconciliation.**~~ **DONE (July 14).** The rule
+   now lives in `scoring.deriveRosterStamps` (pure; the golden suite drives
+   the same function); `updateActiveSelections` diffs derived stamps against
+   the DB, clearing retracted ones. Stamp-1 reserve rows stay immutable.
+   Verified with a live retract-DNF-restore round trip + `verify:standings`.
+4. ~~**`is_active` on `participant_rider_selections`.**~~ **DONE (July 14).**
+   Code no longer writes it; migration `003_drop_transitional_columns.sql`
+   drops it (plus `stage_rank_change` and the never-used
+   `directie_stage_points` table). **Owner action: paste 003 in the SQL
+   editor after the deploy.** `riders.is_active` is a different, live column.
 5. **EtappeBeheer.tsx is ~1,200 lines.** Split into components
    (`src/components/beheer/…`), no behavior change. Also sweep
    `src/hooks/useBusinessLogic.ts` and `lib/data-transforms.ts` for v1-era
    dead paths.
-6. **`participant_stage_points.stage_rank_change`** exists in the schema,
-   never written. Write it (cheap, pipeline already has both ranks) or drop it.
-7. **Directie score semantics — needs an owner decision, not code first.**
-   The site's directie leaderboard sums the top-5; the sheet's formula
-   averages them. Same ranking order, different numbers. Ask which the
-   participants should see, then align + document.
-8. **docs/implementation-plan.md** (695 lines) is largely executed/stale —
-   add a "superseded by" header pointing at the newer docs, don't rewrite it.
+6. ~~**`participant_stage_points.stage_rank_change`**~~ **DONE (July 14).**
+   Owner chose drop — part of migration 003 (see item 4).
+7. ~~**Directie score semantics.**~~ **DONE (July 14).** Owner ruling: show
+   the **average** of the top-5 (the sheet's formula), one decimal, divided
+   by the actual contributor count. `verify:standings` now also asserts the
+   10 directie averages against the golden fixture.
+8. ~~**docs/implementation-plan.md.**~~ **DONE (July 14).** Superseded/
+   historical headers added to implementation-plan, next-steps-plan,
+   phase-a-go-live and architecture-review; finding 5 marked fixed.
 9. **Rebuild dress rehearsal**: `npm run rebuild -- --apply` has never run
    against a scratch Supabase project end-to-end (needs a throwaway project
    + the three migrations pasted). Nice-to-have insurance.
