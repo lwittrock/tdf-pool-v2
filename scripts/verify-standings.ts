@@ -30,6 +30,9 @@ interface Expected {
     string,
     { stage_points: Record<string, number>; cumulative: Record<string, number> }
   >;
+  directie_groups: Record<string, string[]>;
+  /** Average of the top-5 cumulative at stages_completed, 1 decimal (sheet formula). */
+  directie_scores_computed: Record<string, number>;
 }
 
 async function main(): Promise<void> {
@@ -88,6 +91,25 @@ async function main(): Promise<void> {
     }
   }
 
+  // Directie scores: average of the top-5 cumulative at the last golden stage
+  // (owner ruling July 2026 — the sheet's AVERAGE formula, not a sum).
+  for (const [directie, members] of Object.entries(expected.directie_groups)) {
+    const cumulatives = members
+      .map((pcode) => byKey.get(`${pcode}|${expected.stages_completed}`)?.cumulative_points)
+      .filter((points): points is number => points !== undefined)
+      .sort((a, b) => b - a)
+      .slice(0, 5);
+    const dbScore =
+      cumulatives.length === 0
+        ? 0
+        : Math.round((cumulatives.reduce((sum, points) => sum + points, 0) / cumulatives.length) * 10) / 10;
+    const goldenScore = expected.directie_scores_computed[directie];
+    if (dbScore !== goldenScore) {
+      diffs.push(`directie ${directie}: top-5-gemiddelde ${dbScore} (DB) vs ${goldenScore} (golden)`);
+    }
+    checked += 1;
+  }
+
   if (diffs.length > 0) {
     console.error(`AFWIJKINGEN (${diffs.length}) na ${checked} cellen:`);
     for (const d of diffs.slice(0, 30)) console.error(`  - ${d}`);
@@ -95,7 +117,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   console.log(
-    `OK: ${checked} cellen (etappepunten + cumulatief, ${Object.keys(expected.participants).length} deelnemers × ${expected.stages_completed} etappes) exact gelijk aan de golden standings.`
+    `OK: ${checked} cellen (etappepunten + cumulatief, ${Object.keys(expected.participants).length} deelnemers × ${expected.stages_completed} etappes, plus ${Object.keys(expected.directie_groups).length} directiescores) exact gelijk aan de golden standings.`
   );
 }
 

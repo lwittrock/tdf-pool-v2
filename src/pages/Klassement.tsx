@@ -350,7 +350,7 @@ function HomePage() {
         <main>
           <h2 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-4 text-tdf-primary">Directie Klassement</h2>
           <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
-            Top {metadata.top_n_participants_for_directie} deelnemers per directie per etappe tellen mee
+            Gemiddelde van de top {metadata.top_n_participants_for_directie} deelnemers per directie
           </p>
 
           <div className="block lg:hidden space-y-2">
@@ -371,7 +371,7 @@ function HomePage() {
                     </div>
                     
                     <div className="text-right min-w-[60px]">
-                      <div className="text-lg font-bold text-tdf-primary">{entry.overall_score}</div>
+                      <div className="text-lg font-bold text-tdf-primary">{entry.overall_score.toFixed(1)}</div>
                     </div>
                   </div>
                 </div>
@@ -416,7 +416,7 @@ function HomePage() {
                       <td className="px-4 py-3 text-sm font-medium">{entry.overall_rank}</td>
                       <td className="px-4 py-3 text-sm text-center"><RankChange change={entry.overall_rank_change} /></td>
                       <td className="px-4 py-3 text-sm font-medium">{entry.directie_name}</td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold">{entry.overall_score}</td>
+                      <td className="px-4 py-3 text-sm text-right font-semibold">{entry.overall_score.toFixed(1)}</td>
                     </tr>
                     {expandedItem === entry.directie_name && (
                       <tr className="bg-gray-100">

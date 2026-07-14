@@ -54,9 +54,12 @@ export const COMBATIVITY_POINTS = 5;
 export const DAGPLOEG_POINTS = 6;
 
 /**
- * Number of top participants per directie whose scores count toward directie total
- * IMPORTANT: This is per-stage, not cumulative
- * e.g., For Stage 5, we take the top 5 participants by Stage 5 points only
+ * Number of top participants per directie whose scores count toward the
+ * directie score. The score is the AVERAGE of those top-N (sheet semantics,
+ * owner ruling July 2026); directies with fewer than N participants average
+ * over what they have.
+ * The stage score takes the top N by stage points, the overall score the
+ * top N by cumulative points.
  */
 export const TOP_N_FOR_DIRECTIE = 5;
 

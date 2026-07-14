@@ -24,6 +24,10 @@ against that sheet cell-for-cell).
   classification* → participants whose Ploeg pick matches). Reserves
   activate on a casualty: from the DNS stage itself, or from the stage
   after a DNF/OTL/DSQ; at most one substitution per participant.
+- **Directie klassement** shows the **average** of each directie's top-5
+  participants (by cumulative points), one decimal — the sheet's formula
+  (owner ruling July 2026). Directies with fewer than 5 participants
+  average over what they have.
 - **Corrections self-heal:** re-entering any stage recomputes cumulative
   totals and overall ranks for every stage in one pass (~6 s/stage).
 

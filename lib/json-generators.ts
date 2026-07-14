@@ -161,12 +161,24 @@ export async function generateLeaderboardsJSON(): Promise<{
         .sort((a, b) => b.cumulative_points - a.cumulative_points)
         .slice(0, TOP_N_FOR_DIRECTIE);
 
+      // Directie score is the AVERAGE of the top-N (sheet semantics, owner
+      // ruling July 2026) — divide by the actual contributor count: a
+      // directie can have fewer than TOP_N participants.
+      const average = (total: number, count: number): number =>
+        count === 0 ? 0 : Math.round((total / count) * 10) / 10;
+
       directieLeaderboardByStage[stageKey].push({
         directie_name: directie.name,
-        overall_score: byOverall.reduce((sum, row) => sum + row.cumulative_points, 0),
+        overall_score: average(
+          byOverall.reduce((sum, row) => sum + row.cumulative_points, 0),
+          byOverall.length
+        ),
         overall_rank: 0,
         overall_rank_change: 0,
-        stage_score: byStagePoints.reduce((sum, row) => sum + row.stage_points, 0),
+        stage_score: average(
+          byStagePoints.reduce((sum, row) => sum + row.stage_points, 0),
+          byStagePoints.length
+        ),
         stage_rank: 0,
         stage_participant_contributions: byStagePoints.map((row) => ({
           participant_name: participantById.get(row.participant_id)?.name ?? 'Unknown',
