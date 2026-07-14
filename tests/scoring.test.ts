@@ -12,8 +12,23 @@ import {
   computeRiderStagePoints,
   computeParticipantStagePoints,
   selectionCountsForStage,
+  dagploegBonus,
   type SelectionInput,
 } from '../lib/scoring';
+
+describe('dagploegBonus (WP-B1)', () => {
+  it('awards +6 on a ploeg match, case/spacing-insensitively', () => {
+    expect(dagploegBonus('UAE TEAM EMIRATES XRG', 'UAE TEAM EMIRATES XRG')).toBe(6);
+    expect(dagploegBonus('uae team  emirates xrg ', 'UAE TEAM EMIRATES XRG')).toBe(6);
+  });
+
+  it('awards nothing on a different team, a missing ploeg, or a stage without dagploeg', () => {
+    expect(dagploegBonus('LIDL-TREK', 'UAE TEAM EMIRATES XRG')).toBe(0);
+    expect(dagploegBonus(null, 'UAE TEAM EMIRATES XRG')).toBe(0);
+    expect(dagploegBonus('LIDL-TREK', null)).toBe(0);
+    expect(dagploegBonus('LIDL-TREK', '')).toBe(0);
+  });
+});
 
 const P1 = 'participant-1';
 

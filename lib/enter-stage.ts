@@ -18,12 +18,19 @@ export interface RiderRecord {
   team: string;
 }
 
+export interface RiderAlias {
+  alias: string;
+  rider_id: string;
+}
+
 export interface ValidatedEntry {
   results: Array<{ rider_id: string; position: number; time_gap: string | null }>;
   jerseys: Array<{ jersey_type: JerseyType; rider_id: string }>;
   combativityRiderId: string | null;
   dnf: Array<{ rider_id: string; status: DNFStatus }>;
   winningTeam: string;
+  /** Canonical team spelling of the Dagploeg (team day classification winner). */
+  dagploeg: string | null;
   warnings: string[];
 }
 
@@ -42,15 +49,25 @@ const JERSEY_LABELS_NL: Record<JerseyType, string> = {
  * Pure validation: everything must resolve before anything is written.
  * An unrecognized rider name is a blocking error, never a silent skip
  * (the old flow only warned — and the UI discarded the warnings, fact 5).
+ * Aliases (rider_aliases table) resolve alternative spellings to their
+ * canonical rider row (WP-B1).
  */
 export function validateStageEntry(
   entry: ManualStageEntry,
-  riders: RiderRecord[]
+  riders: RiderRecord[],
+  aliases: RiderAlias[] = []
 ): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  const riderById = new Map(riders.map((r) => [r.id, r]));
   const riderByKey = new Map(riders.map((r) => [riderNameKey(r.name), r]));
+  for (const alias of aliases) {
+    const rider = riderById.get(alias.rider_id);
+    if (rider && !riderByKey.has(riderNameKey(alias.alias))) {
+      riderByKey.set(riderNameKey(alias.alias), rider);
+    }
+  }
   const resolve = (name: string): RiderRecord | undefined => riderByKey.get(riderNameKey(name));
 
   if (!Number.isInteger(entry.stage_number) || entry.stage_number < 1 || entry.stage_number > 21) {
@@ -156,6 +173,25 @@ export function validateStageEntry(
     errors.push('Geen winnaar (positie 1) in de uitslag');
   }
 
+  // --- Dagploeg (WP-B1: team day classification winner, +6 rule) -------------
+  // Optional — some stages have no team day winner. When provided it must
+  // match a known team spelling, so the +6 comparison against the
+  // participants' Ploeg picks can never silently miss on a typo.
+  let dagploeg: string | null = null;
+  if (entry.dagploeg?.trim()) {
+    const teamByKey = new Map(
+      riders.filter((r) => r.team && r.team !== 'ONBEKEND').map((r) => [riderNameKey(r.team), r.team])
+    );
+    const match = teamByKey.get(riderNameKey(entry.dagploeg));
+    if (!match) {
+      errors.push(`Onbekende ploeg voor de dagploeg: "${entry.dagploeg}"`);
+    } else {
+      dagploeg = match;
+    }
+  } else {
+    warnings.push('Geen dagploeg ingevoerd (geen +6 voor deze etappe)');
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors };
   }
@@ -168,6 +204,7 @@ export function validateStageEntry(
       combativityRiderId,
       dnf,
       winningTeam: winnerRider!.team,
+      dagploeg,
       warnings,
     },
   };
@@ -196,7 +233,15 @@ export async function enterStage(
     throw new Error(`Renners laden mislukt: ${ridersError?.message}`);
   }
 
-  const validation = validateStageEntry(entry, riders);
+  // Aliases are optional infrastructure (phase-b1.sql); tolerate absence.
+  const { data: aliases, error: aliasError } = await supabase
+    .from('rider_aliases')
+    .select('alias, rider_id');
+  if (aliasError) {
+    console.error('[Enter Stage] rider_aliases niet beschikbaar:', aliasError.message);
+  }
+
+  const validation = validateStageEntry(entry, riders, aliases ?? []);
 
   // Audit trail first — also (especially) for rejected payloads.
   const { error: logError } = await supabase.from('stage_entry_log').insert({
@@ -244,6 +289,7 @@ export async function enterStage(
   if (entry.stage_type) stageRow.stage_type = entry.stage_type;
   if (entry.difficulty) stageRow.difficulty = entry.difficulty;
   if (entry.won_how) stageRow.won_how = entry.won_how;
+  if (validation.value.dagploeg) stageRow.dagploeg = validation.value.dagploeg;
 
   const { data: stage, error: stageError } = await supabase
     .from('stages')

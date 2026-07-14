@@ -6,10 +6,9 @@
  * live Excel administration). The fixtures are the acceptance test for all
  * scoring work: never "fix" the fixtures to match the code.
  *
- * The Dagploeg +6 rule is not implemented in the engine yet (WP-B1); this
- * test applies it externally from the fixture's per-stage `dagploeg` field
- * so the roster/points core is still verified against the real totals.
- * When WP-B1 lands, move the +6 into the engine and delete it here.
+ * The Dagploeg +6 is the engine's dagploegBonus (WP-B1), fed from the
+ * fixture's per-stage `dagploeg` field (winner of the stage's team day
+ * classification — may be absent).
  */
 
 import { readFileSync } from 'node:fs';
@@ -18,10 +17,11 @@ import { describe, expect, it } from 'vitest';
 import {
   computeRiderStagePoints,
   computeParticipantStagePoints,
+  dagploegBonus,
   type SelectionInput,
   type StageJerseyInput,
 } from '../lib/scoring';
-import { foldedRiderNameKey, riderNameKey } from '../lib/rider-names';
+import { foldedRiderNameKey } from '../lib/rider-names';
 import type { JerseyType } from '../lib/types';
 
 const FIXTURES = join(__dirname, '..', 'data', '2026', 'fixtures');
@@ -40,9 +40,11 @@ interface FixtureStage {
   top_20: Array<{ position: number; rider: string }>;
   jerseys: Record<JerseyType, string>;
   combativity: string | null;
-  dagploeg: string;
-  /** Mid-Tour DNS riders (activate the reserve, Q1/Q3). */
+  dagploeg: string | null;
+  /** Mid-Tour DNS riders (reserve activates from this stage). */
   dns?: string[];
+  /** DNF/OTL/DSQ riders (reserve activates from the NEXT stage). */
+  dnf?: string[];
 }
 
 interface ExpectedStandings {
@@ -90,24 +92,32 @@ for (const participant of teamSelections) {
   }
 }
 
-// Mid-Tour DNS substitutions (Q1: also mid-race; Q2: from that stage on;
-// Q4: at most one — the reserve only activates while still unused), driven
-// by the fixtures' dns lists exactly like lib/pipeline updateActiveSelections.
+// Mid-Tour substitutions (Q1: also mid-race; Q2: from the activation stage
+// on; Q4: at most one — the reserve only activates while still unused),
+// driven by the fixtures' casualty lists exactly like lib/pipeline
+// updateActiveSelections: DNS at stage s activates from s, DNF/OTL/DSQ at
+// stage s activates from s+1 (owner ruling July 14 2026).
 const byParticipant = new Map<string, SelectionInput[]>();
 for (const selection of selections) {
   const list = byParticipant.get(selection.participant_id) ?? [];
   list.push(selection);
   byParticipant.set(selection.participant_id, list);
 }
+const stageByNumber = new Map(stages.map((s) => [s.stage_number, s]));
 for (const stage of stages) {
-  const dns = new Set((stage.dns ?? []).map(foldedRiderNameKey));
-  if (dns.size === 0) continue;
+  const previous = stageByNumber.get(stage.stage_number - 1);
+  const casualties = new Set([
+    ...(stage.dns ?? []).map(foldedRiderNameKey),
+    ...(previous?.dnf ?? []).map(foldedRiderNameKey),
+  ]);
+  if (casualties.size === 0) continue;
   for (const list of byParticipant.values()) {
     const reserve = list.find((s) => s.position === 11);
     for (const main of list) {
-      if (main.position > 10 || !dns.has(main.rider_id) || main.replaced_at_stage != null) continue;
+      if (main.position > 10 || !casualties.has(main.rider_id) || main.replaced_at_stage != null)
+        continue;
       main.replaced_at_stage = stage.stage_number;
-      if (reserve && reserve.replaced_at_stage == null && !dns.has(reserve.rider_id)) {
+      if (reserve && reserve.replaced_at_stage == null && !casualties.has(reserve.rider_id)) {
         reserve.replaced_at_stage = stage.stage_number;
       }
     }
@@ -143,11 +153,9 @@ describe(`golden fixtures 2026 (128 participants × ${expected.stages_completed}
       );
 
       for (const participant of teamSelections) {
-        // Dagploeg +6 — WP-B1 rule, applied externally for now (see header).
-        const dagploegBonus =
-          riderNameKey(participant.ploeg) === riderNameKey(stage.dagploeg) ? 6 : 0;
         const stageTotal =
-          (participantPoints.get(participant.id)?.total_points ?? 0) + dagploegBonus;
+          (participantPoints.get(participant.id)?.total_points ?? 0) +
+          dagploegBonus(participant.ploeg, stage.dagploeg);
 
         const stageKey = `stage_${stage.stage_number}`;
         const expectedParticipant = expected.participants[participant.id];

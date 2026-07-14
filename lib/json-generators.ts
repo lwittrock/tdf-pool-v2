@@ -428,7 +428,8 @@ export async function generateStagesDataJSON(): Promise<StageData[]> {
         white: riderMap.get(stageJerseys.find((j) => j.jersey_type === 'white')?.rider_id || '') || '',
       },
       combativity: riderMap.get(combativityByStage.get(stage.id) || '') || '',
-      dnf_riders: stageDnf.filter((d) => d.status === 'DNF').map((d) => riderMap.get(d.rider_id) || ''),
+      dagploeg: stage.dagploeg ?? null,
+      dnf_riders: stageDnf.filter((d) => d.status !== 'DNS').map((d) => riderMap.get(d.rider_id) || ''),
       dns_riders: stageDnf.filter((d) => d.status === 'DNS').map((d) => riderMap.get(d.rider_id) || ''),
     };
   });

@@ -68,6 +68,7 @@ function toEntry(fixture: FixtureStage): ManualStageEntry {
     })),
     jerseys: fixture.jerseys,
     combativity: fixture.combativity ?? undefined,
+    dagploeg: fixture.dagploeg ?? undefined,
     dns_riders: fixture.dns,
     dnf_riders: fixture.dnf,
     force: true,

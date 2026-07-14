@@ -57,6 +57,8 @@ export interface ManualStageEntry {
     white: string;
   };
   combativity?: string;
+  /** Winner of the stage's team day classification (Dagploeg, +6 rule). */
+  dagploeg?: string;
   dnf_riders?: string[];
   dns_riders?: string[];
   force?: boolean;
@@ -250,6 +252,7 @@ export interface StageData {
     white: string;
   };
   combativity: string;
+  dagploeg?: string | null;
   dnf_riders: string[];
   dns_riders: string[];
 }

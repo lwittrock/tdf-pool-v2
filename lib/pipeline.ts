@@ -18,6 +18,7 @@ import { getServiceClient, fetchAll } from './supabase-server.js';
 import {
   computeRiderStagePoints,
   computeParticipantStagePoints,
+  dagploegBonus,
   RESERVE_ACTIVATES_MID_TOUR,
   type SelectionInput,
   type StageJerseyInput,
@@ -60,11 +61,15 @@ async function getStageId(stageNumber: number): Promise<string> {
 }
 
 /**
- * Handle DNS substitutions for a stage: deactivate DNS'd main riders
+ * Handle substitutions for a stage: deactivate casualty main riders
  * (recording replaced_at_stage) and activate the position-11 reserve
  * (recording the activation stage on the reserve row — WP-A3 scoring reads
- * that to build the roster-as-of-stage). DNS only: DNF/OTL/DSQ do not
- * activate the reserve (owner decision Q3/Q20).
+ * that to build the roster-as-of-stage).
+ *
+ * Casualties for stage s (owner ruling July 14 2026, supersedes the earlier
+ * DNS-only Q3/Q20): riders DNS'd at stage s (never started it) plus riders
+ * who DNF/OTL/DSQ'd at stage s-1 (they rode s-1, so the reserve counts
+ * from the next stage).
  */
 export async function updateActiveSelections(stageNumber: number): Promise<UpdateSelectionsResult> {
   const supabase = getServiceClient();
@@ -80,8 +85,26 @@ export async function updateActiveSelections(stageNumber: number): Promise<Updat
     .eq('stage_id', stageId)
     .eq('status', 'DNS');
 
-  const dnsRiderIds = new Set(dnsRecords?.map((r) => r.rider_id) || []);
-  const dnsRiderNames = dnsRecords?.map((r) => (r.riders as any).name as string) || [];
+  let dnfRecords: typeof dnsRecords = [];
+  if (stageNumber > 1) {
+    const { data: previousStage } = await supabase
+      .from('stages')
+      .select('id')
+      .eq('stage_number', stageNumber - 1)
+      .maybeSingle();
+    if (previousStage) {
+      const { data } = await supabase
+        .from('stage_dnf')
+        .select('rider_id, riders!inner(name)')
+        .eq('stage_id', previousStage.id)
+        .neq('status', 'DNS');
+      dnfRecords = data ?? [];
+    }
+  }
+
+  const casualties = [...(dnsRecords ?? []), ...(dnfRecords ?? [])];
+  const dnsRiderIds = new Set(casualties.map((r) => r.rider_id));
+  const dnsRiderNames = casualties.map((r) => (r.riders as any).name as string);
 
   if (dnsRiderIds.size === 0) {
     return { dnsRiders: [], substitutions: [], participantsAffected: 0 };
@@ -170,14 +193,21 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
   const stageId = await getStageId(stageNumber);
 
   // ---- Inputs (bulk) --------------------------------------------------------
-  const [{ data: stageResults }, { data: jerseys }, { data: combativity }, { data: participants }] =
-    await Promise.all([
-      supabase.from('stage_results').select('rider_id, position').eq('stage_id', stageId).order('position'),
-      supabase.from('stage_jerseys').select('rider_id, jersey_type').eq('stage_id', stageId),
-      supabase.from('stage_combativity').select('rider_id').eq('stage_id', stageId).maybeSingle(),
-      supabase.from('participants').select('id, name').order('id'),
-    ]);
+  const [
+    { data: stageResults },
+    { data: jerseys },
+    { data: combativity },
+    { data: participants },
+    { data: stageRow },
+  ] = await Promise.all([
+    supabase.from('stage_results').select('rider_id, position').eq('stage_id', stageId).order('position'),
+    supabase.from('stage_jerseys').select('rider_id, jersey_type').eq('stage_id', stageId),
+    supabase.from('stage_combativity').select('rider_id').eq('stage_id', stageId).maybeSingle(),
+    supabase.from('participants').select('id, name, ploeg').order('id'),
+    supabase.from('stages').select('dagploeg').eq('id', stageId).maybeSingle(),
+  ]);
   if (!participants) throw new Error('Deelnemers laden mislukt');
+  const stageDagploeg: string | null = stageRow?.dagploeg ?? null;
 
   const allSelections = await fetchAll<SelectionInput>((from, to) =>
     supabase
@@ -222,6 +252,16 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
   for (const participant of participants) {
     if (!participantPointsMap.has(participant.id)) {
       participantPointsMap.set(participant.id, { total_points: 0, contributions: new Map() });
+    }
+  }
+
+  // Dagploeg +6 (WP-B1): the participant's Ploeg pick won the stage's team
+  // day classification. Included in stage_points (like the sheet does), not
+  // in the per-rider contributions.
+  for (const participant of participants) {
+    const bonus = dagploegBonus((participant as { ploeg?: string | null }).ploeg, stageDagploeg);
+    if (bonus > 0) {
+      participantPointsMap.get(participant.id)!.total_points += bonus;
     }
   }
 

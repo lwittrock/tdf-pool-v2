@@ -11,9 +11,11 @@
  * - The reserve (position 11) counts for stage s once replaced_at_stage
  *   is set and <= s. On the reserve row, replaced_at_stage records the
  *   stage from which the substitution applies.
- * Owner decisions: activation on DNS only (Q3/Q20 — DNF/OTL/DSQ do not
- * substitute), also mid-Tour (Q1), from the activation stage onward and
- * never retroactively (Q2), and at most one substitution (Q4 — the second
+ * Owner decisions: the reserve activates on any casualty — from the DNS
+ * stage itself, or from the stage AFTER a DNF/OTL/DSQ (the rider rode that
+ * stage; ruling of July 14 2026, supersedes the earlier DNS-only Q3/Q20) —
+ * also mid-Tour (Q1), from the activation stage onward and never
+ * retroactively (Q2), and at most one substitution (Q4 — the second
  * casualty just leaves the participant with 9 scorers).
  */
 
@@ -21,8 +23,10 @@ import {
   POINTS_FOR_RANK,
   JERSEY_POINTS,
   COMBATIVITY_POINTS,
+  DAGPLOEG_POINTS,
   type JerseyType,
 } from './scoring-constants.js';
+import { riderNameKey } from './rider-names.js';
 
 /** Q1 — a mid-Tour DNS also activates the reserve for the remaining stages. */
 export const RESERVE_ACTIVATES_MID_TOUR = true;
@@ -139,6 +143,19 @@ export interface ParticipantStagePoints {
   total_points: number;
   /** rider_id → points contributed (only riders that scored). */
   contributions: Map<string, number>;
+}
+
+/**
+ * Dagploeg bonus (WP-B1): +6 when the participant's Ploeg pick equals the
+ * stage's team day classification winner. Name-key comparison, matching the
+ * sheet's free-text team spellings.
+ */
+export function dagploegBonus(
+  participantPloeg: string | null | undefined,
+  stageDagploeg: string | null | undefined
+): number {
+  if (!participantPloeg?.trim() || !stageDagploeg?.trim()) return 0;
+  return riderNameKey(participantPloeg) === riderNameKey(stageDagploeg) ? DAGPLOEG_POINTS : 0;
 }
 
 /**

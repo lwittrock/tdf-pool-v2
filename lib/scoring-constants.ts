@@ -48,6 +48,12 @@ export const JERSEY_POINTS = {
 export const COMBATIVITY_POINTS = 5;
 
 /**
+ * Points awarded to participants whose Ploeg pick wins the stage's team day
+ * classification (the sheet's "Dagploeg" — NOT the stage winner's team).
+ */
+export const DAGPLOEG_POINTS = 6;
+
+/**
  * Number of top participants per directie whose scores count toward directie total
  * IMPORTANT: This is per-stage, not cumulative
  * e.g., For Stage 5, we take the top 5 participants by Stage 5 points only

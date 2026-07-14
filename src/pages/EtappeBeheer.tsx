@@ -43,6 +43,7 @@ interface StageFormData {
     white: string;
   };
   combativity: string;
+  dagploeg: string;
   dnf_riders: string[];
   dns_riders: string[];
 }
@@ -84,6 +85,7 @@ const EMPTY_FORM_DATA: StageFormData = {
   })),
   jerseys: { yellow: '', green: '', polka_dot: '', white: '' },
   combativity: '',
+  dagploeg: '',
   dnf_riders: [],
   dns_riders: [],
 };
@@ -119,6 +121,7 @@ function createFormDataFromStage(stage: StageData): StageFormData {
     top_20_finishers: padFinishersTo20(stage.top_20_finishers || []),
     jerseys: stage.jerseys || { yellow: '', green: '', polka_dot: '', white: '' },
     combativity: stage.combativity || '',
+    dagploeg: stage.dagploeg || '',
     dnf_riders: stage.dnf_riders || [],
     dns_riders: stage.dns_riders || [],
   };
@@ -568,6 +571,10 @@ function StageViewMode({ formData, onBack, onEdit }: StageViewModeProps) {
             <span className="text-gray-600">Strijdlustigste renner:</span>
             <div className="font-medium">{formData.combativity || '-'}</div>
           </div>
+          <div>
+            <span className="text-gray-600">Dagploeg (ploegen-dagklassement):</span>
+            <div className="font-medium">{formData.dagploeg || '-'}</div>
+          </div>
           {formData.dnf_riders.length > 0 && (
             <div>
               <span className="text-gray-600">DNF:</span>
@@ -727,6 +734,13 @@ function StageEntryMode({
 
         {/* Combativity */}
         <StageCombativityForm
+          formData={formData}
+          riders={riders}
+          onUpdate={onUpdateFormData}
+        />
+
+        {/* Dagploeg */}
+        <StageDagploegForm
           formData={formData}
           riders={riders}
           onUpdate={onUpdateFormData}
@@ -985,6 +999,41 @@ function StageCombativityForm({
           onChange={(value: string) => onUpdate({ ...formData, combativity: value })}
           placeholder="Selecteer renner..."
         />
+      </div>
+    </div>
+  );
+}
+
+function StageDagploegForm({
+  formData,
+  riders,
+  onUpdate,
+}: {
+  formData: StageFormData;
+  riders: Array<{ id: string; name: string; team?: string }>;
+  onUpdate: (data: StageFormData) => void;
+}) {
+  const teams = [...new Set(riders.map((r) => r.team).filter((t): t is string => Boolean(t) && t !== 'ONBEKEND'))].sort();
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 space-y-4">
+      <h3 className="font-semibold text-lg">Dagploeg</h3>
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Winnaar ploegen-dagklassement (+6 voor wie deze ploeg koos; leeg laten als er geen is)
+        </label>
+        <input
+          type="text"
+          list="dagploeg-teams"
+          value={formData.dagploeg}
+          onChange={(e) => onUpdate({ ...formData, dagploeg: e.target.value })}
+          placeholder="Selecteer ploeg..."
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+        />
+        <datalist id="dagploeg-teams">
+          {teams.map((team) => (
+            <option key={team} value={team} />
+          ))}
+        </datalist>
       </div>
     </div>
   );
