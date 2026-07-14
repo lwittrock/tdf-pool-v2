@@ -19,6 +19,7 @@ import {
   computeRiderStagePoints,
   computeParticipantStagePoints,
   dagploegBonus,
+  deriveRosterStamps,
   RESERVE_ACTIVATES_MID_TOUR,
   type SelectionInput,
   type StageJerseyInput,
@@ -61,126 +62,116 @@ async function getStageId(stageNumber: number): Promise<string> {
 }
 
 /**
- * Handle substitutions for a stage: deactivate casualty main riders
- * (recording replaced_at_stage) and activate the position-11 reserve
- * (recording the activation stage on the reserve row — WP-A3 scoring reads
- * that to build the roster-as-of-stage).
+ * Reconcile every participant's substitution stamps against the FULL
+ * stage_dnf history (finding 5). The rules themselves (casualty stage,
+ * at most one substitution, pre-race activations) live in
+ * scoring.deriveRosterStamps — the golden suite replays the same function.
  *
- * Casualties for stage s (owner ruling July 14 2026, supersedes the earlier
- * DNS-only Q3/Q20): riders DNS'd at stage s (never started it) plus riders
- * who DNF/OTL/DSQ'd at stage s-1 (they rode s-1, so the reserve counts
- * from the next stage).
+ * Incremental stamping was write-only: re-entering a stage without the
+ * DNS/DNF left the substitution in place. Deriving the desired stamps from
+ * scratch on every run and diffing against the stored rows also CLEARS
+ * stamps whose casualty was retracted. Reserve rows stamped 1 (pre-race
+ * activations from the golden import — no stage_dnf backing) are never
+ * touched.
+ *
+ * stageNumber only scopes the report (dnsRiders/substitutions for the entry
+ * UI); the reconciliation itself always covers all stages.
  */
 export async function updateActiveSelections(stageNumber: number): Promise<UpdateSelectionsResult> {
   const supabase = getServiceClient();
-  const stageId = await getStageId(stageNumber);
+  await getStageId(stageNumber); // fail early on an unknown stage
 
   if (!RESERVE_ACTIVATES_MID_TOUR && stageNumber > 1) {
     return { dnsRiders: [], substitutions: [], participantsAffected: 0 };
   }
 
-  const { data: dnsRecords } = await supabase
-    .from('stage_dnf')
-    .select('rider_id, riders!inner(name)')
-    .eq('stage_id', stageId)
-    .eq('status', 'DNS');
+  const [{ data: stages }, { data: dnfRows }, { data: riders }, { data: participants }] =
+    await Promise.all([
+      supabase.from('stages').select('id, stage_number'),
+      supabase.from('stage_dnf').select('stage_id, rider_id, status'),
+      supabase.from('riders').select('id, name'),
+      supabase.from('participants').select('id, name'),
+    ]);
+  if (!participants) throw new Error('Deelnemers laden mislukt');
+  const stageNumberById = new Map((stages ?? []).map((s) => [s.id, s.stage_number]));
+  const riderNameById = new Map((riders ?? []).map((r) => [r.id, r.name]));
+  const participantNameById = new Map(participants.map((p) => [p.id, p.name]));
 
-  let dnfRecords: typeof dnsRecords = [];
-  if (stageNumber > 1) {
-    const { data: previousStage } = await supabase
-      .from('stages')
-      .select('id')
-      .eq('stage_number', stageNumber - 1)
-      .maybeSingle();
-    if (previousStage) {
-      const { data } = await supabase
-        .from('stage_dnf')
-        .select('rider_id, riders!inner(name)')
-        .eq('stage_id', previousStage.id)
-        .neq('status', 'DNS');
-      dnfRecords = data ?? [];
-    }
+  // DNS'd riders drop out from their DNS stage; DNF/OTL/DSQ'd riders from
+  // the stage after (owner ruling July 14 2026, supersedes DNS-only Q3/Q20).
+  const casualtiesByStage = new Map<number, Set<string>>();
+  for (const row of dnfRows ?? []) {
+    const recordedAt = stageNumberById.get(row.stage_id);
+    if (recordedAt == null) continue;
+    const effectiveStage = row.status === 'DNS' ? recordedAt : recordedAt + 1;
+    const set = casualtiesByStage.get(effectiveStage) ?? new Set<string>();
+    set.add(row.rider_id);
+    casualtiesByStage.set(effectiveStage, set);
   }
 
-  const casualties = [...(dnsRecords ?? []), ...(dnfRecords ?? [])];
-  const dnsRiderIds = new Set(casualties.map((r) => r.rider_id));
-  const dnsRiderNames = casualties.map((r) => (r.riders as any).name as string);
-
-  if (dnsRiderIds.size === 0) {
-    return { dnsRiders: [], substitutions: [], participantsAffected: 0 };
+  interface SelectionRow {
+    id: string;
+    participant_id: string;
+    rider_id: string;
+    position: number;
+    replaced_at_stage: number | null;
+    replacement_for_rider_id: string | null;
+  }
+  const selectionRows = await fetchAll<SelectionRow>((from, to) =>
+    supabase
+      .from('participant_rider_selections')
+      .select('id, participant_id, rider_id, position, replaced_at_stage, replacement_for_rider_id')
+      .order('id')
+      .range(from, to)
+  );
+  const rowsByParticipant = new Map<string, SelectionRow[]>();
+  for (const row of selectionRows) {
+    const list = rowsByParticipant.get(row.participant_id) ?? [];
+    list.push(row);
+    rowsByParticipant.set(row.participant_id, list);
   }
 
-  const { data: participants, error } = await supabase
-    .from('participants')
-    .select(`
-      id,
-      name,
-      participant_rider_selections!inner(
-        id,
-        rider_id,
-        position,
-        is_active,
-        replaced_at_stage,
-        riders!participant_rider_selections_rider_id_fkey(name)
-      )
-    `);
-
-  if (error || !participants) {
-    throw new Error(`Deelnemers laden mislukt: ${error?.message}`);
-  }
+  const dnsRiderNames = [...(casualtiesByStage.get(stageNumber) ?? [])].map(
+    (riderId) => riderNameById.get(riderId) ?? 'Onbekend'
+  );
 
   const substitutions: SubstitutionMade[] = [];
-  let participantsAffected = 0;
+  const affectedParticipants = new Set<string>();
 
-  for (const participant of participants) {
-    const selections = (participant.participant_rider_selections as any[]).sort(
-      (a, b) => a.position - b.position
-    );
-    const mainRiders = selections.filter((s) => s.position <= 10);
-    const backupRider = selections.find((s) => s.position === 11);
-    let affected = false;
+  for (const [participantId, rows] of rowsByParticipant) {
+    const { stampByPosition, substitution } = deriveRosterStamps(rows, casualtiesByStage);
 
-    for (const selection of mainRiders) {
-      const alreadyReplaced = selection.replaced_at_stage != null;
-      if (!dnsRiderIds.has(selection.rider_id) || alreadyReplaced) continue;
-
-      await supabase
-        .from('participant_rider_selections')
-        .update({ is_active: false, replaced_at_stage: stageNumber })
-        .eq('id', selection.id);
-      affected = true;
-
-      const backupAvailable =
-        backupRider &&
-        backupRider.replaced_at_stage == null && // reserve not yet activated
-        !dnsRiderIds.has(backupRider.rider_id);
-
-      if (backupAvailable) {
-        // replaced_at_stage on the reserve row = stage from which it scores
-        await supabase
-          .from('participant_rider_selections')
-          .update({
-            is_active: true,
-            replaced_at_stage: stageNumber,
-            replacement_for_rider_id: selection.rider_id,
-          })
-          .eq('id', backupRider.id);
-        // Keep the in-memory row in sync: a second DNS'd main in the same
-        // stage (e.g. a team withdrawal) must not re-activate the reserve.
-        backupRider.replaced_at_stage = stageNumber;
-
-        substitutions.push({
-          participant_name: participant.name,
-          rider_out: selection.riders.name,
-          rider_in: backupRider.riders.name,
-        });
-      }
+    if (substitution && substitution.stageNumber === stageNumber) {
+      substitutions.push({
+        participant_name: participantNameById.get(participantId) ?? 'Onbekend',
+        rider_out: riderNameById.get(substitution.riderOut) ?? 'Onbekend',
+        rider_in: riderNameById.get(substitution.riderIn) ?? 'Onbekend',
+      });
     }
 
-    if (affected) participantsAffected++;
+    for (const row of rows) {
+      const isReserve = row.position === 11;
+      if (isReserve && row.replaced_at_stage === 1) continue; // pre-race activation: immutable
+      const desiredStamp = stampByPosition.get(row.position) ?? null;
+      const desiredReplacementFor = isReserve ? (substitution?.riderOut ?? null) : null;
+      const stampChanged = row.replaced_at_stage !== desiredStamp;
+      const replacementChanged = isReserve && row.replacement_for_rider_id !== desiredReplacementFor;
+      if (!stampChanged && !replacementChanged) continue;
+
+      const { error: updateError } = await supabase
+        .from('participant_rider_selections')
+        .update({
+          replaced_at_stage: desiredStamp,
+          is_active: isReserve ? desiredStamp != null : desiredStamp == null,
+          ...(isReserve ? { replacement_for_rider_id: desiredReplacementFor } : {}),
+        })
+        .eq('id', row.id);
+      if (updateError) throw new Error(`Selectie bijwerken mislukt: ${updateError.message}`);
+      affectedParticipants.add(participantId);
+    }
   }
 
-  return { dnsRiders: dnsRiderNames, substitutions, participantsAffected };
+  return { dnsRiders: dnsRiderNames, substitutions, participantsAffected: affectedParticipants.size };
 }
 
 /**

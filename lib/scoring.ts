@@ -139,6 +139,62 @@ export function selectionCountsForStage(selection: SelectionInput, stageNumber: 
   return false;
 }
 
+export interface DerivedRoster {
+  /** Desired replaced_at_stage per selection position (11 = reserve). */
+  stampByPosition: Map<number, number | null>;
+  /** The single substitution (Q4: at most one), or null. */
+  substitution: { stageNumber: number; riderOut: string; riderIn: string } | null;
+}
+
+/**
+ * Derive one participant's replaced_at_stage stamps from the FULL casualty
+ * history (finding 5: reconciliation instead of incremental stamping, so a
+ * retracted DNS/DNF also UNDOES its substitution).
+ *
+ * casualtiesByStage maps a stage number to the riders whose reserve counts
+ * from that stage: DNS'd riders map to their DNS stage, DNF/OTL/DSQ'd riders
+ * to the stage after (owner ruling July 14 2026).
+ *
+ * Rules replayed in stage order, mains in position order:
+ * - a casualty main is stamped at its effective stage (Q2: scores until then);
+ * - the first casualty with the reserve still unused activates the reserve
+ *   from that same stage (Q1 mid-Tour, Q4 at most one substitution) — unless
+ *   the reserve itself is a casualty of that stage;
+ * - a reserve with an existing stamp of 1 is a pre-race activation from the
+ *   golden import (P115's 9-rider roster, non-starting picks): it has no
+ *   stage_dnf backing, so it is seeded as already-active and never restamped.
+ */
+export function deriveRosterStamps(
+  selections: readonly SelectionInput[],
+  casualtiesByStage: ReadonlyMap<number, ReadonlySet<string>>
+): DerivedRoster {
+  const mains = selections
+    .filter((s) => s.position >= 1 && s.position <= 10)
+    .sort((a, b) => a.position - b.position);
+  const reserve = selections.find((s) => s.position === 11) ?? null;
+  const reservePreActivated = reserve?.replaced_at_stage === 1;
+
+  const stampByPosition = new Map<number, number | null>();
+  for (const main of mains) stampByPosition.set(main.position, null);
+  let reserveStamp: number | null = reservePreActivated ? 1 : null;
+  let substitution: DerivedRoster['substitution'] = null;
+
+  for (const stageNumber of [...casualtiesByStage.keys()].sort((a, b) => a - b)) {
+    const casualties = casualtiesByStage.get(stageNumber)!;
+    for (const main of mains) {
+      if (stampByPosition.get(main.position) != null || !casualties.has(main.rider_id)) continue;
+      stampByPosition.set(main.position, stageNumber);
+      if (reserve && reserveStamp == null && !casualties.has(reserve.rider_id)) {
+        reserveStamp = stageNumber;
+        substitution = { stageNumber, riderOut: main.rider_id, riderIn: reserve.rider_id };
+      }
+    }
+  }
+
+  if (reserve) stampByPosition.set(11, reserveStamp);
+  return { stampByPosition, substitution };
+}
+
 export interface ParticipantStagePoints {
   total_points: number;
   /** rider_id → points contributed (only riders that scored). */

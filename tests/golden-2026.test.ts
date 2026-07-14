@@ -18,6 +18,7 @@ import {
   computeRiderStagePoints,
   computeParticipantStagePoints,
   dagploegBonus,
+  deriveRosterStamps,
   type SelectionInput,
   type StageJerseyInput,
 } from '../lib/scoring';
@@ -92,35 +93,32 @@ for (const participant of teamSelections) {
   }
 }
 
-// Mid-Tour substitutions (Q1: also mid-race; Q2: from the activation stage
-// on; Q4: at most one — the reserve only activates while still unused),
-// driven by the fixtures' casualty lists exactly like lib/pipeline
-// updateActiveSelections: DNS at stage s activates from s, DNF/OTL/DSQ at
-// stage s activates from s+1 (owner ruling July 14 2026).
+// Mid-Tour substitutions, driven by the fixtures' casualty lists through the
+// SAME rule function the pipeline uses (deriveRosterStamps): DNS at stage s
+// activates from s, DNF/OTL/DSQ at stage s activates from s+1 (owner ruling
+// July 14 2026). Pre-race activations were seeded above as stamp 1.
 const byParticipant = new Map<string, SelectionInput[]>();
 for (const selection of selections) {
   const list = byParticipant.get(selection.participant_id) ?? [];
   list.push(selection);
   byParticipant.set(selection.participant_id, list);
 }
-const stageByNumber = new Map(stages.map((s) => [s.stage_number, s]));
+const casualtiesByStage = new Map<number, Set<string>>();
 for (const stage of stages) {
-  const previous = stageByNumber.get(stage.stage_number - 1);
-  const casualties = new Set([
-    ...(stage.dns ?? []).map(foldedRiderNameKey),
-    ...(previous?.dnf ?? []).map(foldedRiderNameKey),
-  ]);
-  if (casualties.size === 0) continue;
-  for (const list of byParticipant.values()) {
-    const reserve = list.find((s) => s.position === 11);
-    for (const main of list) {
-      if (main.position > 10 || !casualties.has(main.rider_id) || main.replaced_at_stage != null)
-        continue;
-      main.replaced_at_stage = stage.stage_number;
-      if (reserve && reserve.replaced_at_stage == null && !casualties.has(reserve.rider_id)) {
-        reserve.replaced_at_stage = stage.stage_number;
-      }
-    }
+  for (const [effectiveStage, names] of [
+    [stage.stage_number, stage.dns ?? []],
+    [stage.stage_number + 1, stage.dnf ?? []],
+  ] as Array<[number, string[]]>) {
+    if (names.length === 0) continue;
+    const set = casualtiesByStage.get(effectiveStage) ?? new Set<string>();
+    for (const name of names) set.add(foldedRiderNameKey(name));
+    casualtiesByStage.set(effectiveStage, set);
+  }
+}
+for (const list of byParticipant.values()) {
+  const { stampByPosition } = deriveRosterStamps(list, casualtiesByStage);
+  for (const selection of list) {
+    selection.replaced_at_stage = stampByPosition.get(selection.position) ?? null;
   }
 }
 

@@ -13,6 +13,7 @@ import {
   computeParticipantStagePoints,
   selectionCountsForStage,
   dagploegBonus,
+  deriveRosterStamps,
   type SelectionInput,
 } from '../lib/scoring';
 
@@ -62,6 +63,58 @@ function fullTeam(replacedMain?: { rider: string; atStage: number }): SelectionI
   );
   return selections;
 }
+
+/** casualtiesByStage literal: { effectiveStage: [rider ids] } */
+function casualties(entries: Record<number, string[]>): Map<number, Set<string>> {
+  return new Map(Object.entries(entries).map(([s, r]) => [Number(s), new Set(r)]));
+}
+
+describe('deriveRosterStamps (finding 5: reconciliation)', () => {
+  it('stamps a casualty main and activates the reserve from the same stage', () => {
+    const { stampByPosition, substitution } = deriveRosterStamps(fullTeam(), casualties({ 5: ['r3'] }));
+    expect(stampByPosition.get(3)).toBe(5);
+    expect(stampByPosition.get(11)).toBe(5);
+    expect(substitution).toEqual({ stageNumber: 5, riderOut: 'r3', riderIn: 'r11' });
+  });
+
+  it('clears stamps whose casualty was retracted (the write-only bug)', () => {
+    const team = fullTeam({ rider: 'r3', atStage: 5 }); // stamped by an earlier run
+    const { stampByPosition, substitution } = deriveRosterStamps(team, casualties({}));
+    expect(stampByPosition.get(3)).toBeNull();
+    expect(stampByPosition.get(11)).toBeNull();
+    expect(substitution).toBeNull();
+  });
+
+  it('activates the reserve at most once; later casualties only lose their rider', () => {
+    const { stampByPosition, substitution } = deriveRosterStamps(
+      fullTeam(),
+      casualties({ 3: ['r1'], 6: ['r2'] })
+    );
+    expect(stampByPosition.get(1)).toBe(3);
+    expect(stampByPosition.get(2)).toBe(6);
+    expect(stampByPosition.get(11)).toBe(3);
+    expect(substitution).toEqual({ stageNumber: 3, riderOut: 'r1', riderIn: 'r11' });
+  });
+
+  it('does not activate a reserve that is itself a casualty of that stage', () => {
+    const { stampByPosition, substitution } = deriveRosterStamps(
+      fullTeam(),
+      casualties({ 5: ['r1', 'r11'] })
+    );
+    expect(stampByPosition.get(1)).toBe(5);
+    expect(stampByPosition.get(11)).toBeNull();
+    expect(substitution).toBeNull();
+  });
+
+  it('keeps a pre-race activation (reserve stamp 1, no casualty backing) and counts it as the one substitution', () => {
+    const team = fullTeam();
+    team.find((s) => s.position === 11)!.replaced_at_stage = 1;
+    const { stampByPosition, substitution } = deriveRosterStamps(team, casualties({ 4: ['r2'] }));
+    expect(stampByPosition.get(11)).toBe(1); // seeded, not cleared
+    expect(stampByPosition.get(2)).toBe(4); // casualty main still loses its rider
+    expect(substitution).toBeNull(); // reserve already used pre-race
+  });
+});
 
 describe('computeRiderStagePoints', () => {
   it('awards 25/19/18…1 for positions, jerseys stack, combativity optional', () => {
