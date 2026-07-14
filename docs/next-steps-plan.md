@@ -10,12 +10,13 @@ Legend: **YOU** = owner actions (dashboards, Excel, decisions).
 
 ---
 
-> **Status (July 14):** Steps 0–2 are DONE. Stages 1–9 are live on the site,
-> the golden suite verifies 128 × 9 cells against the owner's sheet, and the
-> WP-B2 rewrite landed early (a 9-stage reprocess now takes ~56 s; UI entry
-> is unblocked). The rewrite also uncovered and fixed two critical data bugs
-> — see findings 9 and 10 in `phase-a-review-findings.md`. Next up: Step 3
-> (Dagploeg + aliases), then the cutover (Step 4) is immediately viable.
+> **Status (July 14):** Steps 0–3 are DONE. Stages 1–9 are live, published
+> totals match the owner's sheet **exactly (Dagploeg +6 included)** — 0
+> diffs over 2,304 verified cells. WP-B2 landed early (9-stage reprocess
+> ≈ 1 min; UI entry unblocked) and uncovered two critical data bugs (findings
+> 9/10, fixed). WP-B1 added `stages.dagploeg`, `rider_aliases`, and the new
+> substitution ruling (DNF at s → reserve from s+1; DNS from s itself; zero
+> historical impact, verified). **Next: Step 4 — enter stage 10 in the UI.**
 
 ## Step 0 — Finish the current data load *(DONE)*
 
@@ -59,7 +60,7 @@ longer needed for normal operation.
 
 ---
 
-## Step 3 — WP-B1: Dagploeg + rider aliases
+## Step 3 — WP-B1: Dagploeg + rider aliases *(DONE — July 14)*
 
 Two schema additions; SQL runs in the dashboard until Step 5 automates it.
 
@@ -116,10 +117,10 @@ README top half, ESLint flat-config with the dependency bumps.
 
 ## Ongoing operations during the Tour (as of July 14)
 
-- **Enter a new stage:** the beheer UI (`/admin`) now completes well inside
-  the limit (WP-B2) — enter it there. The fixture-file + `replay:stages`
-  route still works as backup. Until Step 3 lands, the Dagploeg +6 is not
-  in the published totals.
+- **Enter a new stage:** the beheer UI (`/admin`) — top-20, jerseys,
+  combativity (optional), Dagploeg (optional; winner of the stage's team
+  day classification, see PCS "Complementary results"), DNS/DNF lists.
+  The fixture-file + `replay:stages` route still works as backup.
 - **Correct an old stage:** re-enter it (UI with overwrite confirmation, or
   fixture file + `replay:stages --apply --local N`). Cumulative totals and
   overall ranks now ripple forward automatically — no need to reprocess the

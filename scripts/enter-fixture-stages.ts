@@ -120,6 +120,10 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   const knownKeys = new Set((riders ?? []).map((r) => foldedRiderNameKey(r.name)));
+  // Aliases resolve at entry time (WP-B1) — never recreate an aliased
+  // spelling as a new rider. Tolerate the table not existing yet.
+  const { data: aliases } = await supabase.from('rider_aliases').select('alias');
+  for (const a of aliases ?? []) knownKeys.add(foldedRiderNameKey(a.alias));
 
   const missing = new Map<string, string>(); // key -> first-seen raw name
   for (const fixture of fixtures) {

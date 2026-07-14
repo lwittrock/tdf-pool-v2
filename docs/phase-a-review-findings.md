@@ -84,7 +84,7 @@ correct; fixing the read side needs the Vercel `VERCEL_ENV` exposed to the
 Vite build. Until then: test entry flows against production, per the go-live
 doc.
 
-### 8a. R1's "Dagploeg = stage winner's team" assumption is wrong — for WP-B1
+### 8a. R1's "Dagploeg = stage winner's team" assumption is wrong — RESOLVED (WP-B1, July 14)
 Discovered while transcribing the Excel's stage columns; **confirmed by the
 owner** (July 2026): the Dagploeg is the winner of the stage's **team day
 classification** (PCS "Complementary results" per stage — e.g. stage 9: team
