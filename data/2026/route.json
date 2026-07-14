@@ -1,0 +1,26 @@
+{
+  "_comment": "2026 Tour route (owner-supplied, July 2026) — used to prefill the stage-entry form. Rest days: 13/07 and 20/07.",
+  "stages": [
+    { "stage_number": 1, "date": "2026-07-04", "departure_city": "Barcelona", "arrival_city": "Barcelona", "distance": "19.6", "stage_type": "TTT" },
+    { "stage_number": 2, "date": "2026-07-05", "departure_city": "Tarragona", "arrival_city": "Barcelona", "distance": "168.5", "stage_type": "" },
+    { "stage_number": 3, "date": "2026-07-06", "departure_city": "Granollers", "arrival_city": "Les Angles", "distance": "195.9", "stage_type": "" },
+    { "stage_number": 4, "date": "2026-07-07", "departure_city": "Carcassonne", "arrival_city": "Foix", "distance": "181.9", "stage_type": "" },
+    { "stage_number": 5, "date": "2026-07-08", "departure_city": "Lannemezan", "arrival_city": "Pau", "distance": "158.3", "stage_type": "" },
+    { "stage_number": 6, "date": "2026-07-09", "departure_city": "Pau", "arrival_city": "Gavarnie-Gèdre", "distance": "186.2", "stage_type": "" },
+    { "stage_number": 7, "date": "2026-07-10", "departure_city": "Hagetmau", "arrival_city": "Bordeaux", "distance": "175.1", "stage_type": "" },
+    { "stage_number": 8, "date": "2026-07-11", "departure_city": "Périgueux", "arrival_city": "Bergerac", "distance": "180.4", "stage_type": "" },
+    { "stage_number": 9, "date": "2026-07-12", "departure_city": "Malemort", "arrival_city": "Ussel", "distance": "154.6", "stage_type": "" },
+    { "stage_number": 10, "date": "2026-07-14", "departure_city": "Aurillac", "arrival_city": "Le Lioran", "distance": "166.6", "stage_type": "" },
+    { "stage_number": 11, "date": "2026-07-15", "departure_city": "Vichy", "arrival_city": "Nevers", "distance": "161.3", "stage_type": "" },
+    { "stage_number": 12, "date": "2026-07-16", "departure_city": "Circuit Nevers Magny-Cours", "arrival_city": "Chalon-sur-Saône", "distance": "179.1", "stage_type": "" },
+    { "stage_number": 13, "date": "2026-07-17", "departure_city": "Dole", "arrival_city": "Belfort", "distance": "205.8", "stage_type": "" },
+    { "stage_number": 14, "date": "2026-07-18", "departure_city": "Mulhouse", "arrival_city": "Le Markstein", "distance": "155.3", "stage_type": "" },
+    { "stage_number": 15, "date": "2026-07-19", "departure_city": "Champagnole", "arrival_city": "Plateau de Solaison", "distance": "183.9", "stage_type": "" },
+    { "stage_number": 16, "date": "2026-07-21", "departure_city": "Évian-les-Bains", "arrival_city": "Thonon-les-Bains", "distance": "26.1", "stage_type": "ITT" },
+    { "stage_number": 17, "date": "2026-07-22", "departure_city": "Chambéry", "arrival_city": "Voiron", "distance": "174.7", "stage_type": "" },
+    { "stage_number": 18, "date": "2026-07-23", "departure_city": "Voiron", "arrival_city": "Orcières-Merlette", "distance": "185.2", "stage_type": "" },
+    { "stage_number": 19, "date": "2026-07-24", "departure_city": "Gap", "arrival_city": "Alpe d'Huez", "distance": "127.9", "stage_type": "" },
+    { "stage_number": 20, "date": "2026-07-25", "departure_city": "Le Bourg d'Oisans", "arrival_city": "Alpe d'Huez", "distance": "170.9", "stage_type": "" },
+    { "stage_number": 21, "date": "2026-07-26", "departure_city": "Thoiry", "arrival_city": "Paris", "distance": "133", "stage_type": "" }
+  ]
+}

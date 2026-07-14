@@ -20,6 +20,8 @@ import { useAdminSession } from '../hooks/useAdminSession';
 import { AdminLogin } from '../components/AdminLogin';
 import { getAdminToken, getAdminAuthHeaders, signOutAdmin } from '../lib/adminAuth';
 import { JERSEY_ICONS } from '../../lib/constants';
+import { parseResultsPaste } from '../../lib/parse-results';
+import route from '../../data/2026/route.json';
 import type { StageData, SubstitutionMade } from '../../lib/types';
 
 // ============================================================================
@@ -100,6 +102,19 @@ function getNextStageNumber(stages: StageData[]): number {
   return Math.min(maxStage + 1, 21);
 }
 
+/** Route facts known before the Tour (data/2026/route.json) — prefill. */
+function routePrefill(stageNumber: number): Partial<StageFormData> {
+  const stage = route.stages.find(s => s.stage_number === stageNumber);
+  if (!stage) return {};
+  return {
+    date: stage.date,
+    distance: stage.distance,
+    departure_city: stage.departure_city,
+    arrival_city: stage.arrival_city,
+    stage_type: stage.stage_type || '',
+  };
+}
+
 function padFinishersTo20(finishers: Array<{ rider_name: string; position: number }>): Array<{ rider_name: string; position: number }> {
   const padded = [...finishers];
   while (padded.length < 20) {
@@ -109,13 +124,14 @@ function padFinishersTo20(finishers: Array<{ rider_name: string; position: numbe
 }
 
 function createFormDataFromStage(stage: StageData): StageFormData {
+  const prefill = routePrefill(stage.stage_number);
   return {
     stage_number: stage.stage_number,
-    date: stage.date || '',
-    distance: stage.distance || '',
-    departure_city: stage.departure_city || '',
-    arrival_city: stage.arrival_city || '',
-    stage_type: stage.stage_type || '',
+    date: stage.date || prefill.date || '',
+    distance: stage.distance || prefill.distance || '',
+    departure_city: stage.departure_city || prefill.departure_city || '',
+    arrival_city: stage.arrival_city || prefill.arrival_city || '',
+    stage_type: stage.stage_type || prefill.stage_type || '',
     difficulty: stage.difficulty || 'Flat',
     won_how: stage.won_how || '',
     top_20_finishers: padFinishersTo20(stage.top_20_finishers || []),
@@ -166,6 +182,7 @@ function StageManagementPage() {
   const handleOpenEntry = useCallback((stageNumber: number) => {
     setFormData({
       ...EMPTY_FORM_DATA,
+      ...routePrefill(stageNumber),
       stage_number: stageNumber,
     });
     setViewMode('entry');
@@ -723,6 +740,7 @@ function StageEntryMode({
           formData={formData}
           riders={riders}
           onUpdateFinisher={onUpdateFinisher}
+          onUpdate={onUpdateFormData}
         />
 
         {/* Jerseys */}
@@ -871,15 +889,64 @@ function StageFinishersForm({
   formData,
   riders,
   onUpdateFinisher,
+  onUpdate,
 }: {
   formData: StageFormData;
   riders: Array<{ id: string; name: string }>;
   onUpdateFinisher: (index: number, riderName: string) => void;
+  onUpdate: (data: StageFormData) => void;
 }) {
+  const [pasteText, setPasteText] = useState('');
+  const [pasteFeedback, setPasteFeedback] = useState('');
+
+  const handlePaste = () => {
+    const { entries, unmatched } = parseResultsPaste(
+      pasteText,
+      riders.map((r) => r.name)
+    );
+    if (entries.length === 0) {
+      setPasteFeedback('Geen renners gevonden in de geplakte tekst.');
+      return;
+    }
+    const finishers = Array.from({ length: 20 }, (_, i) => ({
+      rider_name: entries[i]?.rider_name ?? '',
+      position: i + 1,
+    }));
+    onUpdate({ ...formData, top_20_finishers: finishers });
+    setPasteFeedback(
+      `${entries.filter((e) => e.matched).length} van ${entries.length} regels herkend.` +
+        (unmatched.length > 0
+          ? ` Niet herkend (controleer hieronder): ${unmatched.map((u) => `"${u}"`).join(', ')}`
+          : '')
+    );
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-4 space-y-4">
       <h3 className="font-semibold text-lg">Top 20 Uitslag</h3>
-      
+
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2">
+        <label className="block text-sm font-medium">
+          Plak de uitslag (één renner per regel — kale namen, genummerde regels of
+          een gekopieerde ProCyclingStats-tabel werken allemaal)
+        </label>
+        <textarea
+          value={pasteText}
+          onChange={(e) => setPasteText(e.target.value)}
+          rows={4}
+          placeholder={'1  POGAČAR Tadej  UAE Team Emirates - XRG\n2  VINGEGAARD Jonas  Team Visma | Lease a Bike\n…'}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-xs"
+        />
+        <button
+          type="button"
+          onClick={handlePaste}
+          className="px-4 py-2 bg-tdf-primary text-white rounded-lg hover:opacity-90 text-sm font-medium"
+        >
+          Vul de 20 posities in
+        </button>
+        {pasteFeedback && <p className="text-sm text-gray-700">{pasteFeedback}</p>}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {formData.top_20_finishers.map((finisher, index) => (
           <div key={index} className="flex items-center gap-2">
