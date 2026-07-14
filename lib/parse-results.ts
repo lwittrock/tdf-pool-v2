@@ -2,17 +2,23 @@
  * Paste-parser for stage results (pure, unit-tested).
  *
  * Turns a pasted block of text into an ordered top-N list of canonical
- * rider names. Accepts, per line:
- *   - a bare rider name in DB spelling ("TADEJ POGACAR")
- *   - a numbered line ("1. Tadej Pogacar", "1e TADEJ POGACAR")
- *   - a ProCyclingStats-style row ("1  POGAČAR Tadej  UAE Team Emirates - XRG  4:15:03")
+ * rider names. Built for the three real input shapes:
+ *   - bare rider names, one per line ("TADEJ POGACAR")
+ *   - numbered lines ("1. Tadej Pogacar", "1e TADEJ POGACAR")
+ *   - a copied ProCyclingStats results table, which in practice is messy:
+ *     ranks and names sometimes on separate lines, the team on its own
+ *     line, mixed-case names ("del Toro Isaac"), nav junk above the table.
  *
- * Matching is accent/case-insensitive and word-order-independent: a known
- * rider matches when all of their name tokens appear in the line. When
- * several riders match, the longest name wins; a genuine tie is treated as
- * unmatched (never guess). Header/empty lines are skipped; a line with
- * letters that matches nobody is kept verbatim so the admin sees and fixes
- * it — silently dropping a line would shift every position below it.
+ * Rules:
+ *   - Matching is accent/case-insensitive and word-order-independent: a
+ *     rider matches when all of their name tokens appear in the line. On
+ *     multiple matches the longest name wins; a genuine tie never guesses.
+ *   - A line with a leading rank number is a result row: it either matches
+ *     a rider or stays visible as an unmatched entry (silently dropping it
+ *     would shift every position below it).
+ *   - An un-numbered line only becomes an entry when it matches a rider
+ *     (bare-name lists, or PCS names split from their rank). Anything else
+ *     (team names, headers, times, nav junk) is ignored but reported.
  */
 
 import { foldedRiderNameKey } from './rider-names.js';
@@ -27,12 +33,14 @@ export interface ParsedResultLine {
 
 export interface ParseResultsOutcome {
   entries: ParsedResultLine[];
-  /** Raw text of lines that contained content but matched no rider. */
+  /** Numbered lines that matched no rider (occupy a position; fix by hand). */
   unmatched: string[];
+  /** Ignored non-rider lines (headers, teams, junk) — for the feedback text. */
+  ignored: string[];
 }
 
-const HEADER_LINE =
-  /^\s*(rnk|rank|rider|renner|team|ploeg|uitslag|etappe|stage|points?|punten|bonis|bonus|time|tijd|gap|resultaten|pos\.?)\b/i;
+/** Leading rank: "1", "1.", "1e", "12)" — 1 to 3 digits only. */
+const LEADING_RANK = /^\s*(\d{1,3})\s*[.e)]?(\s+|$)/i;
 
 function tokens(line: string): string[] {
   return foldedRiderNameKey(line)
@@ -46,42 +54,48 @@ export function parseResultsPaste(
   riderNames: string[],
   maxEntries = 20
 ): ParseResultsOutcome {
-  const riders = riderNames.map((name) => ({
-    name,
-    tokens: tokens(name),
-  }));
+  const riders = riderNames.map((name) => ({ name, tokens: tokens(name) }));
 
   const entries: ParsedResultLine[] = [];
   const unmatched: string[] = [];
+  const ignored: string[] = [];
+
+  const matchRider = (lineTokens: Set<string>): string | null => {
+    const hits = riders.filter((r) => r.tokens.every((t) => lineTokens.has(t)));
+    if (hits.length === 1) return hits[0].name;
+    if (hits.length > 1) {
+      const sorted = hits.slice().sort((a, b) => b.tokens.length - a.tokens.length);
+      if (sorted[0].tokens.length > sorted[1].tokens.length) return sorted[0].name;
+    }
+    return null;
+  };
 
   for (const rawLine of text.split(/\r?\n/)) {
     if (entries.length >= maxEntries) break;
     const line = rawLine.trim();
-    if (!line || !/[A-Za-zÀ-ž]/.test(line)) continue;
-    if (HEADER_LINE.test(line) && !/\d/.test(line.slice(0, 4))) continue;
+    if (!line || !/[A-Za-zÀ-ž]/.test(line)) continue; // empty, ranks alone, times
 
-    // Strip a leading rank ("1", "1.", "1e", "12)").
-    const withoutRank = line.replace(/^\s*\d{1,3}\s*[.e)]?\s+/i, '');
-    const lineTokens = new Set(tokens(withoutRank));
-    if (lineTokens.size === 0) continue;
+    const rankMatch = LEADING_RANK.exec(line);
+    const content = rankMatch ? line.slice(rankMatch[0].length) : line;
+    const lineTokens = new Set(tokens(content));
+    const rider = lineTokens.size > 0 ? matchRider(lineTokens) : null;
 
-    const hits = riders.filter((r) => r.tokens.every((t) => lineTokens.has(t)));
-    let best: { name: string } | null = null;
-    if (hits.length === 1) {
-      best = hits[0];
-    } else if (hits.length > 1) {
-      const sorted = hits.slice().sort((a, b) => b.tokens.length - a.tokens.length);
-      if (sorted[0].tokens.length > sorted[1].tokens.length) best = sorted[0];
-    }
-
-    const position = entries.length + 1;
-    if (best) {
-      entries.push({ position, rider_name: best.name, matched: true, raw: line });
-    } else {
-      entries.push({ position, rider_name: withoutRank, matched: false, raw: line });
+    if (rider) {
+      entries.push({ position: entries.length + 1, rider_name: rider, matched: true, raw: line });
+    } else if (rankMatch && lineTokens.size > 0) {
+      // A numbered row that resolves to nobody is a real problem — keep it
+      // visible in its position instead of shifting everything below it.
+      entries.push({
+        position: entries.length + 1,
+        rider_name: content.trim(),
+        matched: false,
+        raw: line,
+      });
       unmatched.push(line);
+    } else {
+      ignored.push(line);
     }
   }
 
-  return { entries, unmatched };
+  return { entries, unmatched, ignored };
 }

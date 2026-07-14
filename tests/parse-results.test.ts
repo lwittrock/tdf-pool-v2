@@ -91,4 +91,62 @@ describe('parseResultsPaste', () => {
     expect(entries).toHaveLength(1);
     expect(entries[0].rider_name).toBe('TADEJ POGACAR');
   });
+
+  it('ignores un-numbered non-rider lines (teams, nav junk) but reports them', () => {
+    const text = [
+      'TADEJ POGACAR',
+      'UAE Team Emirates - XRG', // team on its own line — must not shift positions
+      'JONAS VINGEGAARD',
+    ].join('\n');
+    const { entries, unmatched, ignored } = parseResultsPaste(text, RIDERS);
+    expect(entries.map((e) => e.rider_name)).toEqual(['TADEJ POGACAR', 'JONAS VINGEGAARD']);
+    expect(unmatched).toEqual([]);
+    expect(ignored).toEqual(['UAE Team Emirates - XRG']);
+  });
+
+  it('parses the real PCS copy format: split ranks, team lines, nav junk, mixed case', () => {
+    const RIDERS_S10 = [
+      'TADEJ POGACAR', 'REMCO EVENEPOEL', 'PAUL SEIXAS', 'FLORIAN LIPOWITZ', 'JUAN AYUSO',
+      'MATTIAS SKJELMOSE', 'JONAS VINGEGAARD', 'ISAAC DEL TORO', 'LENNY MARTINEZ', 'TOM PIDCOCK',
+      'RICHARD CARAPAZ', 'DAVIDE PIGANZOLI', 'ILAN VAN WILDER', 'RAMSES DEBRUYNE', 'EGAN BERNAL',
+      'YANNIS VOISARD', 'ADAM YATES', 'TOBIAS HALLAND JOHANNESSEN', 'ANDERS HALLAND JOHANNESSEN',
+      'SEAN QUINN', 'QUINN SIMMONS', 'PABLO CASTRILLO',
+    ];
+    const text = [
+      '2026   »   113th Tour de France (2.UWT)',
+      'Stage 10   »   Aurillac  ›  Le Lioran   (166.6km)',
+      'STAGE', 'GC', 'POINTS', 'KOM', 'YOUTH', 'TEAMS',
+      'Age', 'BIB', 'H2H', 'Specialty', 'next stage', 'previous stage',
+      'Rnk\tRider\tTeam\tUCI\tPnt\t\tTime',
+      '1\tPogačar Tadej', '\tUAE Team Emirates - XRG\t210\t100\t10″\t3:58:08',
+      '2\tEvenepoel Remco', '\tRed Bull - BORA - hansgrohe\t150\t70\t6″\t0:32',
+      '3\tSeixas Paul', '\tDecathlon CMA CGM Team\t110\t50\t4″\t0:34',
+      '4\tLipowitz Florian', '\tRed Bull - BORA - hansgrohe\t90\t40\t\t,,',
+      '5\tAyuso Juan', '\tLidl - Trek\t70\t32\t\t0:38',
+      '6\tSkjelmose Mattias', '\tLidl - Trek\t55\t26\t\t,,',
+      '7\tVingegaard Jonas', '\tTeam Visma | Lease a Bike\t45\t22\t\t0:44',
+      '8\tdel Toro Isaac', '\tUAE Team Emirates - XRG\t40\t18\t\t1:31',
+      '9\t', 'Martinez Lenny', '\tPinarello Q36.5 Pro Cycling Team\t35\t14\t\t1:59',
+      '10\t', 'Pidcock Tom', '\tBahrain - Victorious\t30\t10\t\t2:03',
+      '11\tCarapaz Richard', '\tEF Education - EasyPost\t25\t8\t\t2:09',
+      '12\tPiganzoli Davide', '\tTeam Visma | Lease a Bike\t20\t6\t\t2:42',
+      '13\tVan Wilder Ilan', '\tSoudal Quick-Step\t15\t4\t\t2:48',
+      '14\tDebruyne Ramses', '\tAlpecin - Premier Tech\t10\t2\t\t,,',
+      '15\tBernal Egan', '\tNetcompany INEOS\t5\t1\t\t2:53',
+      '16\tVoisard Yannis', '\tTudor Pro Cycling Team\t\t\t\t3:05',
+      '17\tYates Adam', '\tUAE Team Emirates - XRG\t\t\t\t3:45',
+      '18\tJohannessen Tobias Halland', '\tUno-X Mobility\t\t\t\t4:50',
+      '19\tQuinn Sean', '\tEF Education - EasyPost\t\t\t\t5:23',
+      '20\tCastrillo Pablo', '\tMovistar Team\t\t\t\t6:45',
+    ].join('\n');
+    const { entries, unmatched } = parseResultsPaste(text, RIDERS_S10);
+    expect(unmatched).toEqual([]);
+    expect(entries.map((e) => e.rider_name)).toEqual([
+      'TADEJ POGACAR', 'REMCO EVENEPOEL', 'PAUL SEIXAS', 'FLORIAN LIPOWITZ', 'JUAN AYUSO',
+      'MATTIAS SKJELMOSE', 'JONAS VINGEGAARD', 'ISAAC DEL TORO', 'LENNY MARTINEZ', 'TOM PIDCOCK',
+      'RICHARD CARAPAZ', 'DAVIDE PIGANZOLI', 'ILAN VAN WILDER', 'RAMSES DEBRUYNE', 'EGAN BERNAL',
+      'YANNIS VOISARD', 'ADAM YATES', 'TOBIAS HALLAND JOHANNESSEN', 'SEAN QUINN', 'PABLO CASTRILLO',
+    ]);
+    expect(entries.every((e) => e.matched)).toBe(true);
+  });
 });

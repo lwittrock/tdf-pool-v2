@@ -900,7 +900,7 @@ function StageFinishersForm({
   const [pasteFeedback, setPasteFeedback] = useState('');
 
   const handlePaste = () => {
-    const { entries, unmatched } = parseResultsPaste(
+    const { entries, unmatched, ignored } = parseResultsPaste(
       pasteText,
       riders.map((r) => r.name)
     );
@@ -914,9 +914,11 @@ function StageFinishersForm({
     }));
     onUpdate({ ...formData, top_20_finishers: finishers });
     setPasteFeedback(
-      `${entries.filter((e) => e.matched).length} van ${entries.length} regels herkend.` +
+      `${entries.filter((e) => e.matched).length} van 20 posities gevuld` +
+        (ignored.length > 0 ? ` (${ignored.length} regels genegeerd: koppen/ploegen/tijden)` : '') +
+        '.' +
         (unmatched.length > 0
-          ? ` Niet herkend (controleer hieronder): ${unmatched.map((u) => `"${u}"`).join(', ')}`
+          ? ` Niet herkend — controleer hieronder: ${unmatched.map((u) => `"${u}"`).join(', ')}`
           : '')
     );
   };
