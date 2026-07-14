@@ -1,9 +1,10 @@
 # Phase A post-merge review — findings & status
 
 Code review of the Phase A merge (PR #6, WP-A0–A4), July 2026. Eight
-findings; four fixed in the cleanup round right after the merge, four
-deliberately deferred with the rationale below. Deferred items name the
-work package that should absorb them.
+findings; four fixed in the cleanup round right after the merge, the rest
+resolved or deferred as noted. The WP-B2 bulk rewrite (July 14) closed
+findings 6 and 8 and surfaced two more critical ones (9, 10) — both fixed
+in the same rewrite.
 
 ## Fixed (cleanup round, July 2026)
 
@@ -61,17 +62,16 @@ affected stages **in order**.
 is reconciliation (derive substitutions from the full `stage_dnf` history on
 every run) which belongs in the WP-B2 scoring/pipeline rewrite, not a patch.
 
-### 6. N+1 pipeline may hit the 300s timeout late in the Tour — MEDIUM, → WP-B2
-`calculatePointsForStage` issues participants × completed-stages sequential
-round trips in the cumulative pass (~128 × 18 selects + as many updates by
-stage 18) plus per-row rank updates — roughly 5,000+ sequential REST calls
-per entry in the final week. At 30–60 ms per call that is 160–320 s,
-uncomfortably close to the 300 s `maxDuration`. The file header's
-"acceptable mid-Tour with few stages" stops holding around stage 12–15.
-*Why deferred:* the bulk-query rewrite IS WP-B2; duplicating it as a patch
-now would be thrown away. **Constraint: land WP-B2 before roughly stage 12**,
-or accept that a timed-out entry needs a manual `process-stage` retry (the
-DB swap is transactional, so no data is lost — only the publish is missed).
+### 6. N+1 pipeline hits the 300s timeout — FIXED (WP-B2, July 14)
+The estimate ("stage 12–15") was optimistic: **stage 4's entry was already
+killed at the 300 s limit** (DB writes completed; the publish was cut off),
+and a stage cost ~7 minutes locally by stage 9 — the publish phase's
+generators were even heavier than the points pass (~3,000 queries, run
+twice). Fixed by the WP-B2 rewrite: `lib/pipeline.ts` and
+`lib/json-generators.ts` now use paginated bulk fetches + in-memory
+computation. Measured after: full 9-stage reprocess incl. 9 publishes in
+**56 seconds** (~6 s/stage); snapshot generation 6.8 s (was ~5 min). UI
+entry is unblocked.
 
 ### 7. Preview deployments read production data but write `preview/` — LOW, → WP-B8
 `lib/publish.ts` prefixes all preview writes with `preview/` (correct,
@@ -96,13 +96,14 @@ already carry it as their own `dagploeg` field. Until then the published
 standings simply exclude the +6, as documented for the golden test.
 
 ### 8b. The pool Excel's rider naming is inconsistent — data quirk, ruled
-Both `TOBIAS JOHANNESSEN` and `TOBIAS HALLAND JOHANNESSEN` occurred as picks
-(same physical rider); the sheet treated them as different strings, so the
-one Halland-form picker (P128) received 0 for his stage 2/3/9 results — the
-golden fixtures verify the sheet really scored it that way. **Owner ruling
-(July 2026): merged** via `npm run merge:riders` + `npm run process:stages`;
-the site therefore deliberately diverges from the sheet for P128 from stage
-2 onward. The golden fixtures stay verbatim-Excel (unmerged); a fresh
+Both `TOBIAS JOHANNESSEN` and `TOBIAS HALLAND JOHANNESSEN` occurred in the
+pool data (same physical rider). **Merged July 2026** via
+`npm run merge:riders` + `npm run process:stages`. Scoring impact turned
+out to be **zero**: the only full-form pick (P128) has him as an
+*inactive reserve*, which scores 0 under both the sheet's rules and the
+engine's — so DB and sheet still agree cell-for-cell. The merge is hygiene:
+one rider row owns his results (rider stats display correctly) and a future
+activation of that reserve resolves to the row that has the points. A fresh
 fixture import recreates both rows, so redo the merge after any full
 rebuild. Excel-specific spellings remain canonical in the DB:
 `AARON MURRAY GATE`, `RAUL GARCIA`, `DEREK JAMES GEE`,
@@ -110,10 +111,30 @@ rebuild. Excel-specific spellings remain canonical in the DB:
 `data/2026/startlist.json`. The structural fix (rider aliases / canonical
 IDs so free-text names stop being join keys) belongs in WP-B1/WP-B4.
 
-### 8. Force-reprocessing an earlier stage does not ripple forward — NOTE
-Pre-existing v1 semantics, kept by the port: `calculatePointsForStage(N)`
-recomputes cumulative totals for stages ≤ N only. If you re-enter stage 2
-after stages 3–4 were processed, stages 3–4 keep stale cumulatives until
-they are force-reprocessed too. **Operational rule: after correcting an old
-stage, force-reprocess every later stage, in order.** WP-B2's bulk rewrite
-should recompute the full chain in one pass instead.
+### 8. Force-reprocessing an earlier stage does not ripple forward — FIXED (WP-B2)
+Pre-existing v1 semantics, kept by the port: cumulative totals were only
+recomputed for stages ≤ N. The WP-B2 rewrite recomputes cumulative totals
+and overall ranks for **every** completed stage on each run, so correcting
+an old stage ripples forward automatically — one `process:stages` (or UI
+re-entry) of the corrected stage is enough.
+
+### 9. Un-ranged selects silently truncate at 1,000 rows — CRITICAL, FIXED (WP-B2)
+PostgREST caps un-ranged responses at 1,000 rows and supabase-js returns
+the first page **without any error**. `participant_rider_selections` has
+1,405 rows and `participant_stage_points` reached 1,152 — so scoring ran
+with ~400 selection rows missing (participants late in physical row order
+lost riders from their roster) and published leaderboards dropped 152 rows
+(stage 4 was 24 rows short; stage 7 was empty). Inherited from v1, where it
+was latent (v1 never had this many rows). Fixed: every potentially-large
+read goes through `fetchAll` (`lib/supabase-server.ts`), which paginates
+with a deterministic order. **Rule for all future queries: any table that
+can exceed 1,000 rows must be read via `fetchAll`.**
+
+### 10. The N+1 generators silently dropped riders under failure — FIXED (WP-B2)
+The old `generateRidersJSON` issued ~2 queries per rider per stage and
+ignored per-query errors (`maybeSingle` → null → "no points"), so transient
+failures/rate-limiting under the ~3,000-query storm randomly removed riders
+from the published files — a captured baseline had 72 of 80 riders in
+`rider_rankings.json`, ranking Del Toro #1 with Pogačar missing entirely.
+The bulk rewrite fetches each table once, so a failure is loud instead of
+lossy.

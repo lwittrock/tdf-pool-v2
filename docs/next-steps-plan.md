@@ -10,7 +10,14 @@ Legend: **YOU** = owner actions (dashboards, Excel, decisions).
 
 ---
 
-## Step 0 — Finish the current data load *(in flight)*
+> **Status (July 14):** Steps 0–2 are DONE. Stages 1–9 are live on the site,
+> the golden suite verifies 128 × 9 cells against the owner's sheet, and the
+> WP-B2 rewrite landed early (a 9-stage reprocess now takes ~56 s; UI entry
+> is unblocked). The rewrite also uncovered and fixed two critical data bugs
+> — see findings 9 and 10 in `phase-a-review-findings.md`. Next up: Step 3
+> (Dagploeg + aliases), then the cutover (Step 4) is immediately viable.
+
+## Step 0 — Finish the current data load *(DONE)*
 
 | Who | What |
 |---|---|
@@ -21,7 +28,7 @@ Legend: **YOU** = owner actions (dashboards, Excel, decisions).
 
 ---
 
-## Step 1 — Golden fixtures through stage 9 *(do this before any refactor)*
+## Step 1 — Golden fixtures through stage 9 *(DONE — 128 × 9 cells verified)*
 
 The safety net for everything below. The stage results are already in
 `data/2026/fixtures/stage_results/stage_{5..9}.json`; what's missing is the
@@ -36,7 +43,7 @@ The safety net for everything below. The stage results are already in
 
 ---
 
-## Step 2 — WP-B2: bulk pipeline rewrite *(unblocks UI entry — the burning one)*
+## Step 2 — WP-B2: bulk pipeline rewrite *(DONE — July 14)*
 
 Evidence: stage 4 died on Vercel's 300 s limit; stage 9 takes ~7 min locally.
 Until this lands you cannot enter a stage from the beheer UI.
@@ -107,13 +114,16 @@ README top half, ESLint flat-config with the dependency bumps.
 
 ---
 
-## Ongoing operations during the Tour (as of today)
+## Ongoing operations during the Tour (as of July 14)
 
-- **Enter a new stage** (until Step 2/4): send me the sheet column or PCS
-  results → fixture file → `npm run replay:stages -- --apply --local N`.
-- **Correct an old stage:** fix the fixture file → replay it → then
-  `npm run process:stages -- --apply <stage>..9` for everything after it
-  (cumulative only ripples forward — findings doc, item 8).
+- **Enter a new stage:** the beheer UI (`/admin`) now completes well inside
+  the limit (WP-B2) — enter it there. The fixture-file + `replay:stages`
+  route still works as backup. Until Step 3 lands, the Dagploeg +6 is not
+  in the published totals.
+- **Correct an old stage:** re-enter it (UI with overwrite confirmation, or
+  fixture file + `replay:stages --apply --local N`). Cumulative totals and
+  overall ranks now ripple forward automatically — no need to reprocess the
+  later stages.
 - **Supabase free tier pauses after ~1 week idle** — the Tour's daily
   writes prevent that, but after Paris, visit the dashboard weekly or
   expect to resume the project manually.

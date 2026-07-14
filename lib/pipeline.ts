@@ -1,18 +1,20 @@
 /**
- * Stage-processing pipeline as a plain library (WP-A2).
+ * Stage-processing pipeline as a plain library (WP-A2, internals WP-B2).
  *
  * Replaces the browser-orchestrated chain manual-entry → process-stage →
  * (HTTP self-fetch) update-active-selections + calculate-points. Everything
  * here is a direct function call; one authenticated route (enter-stage)
  * drives it.
  *
- * The point calculations are a faithful port of the previous API routes —
- * still query-heavy (N+1), which is acceptable mid-Tour with few stages;
- * WP-B2 replaces the internals with bulk queries. WP-A3 fixes the
- * roster-as-of-stage semantics.
+ * WP-B2: all inputs are fetched in a handful of paginated bulk queries and
+ * computed in memory (the v1-ported N+1 loops took ~7 minutes per stage by
+ * stage 9 and — worse — un-ranged selects silently truncate at PostgREST's
+ * 1000-row cap, which dropped ~400 of the 1405 selection rows from scoring).
+ * Cumulative totals and overall ranks are recomputed for EVERY completed
+ * stage on each run, so reprocessing an old stage ripples forward by itself.
  */
 
-import { getServiceClient } from './supabase-server.js';
+import { getServiceClient, fetchAll } from './supabase-server.js';
 import {
   computeRiderStagePoints,
   computeParticipantStagePoints,
@@ -160,84 +162,60 @@ export async function updateActiveSelections(stageNumber: number): Promise<Updat
 
 /**
  * Calculate and persist rider + participant points for one stage, then
- * cumulative totals and ranks. Ported from api/admin/calculate-points.
+ * cumulative totals and overall ranks for EVERY completed stage (WP-B2:
+ * bulk fetches + in-memory computation; the pure rules live in scoring.ts).
  */
 export async function calculatePointsForStage(stageNumber: number): Promise<void> {
   const supabase = getServiceClient();
   const stageId = await getStageId(stageNumber);
 
-  // Clear existing points for this stage (reprocessing)
-  await Promise.all([
-    supabase.from('rider_stage_points').delete().eq('stage_id', stageId),
-    supabase.from('participant_stage_points').delete().eq('stage_id', stageId),
-    supabase.from('participant_rider_contributions').delete().eq('stage_id', stageId),
-  ]);
+  // ---- Inputs (bulk) --------------------------------------------------------
+  const [{ data: stageResults }, { data: jerseys }, { data: combativity }, { data: participants }] =
+    await Promise.all([
+      supabase.from('stage_results').select('rider_id, position').eq('stage_id', stageId).order('position'),
+      supabase.from('stage_jerseys').select('rider_id, jersey_type').eq('stage_id', stageId),
+      supabase.from('stage_combativity').select('rider_id').eq('stage_id', stageId).maybeSingle(),
+      supabase.from('participants').select('id, name').order('id'),
+    ]);
+  if (!participants) throw new Error('Deelnemers laden mislukt');
 
-  // ---- Rider points (pure core: lib/scoring.ts) ----------------------------
-  const { data: stageResults } = await supabase
-    .from('stage_results')
-    .select('rider_id, position')
-    .eq('stage_id', stageId)
-    .order('position');
+  const allSelections = await fetchAll<SelectionInput>((from, to) =>
+    supabase
+      .from('participant_rider_selections')
+      .select('participant_id, rider_id, position, replaced_at_stage')
+      .order('id')
+      .range(from, to)
+  );
 
-  const { data: jerseys } = await supabase
-    .from('stage_jerseys')
-    .select('rider_id, jersey_type')
-    .eq('stage_id', stageId);
-
-  const { data: combativity } = await supabase
-    .from('stage_combativity')
-    .select('rider_id')
-    .eq('stage_id', stageId)
-    .maybeSingle();
-
+  // ---- Rider points (pure core: lib/scoring.ts) -----------------------------
   const riderPointsMap = computeRiderStagePoints(
     stageResults ?? [],
     (jerseys ?? []) as StageJerseyInput[],
     combativity?.rider_id ?? null
   );
 
-  const riderInserts = [...riderPointsMap.entries()].map(([riderId, p]) => ({
-    stage_id: stageId,
-    rider_id: riderId,
-    ...p,
-    stage_rank: null,
-  }));
+  const riderInserts = [...riderPointsMap.entries()]
+    .sort(([, a], [, b]) => b.total_points - a.total_points)
+    .map(([riderId, p], index) => ({
+      stage_id: stageId,
+      rider_id: riderId,
+      ...p,
+      stage_rank: index + 1,
+    }));
 
+  {
+    const { error } = await supabase.from('rider_stage_points').delete().eq('stage_id', stageId);
+    if (error) throw new Error(`Rennerpunten wissen mislukt: ${error.message}`);
+  }
   if (riderInserts.length > 0) {
     const { error } = await supabase.from('rider_stage_points').insert(riderInserts);
     if (error) throw new Error(`Rennerpunten opslaan mislukt: ${error.message}`);
   }
 
-  const { data: allRiderPoints } = await supabase
-    .from('rider_stage_points')
-    .select('id, total_points')
-    .eq('stage_id', stageId)
-    .order('total_points', { ascending: false });
-  for (let i = 0; i < (allRiderPoints?.length ?? 0); i++) {
-    await supabase
-      .from('rider_stage_points')
-      .update({ stage_rank: i + 1 })
-      .eq('id', allRiderPoints![i].id);
-  }
-
-  // ---- Participant points -------------------------------------------------
-  const { data: participants } = await supabase.from('participants').select('id, name');
-  if (!participants) throw new Error('Deelnemers laden mislukt');
-
-  // Roster-as-of-stage (WP-A3, fixes F3): scoring no longer trusts the
-  // global is_active flag or position <= 10 — it derives each stage's
-  // roster from replaced_at_stage, so a substituted reserve scores from
-  // its activation stage and a force-reprocessed early stage uses the
-  // roster as it was then.
-  const { data: allSelections } = await supabase
-    .from('participant_rider_selections')
-    .select('participant_id, rider_id, position, replaced_at_stage');
-  if (!allSelections) throw new Error('Selecties laden mislukt');
-
+  // ---- Participant points for this stage (roster-as-of-stage, WP-A3) --------
   const participantPointsMap = computeParticipantStagePoints(
     riderPointsMap,
-    allSelections as SelectionInput[],
+    allSelections,
     stageNumber
   );
   // Participants without any selection row still get a 0-point row.
@@ -247,25 +225,142 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
     }
   }
 
-  const participantInserts = [...participantPointsMap.entries()].map(([participantId, d]) => ({
-    stage_id: stageId,
-    participant_id: participantId,
-    stage_points: d.total_points,
-    stage_rank: null,
-    cumulative_points: 0,
-    overall_rank: null,
-  }));
-  if (participantInserts.length > 0) {
-    const { error } = await supabase.from('participant_stage_points').insert(participantInserts);
+  // ---- Cumulative totals + overall ranks for every completed stage ----------
+  // The stage being processed counts regardless of is_complete (processStage
+  // only marks it complete after this runs). Every completed stage is
+  // recomputed from stored stage_points, so a corrected old stage ripples
+  // forward without manually reprocessing the later ones.
+  const { data: allStages } = await supabase
+    .from('stages')
+    .select('id, stage_number, is_complete')
+    .order('stage_number');
+  if (!allStages) throw new Error('Etappes laden mislukt');
+  const countingStages = allStages.filter(
+    (s) => s.is_complete || s.stage_number === stageNumber
+  );
+
+  interface PspRow {
+    id: string;
+    participant_id: string;
+    stage_id: string;
+    stage_points: number;
+    cumulative_points: number;
+    overall_rank: number | null;
+    overall_rank_change: number | null;
+  }
+  const existingRows = await fetchAll<PspRow>((from, to) =>
+    supabase
+      .from('participant_stage_points')
+      .select('id, participant_id, stage_id, stage_points, cumulative_points, overall_rank, overall_rank_change')
+      .order('id')
+      .range(from, to)
+  );
+  const rowsByStage = new Map<string, Map<string, PspRow>>();
+  for (const row of existingRows) {
+    if (row.stage_id === stageId) continue; // being recomputed
+    let stageRows = rowsByStage.get(row.stage_id);
+    if (!stageRows) rowsByStage.set(row.stage_id, (stageRows = new Map()));
+    stageRows.set(row.participant_id, row);
+  }
+
+  // stage_points per participant per counting stage (fresh for the current one)
+  const pointsFor = (stage: { id: string }, participantId: string): number =>
+    stage.id === stageId
+      ? participantPointsMap.get(participantId)?.total_points ?? 0
+      : rowsByStage.get(stage.id)?.get(participantId)?.stage_points ?? 0;
+
+  const cumulative = new Map<string, number>();
+  const overallRanks = new Map<string, Map<string, number>>(); // stage_id → participant → rank
+  const cumulativeByStage = new Map<string, Map<string, number>>();
+  for (const stage of countingStages) {
+    const stageCumulative = new Map<string, number>();
+    for (const participant of participants) {
+      const total = (cumulative.get(participant.id) ?? 0) + pointsFor(stage, participant.id);
+      cumulative.set(participant.id, total);
+      stageCumulative.set(participant.id, total);
+    }
+    cumulativeByStage.set(stage.id, stageCumulative);
+    const ranked = [...stageCumulative.entries()].sort((a, b) => b[1] - a[1]);
+    overallRanks.set(stage.id, new Map(ranked.map(([pid], index) => [pid, index + 1])));
+  }
+
+  // ---- Write the recomputed current stage ------------------------------------
+  const stageIndex = countingStages.findIndex((s) => s.id === stageId);
+  const previousStage = stageIndex > 0 ? countingStages[stageIndex - 1] : null;
+  const stageRanked = [...participantPointsMap.entries()].sort(
+    (a, b) => b[1].total_points - a[1].total_points
+  );
+  const stageRankByParticipant = new Map(stageRanked.map(([pid], index) => [pid, index + 1]));
+
+  const currentRows = participants.map((participant) => {
+    const currentRank = overallRanks.get(stageId)?.get(participant.id) ?? null;
+    const previousRank = previousStage
+      ? rowsByStage.get(previousStage.id)?.get(participant.id)?.overall_rank ?? null
+      : null;
+    return {
+      stage_id: stageId,
+      participant_id: participant.id,
+      stage_points: participantPointsMap.get(participant.id)?.total_points ?? 0,
+      stage_rank: stageRankByParticipant.get(participant.id) ?? null,
+      cumulative_points: cumulativeByStage.get(stageId)?.get(participant.id) ?? 0,
+      overall_rank: currentRank,
+      overall_rank_change:
+        currentRank != null && previousRank != null ? previousRank - currentRank : null,
+    };
+  });
+
+  {
+    const { error } = await supabase.from('participant_stage_points').delete().eq('stage_id', stageId);
+    if (error) throw new Error(`Deelnemerspunten wissen mislukt: ${error.message}`);
+  }
+  {
+    const { error } = await supabase.from('participant_stage_points').insert(currentRows);
     if (error) throw new Error(`Deelnemerspunten opslaan mislukt: ${error.message}`);
   }
 
-  const contributionInserts: Array<{
-    participant_id: string;
-    stage_id: string;
-    rider_id: string;
-    points_contributed: number;
-  }> = [];
+  // ---- Ripple: repair cumulative/rank fields of OTHER stages if changed ------
+  const corrections: Array<Record<string, unknown>> = [];
+  for (const stage of countingStages) {
+    if (stage.id === stageId) continue;
+    const stageRows = rowsByStage.get(stage.id);
+    if (!stageRows) continue;
+    const prevIndex = countingStages.findIndex((s) => s.id === stage.id) - 1;
+    const prev = prevIndex >= 0 ? countingStages[prevIndex] : null;
+    for (const row of stageRows.values()) {
+      const cum = cumulativeByStage.get(stage.id)?.get(row.participant_id) ?? 0;
+      const rank = overallRanks.get(stage.id)?.get(row.participant_id) ?? null;
+      const prevRank = prev
+        ? prev.id === stageId
+          ? overallRanks.get(stageId)?.get(row.participant_id) ?? null
+          : rowsByStage.get(prev.id)?.get(row.participant_id)?.overall_rank ?? null
+        : null;
+      const change = rank != null && prevRank != null ? prevRank - rank : row.overall_rank_change;
+      if (
+        row.cumulative_points !== cum ||
+        row.overall_rank !== rank ||
+        row.overall_rank_change !== change
+      ) {
+        corrections.push({
+          id: row.id,
+          participant_id: row.participant_id,
+          stage_id: row.stage_id,
+          stage_points: row.stage_points,
+          cumulative_points: cum,
+          overall_rank: rank,
+          overall_rank_change: change,
+        });
+      }
+    }
+  }
+  if (corrections.length > 0) {
+    const { error } = await supabase
+      .from('participant_stage_points')
+      .upsert(corrections, { onConflict: 'id' });
+    if (error) throw new Error(`Cumulatieven bijwerken mislukt: ${error.message}`);
+  }
+
+  // ---- Contributions ---------------------------------------------------------
+  const contributionInserts: Array<Record<string, unknown>> = [];
   for (const [participantId, d] of participantPointsMap.entries()) {
     for (const [riderId, points] of d.contributions.entries()) {
       contributionInserts.push({
@@ -276,113 +371,31 @@ export async function calculatePointsForStage(stageNumber: number): Promise<void
       });
     }
   }
+  {
+    const { error } = await supabase
+      .from('participant_rider_contributions')
+      .delete()
+      .eq('stage_id', stageId);
+    if (error) throw new Error(`Bijdragen wissen mislukt: ${error.message}`);
+  }
   if (contributionInserts.length > 0) {
     const { error } = await supabase
       .from('participant_rider_contributions')
       .insert(contributionInserts);
     if (error) throw new Error(`Bijdragen opslaan mislukt: ${error.message}`);
   }
-
-  // ---- Ranks --------------------------------------------------------------
-  const { data: byStagePoints } = await supabase
-    .from('participant_stage_points')
-    .select('id, stage_points')
-    .eq('stage_id', stageId)
-    .order('stage_points', { ascending: false });
-  for (let i = 0; i < (byStagePoints?.length ?? 0); i++) {
-    await supabase
-      .from('participant_stage_points')
-      .update({ stage_rank: i + 1 })
-      .eq('id', byStagePoints![i].id);
-  }
-
-  // ---- Cumulative totals + overall ranks ----------------------------------
-  // The stage being processed is included regardless of is_complete:
-  // processStage only marks it complete AFTER this runs, so filtering on
-  // is_complete alone would publish the fresh stage with cumulative 0 and
-  // arbitrary overall ranks.
-  const { data: completedStages } = await supabase
-    .from('stages')
-    .select('id, stage_number')
-    .or(`is_complete.eq.true,stage_number.eq.${stageNumber}`)
-    .lte('stage_number', stageNumber)
-    .order('stage_number');
-  if (!completedStages) throw new Error('Etappes laden mislukt');
-
-  for (const participant of participants) {
-    let cumulative = 0;
-    for (const stage of completedStages) {
-      const { data: sp } = await supabase
-        .from('participant_stage_points')
-        .select('stage_points')
-        .eq('participant_id', participant.id)
-        .eq('stage_id', stage.id)
-        .maybeSingle();
-      if (sp) cumulative += sp.stage_points;
-      await supabase
-        .from('participant_stage_points')
-        .update({ cumulative_points: cumulative })
-        .eq('participant_id', participant.id)
-        .eq('stage_id', stage.id);
-    }
-  }
-
-  const { data: byOverall } = await supabase
-    .from('participant_stage_points')
-    .select('id, cumulative_points')
-    .eq('stage_id', stageId)
-    .order('cumulative_points', { ascending: false });
-  for (let i = 0; i < (byOverall?.length ?? 0); i++) {
-    await supabase
-      .from('participant_stage_points')
-      .update({ overall_rank: i + 1 })
-      .eq('id', byOverall![i].id);
-  }
-
-  // ---- Rank changes vs previous stage --------------------------------------
-  if (stageNumber > 1) {
-    const { data: previousStage } = await supabase
-      .from('stages')
-      .select('id')
-      .eq('stage_number', stageNumber - 1)
-      .single();
-    if (previousStage) {
-      for (const participant of participants) {
-        const { data: current } = await supabase
-          .from('participant_stage_points')
-          .select('overall_rank')
-          .eq('participant_id', participant.id)
-          .eq('stage_id', stageId)
-          .single();
-        const { data: previous } = await supabase
-          .from('participant_stage_points')
-          .select('overall_rank')
-          .eq('participant_id', participant.id)
-          .eq('stage_id', previousStage.id)
-          .maybeSingle();
-        if (current?.overall_rank && previous?.overall_rank) {
-          await supabase
-            .from('participant_stage_points')
-            .update({ overall_rank_change: previous.overall_rank - current.overall_rank })
-            .eq('participant_id', participant.id)
-            .eq('stage_id', stageId);
-        }
-      }
-    }
-  }
 }
 
 /** Regenerate all six snapshots and publish a new versioned run. */
 export async function generateAndPublish(): Promise<PublishResult> {
-  const [metadata, leaderboards, riders, stagesData, teamSelections, riderRankings] =
-    await Promise.all([
-      generateMetadataJSON(),
-      generateLeaderboardsJSON(),
-      generateRidersJSON(),
-      generateStagesDataJSON(),
-      generateTeamSelectionsJSON(),
-      generateRiderRankingsJSON(),
-    ]);
+  const [metadata, leaderboards, riders, stagesData, teamSelections] = await Promise.all([
+    generateMetadataJSON(),
+    generateLeaderboardsJSON(),
+    generateRidersJSON(),
+    generateStagesDataJSON(),
+    generateTeamSelectionsJSON(),
+  ]);
+  const riderRankings = await generateRiderRankingsJSON(riders);
 
   return publishSnapshots({
     metadata,

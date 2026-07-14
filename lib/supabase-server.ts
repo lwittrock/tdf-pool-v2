@@ -20,3 +20,25 @@ export function getServiceClient(): SupabaseClient {
   cached = createClient(url, key);
   return cached;
 }
+
+const PAGE_SIZE = 1000;
+
+/**
+ * Fetch every row of a query, paginating past PostgREST's max-rows cap
+ * (1000 by default — a plain .select() SILENTLY truncates beyond it; with
+ * 128 participants × 11 selections that broke scoring, WP-B2).
+ * The builder must apply a deterministic .order(...) for stable pages;
+ * .range() is applied here.
+ */
+export async function fetchAll<Row>(
+  build: (from: number, to: number) => PromiseLike<{ data: Row[] | null; error: { message: string } | null }>
+): Promise<Row[]> {
+  const all: Row[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await build(from, from + PAGE_SIZE - 1);
+    if (error) throw new Error(error.message);
+    const rows = data ?? [];
+    all.push(...rows);
+    if (rows.length < PAGE_SIZE) return all;
+  }
+}
