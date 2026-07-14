@@ -162,7 +162,6 @@ async function main(): Promise<void> {
         participant_id: participant.id,
         rider_id: riderIdByKey.get(foldedRiderNameKey(name)),
         position: index + 1,
-        is_active: true,
         replaced_at_stage: null,
       });
     });
@@ -177,7 +176,6 @@ async function main(): Promise<void> {
           participant_id: participant.id,
           rider_id: reserveRiderId,
           position: 11,
-          is_active: p.reserve_active,
           replaced_at_stage: p.reserve_active ? 1 : null,
         });
       }

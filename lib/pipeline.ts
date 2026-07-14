@@ -162,7 +162,6 @@ export async function updateActiveSelections(stageNumber: number): Promise<Updat
         .from('participant_rider_selections')
         .update({
           replaced_at_stage: desiredStamp,
-          is_active: isReserve ? desiredStamp != null : desiredStamp == null,
           ...(isReserve ? { replacement_for_rider_id: desiredReplacementFor } : {}),
         })
         .eq('id', row.id);

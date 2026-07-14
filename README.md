@@ -73,7 +73,7 @@ deployments from writing production data); `VITE_*` are build-time.
 
 SQL migrations live in [supabase/migrations/](supabase/migrations/) — run
 them **in order** in the Supabase SQL editor (000 base schema, 001 phase A,
-002 phase B1). They are idempotent. Full dashboard walkthrough (auth, blob
+002 phase B1, 003 cleanup). They are idempotent. Full dashboard walkthrough (auth, blob
 store, env vars, smoke tests): [docs/phase-a-go-live.md](docs/phase-a-go-live.md).
 
 ## Scripts
