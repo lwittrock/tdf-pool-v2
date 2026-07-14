@@ -280,6 +280,10 @@ function StageManagementPage() {
           setErrorMessage(
             ['Niet opgeslagen — er is niets gewijzigd:', ...body.validation_errors].join('\n')
           );
+          // The outcome renders at the top of the form; the save button is
+          // at the bottom — without this, a result looks like "nothing
+          // happened" (stage-10 cutover experience).
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
         throw new Error(body.error || 'Verwerken mislukt');
@@ -287,7 +291,8 @@ function StageManagementPage() {
 
       const data: SubmitResult = body.data;
       setSubmitResult(data);
-      setSuccessMessage(`Etappe ${formData.stage_number} succesvol opgeslagen en verwerkt!`);
+      setSuccessMessage(`✅ Etappe ${formData.stage_number} opgeslagen en verwerkt!`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       await refreshAll();
 
       // Warnings and substitutions must stay on screen (fact 5): only
@@ -304,6 +309,7 @@ function StageManagementPage() {
     } catch (error: any) {
       console.error('Submit error:', error);
       setErrorMessage(error.message || 'Er is een fout opgetreden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setSubmitting(false);
     }
@@ -694,11 +700,13 @@ function StageEntryMode({
       {submitResult && (
         <div className="mb-4 space-y-3">
           <div className="p-4 bg-blue-50 text-blue-800 rounded-lg text-sm">
-            Dagploeg (team van de winnaar): <strong>{submitResult.winning_team}</strong>
+            Opgeslagen en verwerkt — de site is binnen ±2 minuten bijgewerkt.
+            Winnende ploeg (team van de etappewinnaar):{' '}
+            <strong>{submitResult.winning_team}</strong>
           </div>
           {submitResult.warnings.length > 0 && (
             <div className="p-4 bg-orange-100 text-orange-800 rounded-lg text-sm">
-              <div className="font-semibold mb-1">Waarschuwingen:</div>
+              <div className="font-semibold mb-1">Let op (niet blokkerend — de etappe is opgeslagen):</div>
               <ul className="list-disc list-inside space-y-1">
                 {submitResult.warnings.map((warning, i) => (
                   <li key={i}>{warning}</li>
@@ -708,7 +716,7 @@ function StageEntryMode({
           )}
           {submitResult.substitutions.length > 0 && (
             <div className="p-4 bg-orange-100 text-orange-800 rounded-lg text-sm">
-              <div className="font-semibold mb-1">Reserves geactiveerd (DNS):</div>
+              <div className="font-semibold mb-1">Reserves geactiveerd:</div>
               <ul className="list-disc list-inside space-y-1">
                 {submitResult.substitutions.map((sub, i) => (
                   <li key={i}>

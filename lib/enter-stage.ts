@@ -189,7 +189,9 @@ export function validateStageEntry(
       dagploeg = match;
     }
   } else {
-    warnings.push('Geen dagploeg ingevoerd (geen +6 voor deze etappe)');
+    warnings.push(
+      'Geen dagploeg ingevoerd — kan later: open de etappe opnieuw, vul de dagploeg in en sla op (de +6 wordt dan automatisch herberekend)'
+    );
   }
 
   if (errors.length > 0) {
