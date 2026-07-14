@@ -8,6 +8,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  define: {
+    // Vercel's deployment environment, baked into the bundle so preview
+    // deployments read the preview/ blob prefix (see lib/config.ts).
+    'import.meta.env.VITE_VERCEL_ENV': JSON.stringify(process.env.VERCEL_ENV ?? ''),
+  },
   base: '/',
   resolve: {
     alias: {

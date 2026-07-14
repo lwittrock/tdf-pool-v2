@@ -27,7 +27,7 @@
  *   BLOB_READ_WRITE_TOKEN                    — --local mode only (publish)
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config as loadEnv } from 'dotenv';
@@ -46,7 +46,15 @@ for (const envFile of ['.env.local', '.env']) {
 const APPLY = process.argv.includes('--apply');
 const LOCAL = process.argv.includes('--local');
 const stageArgs = process.argv.slice(2).filter((a) => /^\d+$/.test(a)).map(Number);
-const STAGES = stageArgs.length > 0 ? stageArgs : [1, 2, 3, 4];
+// Default: every stage file present in the fixtures.
+const STAGES =
+  stageArgs.length > 0
+    ? stageArgs
+    : readdirSync(join(root, 'data', '2026', 'fixtures', 'stage_results'))
+        .map((f) => /^stage_(\d+)\.json$/.exec(f)?.[1])
+        .filter((n): n is string => Boolean(n))
+        .map(Number)
+        .sort((a, b) => a - b);
 
 interface FixtureStage {
   stage_number: number;

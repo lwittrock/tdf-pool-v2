@@ -16,7 +16,7 @@ Legend: **YOU** = owner actions (dashboards, Excel, decisions).
 > ≈ 1 min; UI entry unblocked) and uncovered two critical data bugs (findings
 > 9/10, fixed). WP-B1 added `stages.dagploeg`, `rider_aliases`, and the new
 > substitution ruling (DNF at s → reserve from s+1; DNS from s itself; zero
-> historical impact, verified). **Next: Step 4 — enter stage 10 in the UI.**
+> historical impact, verified). Steps 5–6 followed the same day (rebuild + verify tooling, migrations, hygiene). **Next: enter stage 10 in the UI (the cutover).**
 
 ## Step 0 — Finish the current data load *(DONE)*
 
@@ -66,8 +66,8 @@ Two schema additions; SQL runs in the dashboard until Step 5 automates it.
 
 | Who | What |
 |---|---|
-| CLAUDE | Write `supabase/phase-b1.sql`: `stages.dagploeg` column + `rider_aliases` table (alias → rider_id, unique on alias). Entry UI gets a Dagploeg field (team dropdown from `data/2026/startlist.json` names). Engine: +6 per stage to participants whose `ploeg` = that stage's `dagploeg`; golden test's external +6 moves into the engine. Entry validation + import resolve names through aliases. Seed aliases for the known Excel quirks (short-form Johannessen, etc.). Backfill `dagploeg` for stages 1–9 from the fixture files. |
-| YOU | Paste `phase-b1.sql` in the Supabase SQL editor. From then on, entering a stage includes picking the Dagploeg — it's the winner of the stage's **team day classification** (PCS → stage → "Complementary results"), *not* the stage winner's team. Tell the participants the site now includes the +6. When a new name mismatch ever appears, the fix is one alias row, not a merge. |
+| CLAUDE | Write `supabase/migrations/002_phase_b1.sql`: `stages.dagploeg` column + `rider_aliases` table (alias → rider_id, unique on alias). Entry UI gets a Dagploeg field (team dropdown from `data/2026/startlist.json` names). Engine: +6 per stage to participants whose `ploeg` = that stage's `dagploeg`; golden test's external +6 moves into the engine. Entry validation + import resolve names through aliases. Seed aliases for the known Excel quirks (short-form Johannessen, etc.). Backfill `dagploeg` for stages 1–9 from the fixture files. |
+| YOU | Paste `migrations/002_phase_b1.sql` in the Supabase SQL editor. From then on, entering a stage includes picking the Dagploeg — it's the winner of the stage's **team day classification** (PCS → stage → "Complementary results"), *not* the stage winner's team. Tell the participants the site now includes the +6. When a new name mismatch ever appears, the fix is one alias row, not a merge. |
 
 **Done when:** published totals match your sheet exactly (P128 aside), and a
 misspelled rider name at entry time is either matched via alias or blocked —
@@ -91,7 +91,7 @@ session with no terminal involved.
 
 ---
 
-## Step 5 — WP-B7: migrations + one-command rebuild
+## Step 5 — WP-B7: migrations + one-command rebuild *(DONE — July 14; scratch-project dress rehearsal still open)*
 
 Today proved the need: a fresh Supabase project took a manual chain of
 schema → phase-a.sql → import → startlist → replay → merge.
@@ -106,7 +106,7 @@ production from one command (verified once, against a throwaway project).
 
 ---
 
-## Step 6 — WP-B8: hygiene *(rides along, no urgency)*
+## Step 6 — WP-B8: hygiene *(DONE July 14 — except the ESLint-9/dependency bump, parked for a dedicated pass)*
 
 CLAUDE, batched into a quiet moment: preview deployments reading the
 production pointer (read side of the `preview/` prefix), retire or fix the

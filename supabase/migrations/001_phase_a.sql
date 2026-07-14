@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Phase A additions (WP-A2) — run once in the Supabase SQL editor.
 -- Incremental on top of supabase-schema.sql; safe to re-run.
--- Proper migration files replace this in WP-B7.
+-- Ordered migrations (WP-B7): run 000, 001, 002 in order in the SQL editor.
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------

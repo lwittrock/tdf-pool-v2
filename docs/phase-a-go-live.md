@@ -20,9 +20,9 @@ Each step says how to verify it before moving on.
 
 ### 1.0 Fresh project? Base schema first
 
-`phase-a.sql` is **incremental**: it assumes the base tables and enum types
+`migrations/001_phase_a.sql` is **incremental**: it assumes the base tables and enum types
 already exist. On a brand-new Supabase project, first run the full contents
-of [`supabase/supabase-schema.sql`](../supabase/supabase-schema.sql) in the
+of [`supabase/migrations/000_base_schema.sql`](../supabase/migrations/000_base_schema.sql) in the
 SQL Editor (it drops-and-recreates everything, so it's written for exactly
 this). Then continue with 1.1.
 
@@ -35,7 +35,7 @@ UI) instead of force-reprocessing rows that aren't there.
 ### 1.1 Run the Phase A SQL
 
 1. Open https://supabase.com/dashboard → your project → **SQL Editor**.
-2. Paste the full contents of [`supabase/phase-a.sql`](../supabase/phase-a.sql) and **Run**.
+2. Paste the full contents of [`supabase/migrations/001_phase_a.sql`](../supabase/migrations/001_phase_a.sql) and **Run**.
    It is idempotent — safe to re-run if you're not sure it already ran.
 3. What it creates:
    - `stage_entry_log` table — audit trail of every submitted stage payload
@@ -272,7 +272,7 @@ within ~2 minutes. There is deliberately no UI for this.
 
 ## Checklist (short form)
 
-- [ ] 1.1 `supabase/phase-a.sql` run and verified
+- [ ] 1.1 `supabase/migrations/001_phase_a.sql` run and verified
 - [ ] 1.2 signups off, `lars.login@pm.me` invited
 - [ ] 2.1 Blob store + token + public URL noted
 - [ ] 2.2 `ADMIN_TOKEN` generated

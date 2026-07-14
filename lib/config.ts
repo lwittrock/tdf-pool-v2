@@ -30,8 +30,16 @@ export const config = {
    * Snapshot file URLs come out of the pointer itself, never from config.
    */
   data: {
-    pointer: () =>
-      `${(import.meta.env.VITE_DATA_BASE_URL ?? '').replace(/\/+$/, '')}/data/current.json`,
+    pointer: () => {
+      const base = (import.meta.env.VITE_DATA_BASE_URL ?? '').replace(/\/+$/, '');
+      // Preview deployments publish under the preview/ blob prefix (R16);
+      // read the matching pointer so testing the entry flow on a preview
+      // actually shows its own publishes. VITE_VERCEL_ENV is baked in by
+      // vite.config.ts from Vercel's VERCEL_ENV ('' in local dev).
+      const vercelEnv = import.meta.env.VITE_VERCEL_ENV ?? '';
+      const prefix = vercelEnv && vercelEnv !== 'production' ? '/preview' : '';
+      return `${base}${prefix}/data/current.json`;
+    },
   },
   
   /**

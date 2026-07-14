@@ -65,9 +65,9 @@ in `lib/`, Supabase (Postgres + RLS), Vercel Blob for JSON snapshots, Tailwind *
 | 12 | Publishing never reaches readers: blob `put()` calls use fixed paths + `allowOverwrite`, **no `cacheControlMaxAge`** (Vercel Blob default: 1 month, browser-side too) | `api/admin/process-stage.ts:128-159` |
 | 13 | The frontend fetches `/data/*.json` **from its own origin** — those files are not produced by anything in the repo (`scripts/manage-data.js` referenced in `package.json:13-18` does not exist; `public/` contains only `assets/` and an svg) | `lib/config.ts:28-35`; `vercel.json` `/data` rewrite is an identity no-op |
 | 14 | Client caching would hide updates anyway: `STALE_TIME: Infinity`, all refetch flags off | `lib/constants.ts:138-145` |
-| 15 | Schema is a **destructive** single file (starts with cascading `DROP TABLE`s); no migrations | `supabase/supabase-schema.sql:4-20` |
-| 16 | RLS: public read on everything, stages/results only when `is_complete = true`; **no write policies** (service-role only, correct) | `supabase-schema.sql:369-421` |
-| 17 | Fuzzy RPC strips accents to nothing: `regexp_replace(search_name, '[^a-zA-Z ]', '', 'g')` turns "Pogačar" into "Pogaar" | `supabase-schema.sql:336` |
+| 15 | Schema is a **destructive** single file (starts with cascading `DROP TABLE`s); no migrations | `supabase/migrations/000_base_schema.sql:4-20` |
+| 16 | RLS: public read on everything, stages/results only when `is_complete = true`; **no write policies** (service-role only, correct) | `migrations/000_base_schema.sql:369-421` |
+| 17 | Fuzzy RPC strips accents to nothing: `regexp_replace(search_name, '[^a-zA-Z ]', '', 'g')` turns "Pogačar" into "Pogaar" | `migrations/000_base_schema.sql:336` |
 | 18 | Yearly bootstrap has no path: `seed-participants`/`seed-stages` scripts referenced in `package.json:11-12` don't exist (`scripts/` holds only 3 Python files) | verified |
 | 19 | README drift: documents deleted `Login.tsx` (`README.md:48`), `src/lib/queries/` (`:55`), wrong schema filename `supabase/migrations/initial_schema.sql` (`:24`) | verified |
 | 20 | Dead/unused: `zustand`, `date-fns`, `tree` deps (`package.json`); `src/hooks/useBusinessLogic.ts` (dead, duplicates page logic); `tailwind.config.ts` (v3 leftover, ignored by v4); `data/*.json` top level = v1 legacy | verified |
@@ -361,7 +361,7 @@ Rewrite as pure functions over bulk-loaded data:
   rider, dropdown for uncertain, red row for unmatched). Invariant: *an unrecognized line is shown,
   never silently dropped*. Exactly two formats (procyclingstats table, NOS list) — needs Q11 samples.
   Fuzzy matching: fix the accent bug first — use Postgres `unaccent` instead of the
-  `regexp_replace(...[^a-zA-Z ]...)` hack (`supabase-schema.sql:336`), or normalize in JS before the
+  `regexp_replace(...[^a-zA-Z ]...)` hack (`migrations/000_base_schema.sql:336`), or normalize in JS before the
   RPC; prove with accented fixtures ("Pogačar", "O'Connor", "van der Poel").
 - **Statuses from the DB** per stage: *leeg → ingevoerd → verwerkt* (+ publish outcome, WP-B10), shown
   in the stage list for all editors.
@@ -396,7 +396,7 @@ over-engineering).
 at 6 files); tiny admin editor (textarea + preview is enough).
 
 #### WP-B7 — Season lifecycle (fixes F7)
-- Replace `supabase/supabase-schema.sql` with **incremental migrations** (`supabase/migrations/`,
+- Replace `supabase/migrations/000_base_schema.sql` with **incremental migrations** (`supabase/migrations/`,
   Supabase CLI conventions); the current schema becomes migration 0001 (minus the DROPs).
 - **Non-destructive new-season reset script**: archives first, then truncates season-scoped tables
   (selections, results, points, stages, entry log) while keeping reference data as chosen in the
@@ -495,7 +495,7 @@ of commit `fb9d81c`.*
 | 31 | **A shared component library exists and is almost entirely unused.** `src/components/shared/` contains `JerseyIcons`, `CombativityIcon`, `MedalDisplay`, `RankChange`, `StageBreakdown` — but `RennerPunten.tsx:17-44` defines its own duplicate `CombativeIcon`, three pages carry three near-identical inline `getStageJerseys` helpers (`RennerPunten.tsx:102-118`, `TeamSelectie.tsx:120-130`, plus `lib/data-transforms.ts:74-108` which has *two* overlapping versions), and the per-stage breakdown UI is hand-rolled in each page instead of using `StageBreakdown`. Only `RankChange` is actually imported (by Klassement). |
 | 32 | `Klassement.tsx:10-30` declares local `LeaderboardEntry`/`DirectieEntry` interfaces that duplicate-and-drift from `lib/types.ts`, then bridges with `filteredResults as LeaderboardEntry[]` casts; `RennerPunten` maps rows as `rider: any`. The "type-safe throughout" header comments are aspirational. |
 | 33 | `getParticipantMedals` (`lib/data-transforms.ts:159-173`) is called **per table row inside render** and scans every stage's full leaderboard with `.find()` — O(rows × stages × participants) ≈ 350k operations per render at 128×21. Riders get `medal_counts` precomputed in their snapshot; participants don't. |
-| 34 | The `dnf_status` enum includes `OTL` and `DSQ` (`supabase-schema.sql:30`) but no UI, scoring, or substitution path handles them — and OTL/DSQ genuinely happen in real Tours (a missed time cut is functionally a DNF for the pool). `participant_stage_points.stage_rank_change` (`supabase-schema.sql:182`) is never written by any code. |
+| 34 | The `dnf_status` enum includes `OTL` and `DSQ` (`migrations/000_base_schema.sql:30`) but no UI, scoring, or substitution path handles them — and OTL/DSQ genuinely happen in real Tours (a missed time cut is functionally a DNF for the pool). `participant_stage_points.stage_rank_change` (`migrations/000_base_schema.sql:182`) is never written by any code. |
 | 35 | **Preview deployments share production state.** Vercel env vars, unless explicitly scoped per environment, give preview builds the same `SUPABASE_SERVICE_ROLE_KEY` and `BLOB_READ_WRITE_TOKEN` as production — a stage submitted on a preview URL overwrites the production DB and published snapshots. (Extends R8, which only covered the self-fetch auth page.) |
 | 36 | **TeamSelectie search hijacks the view.** Any search term matching *any* participant name **or directie** flips the whole page from the popularity ranking to "Team van <first match>" (`TeamSelectie.tsx:58-73`, first `.find()` wins) — searching for a *rider* is impossible, and a directie query shows one arbitrary member's team. |
 | 37 | Small but real: `index.html` references favicon `/vite.svg` which isn't in `public/`; routes are case-sensitive capitalized paths (`/Klassement`) with exact-match highlighting; `api/health.ts:44-49` reports "0 riders" always (`head: true` returns no rows); `useTdfData.ts:183-185` exports a `refreshTdfData()` that does `window.location.reload()` (dead); Supabase **free-tier projects pause after ~1 week of inactivity** — relevant for the off-season gap between Phase B and Phase C. |

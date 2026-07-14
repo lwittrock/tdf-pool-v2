@@ -233,7 +233,7 @@ export async function enterStage(
     throw new Error(`Renners laden mislukt: ${ridersError?.message}`);
   }
 
-  // Aliases are optional infrastructure (phase-b1.sql); tolerate absence.
+  // Aliases are optional infrastructure (migrations/002_phase_b1.sql); tolerate absence.
   const { data: aliases, error: aliasError } = await supabase
     .from('rider_aliases')
     .select('alias, rider_id');

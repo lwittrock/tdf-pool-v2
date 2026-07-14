@@ -1,172 +1,120 @@
-# TdF Pool V2
+# TdF Pool
 
-Modern Tour de France pool tracking application built with React, TypeScript, Vite, Tailwind v4, and Supabase.
+The live administration of a 128-participant Tour de France pool: public
+standings site + admin stage entry. React/Vite frontend on Vercel, Vercel
+serverless functions, Supabase Postgres, published JSON snapshots on Vercel
+Blob. Season 2026 is the first fully app-administered Tour (migrated from an
+Excel administration mid-race — the golden test suite verifies the engine
+against that sheet cell-for-cell).
 
-## Quick Start
+## How it works
 
-### 1. Environment Setup
+- **The public site never queries the database.** Every publish writes six
+  immutable JSON snapshots to `data/<season>/<runId>/` on the Blob store and
+  atomically flips one small pointer (`data/current.json`, 60 s cache). The
+  frontend polls the pointer and keys all queries on its `run_id`.
+- **One authenticated entry endpoint** (`POST /api/admin/enter-stage`)
+  validates a full stage payload (blocking errors on unresolvable rider
+  names — aliases resolve known alternative spellings), swaps the stage's
+  rows transactionally, recomputes points, and publishes. Entry happens in
+  the beheer UI at `/admin`.
+- **Scoring rules** live in [lib/scoring.ts](lib/scoring.ts) (pure,
+  golden-tested): finish points 25/19/18…1, jerseys 15/10/10/10,
+  combativity 5, Dagploeg +6 (winner of the stage's *team day
+  classification* → participants whose Ploeg pick matches). Reserves
+  activate on a casualty: from the DNS stage itself, or from the stage
+  after a DNF/OTL/DSQ; at most one substitution per participant.
+- **Corrections self-heal:** re-entering any stage recomputes cumulative
+  totals and overall ranks for every stage in one pass (~6 s/stage).
 
-Copy `.env.example` to `.env.local` and fill in your credentials:
+## Operations (during the Tour)
 
-```bash
-cp .env.example .env.local
-```
+- **Enter a stage:** `/admin` (e-mail login or beheertoken) → top-20,
+  jerseys, combativity *(optional)*, Dagploeg *(optional — PCS → stage →
+  "Complementary results" → team day classification)*, DNS/DNF riders (PCS
+  startlist annotations). Save; the site follows within ~2 minutes.
+- **Correct an old stage:** re-enter it (the UI asks for overwrite
+  confirmation). Everything downstream recomputes automatically.
+- **Verify against the golden standings:** `npm run verify:standings`
+  (cell-for-cell check of the DB against the Excel-extracted fixtures).
+- Every submission — also rejected ones — is recorded in `stage_entry_log`.
 
-Get your Supabase credentials:
-1. Go to https://supabase.com/dashboard
-2. Create a new project
-3. Go to Settings > API
-4. Copy the URL and anon key to `.env.local`
-
-### 2. Database Setup
-
-1. Open Supabase SQL Editor
-2. Copy the contents of `supabase/migrations/initial_schema.sql`
-3. Run the SQL
-4. **Important:** Update the admin email in the SQL before running!
-
-### 3. Run Development Server
-
-```bash
-npm run dev
-```
-
-Open http://localhost:5173
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── layout/           # Navigation, Layout
-│   └── admin/            # Admin-specific components
-├── pages/                # Route pages
-│   ├── Klassement.tsx
-│   ├── RennerPunten.tsx
-│   ├── TeamSelectie.tsx
-│   ├── OverDezePoule.tsx
-│   ├── Login.tsx
-│   └── admin/
-│       ├── AdminLayout.tsx
-│       ├── StageResults.tsx
-│       └── Riders.tsx
-├── lib/
-│   ├── supabase.ts       # Supabase client
-│   └── queries/          # React Query hooks
-├── hooks/                # Custom React hooks
-└── types/                # TypeScript types
-```
-
-## Features
-
-- ✅ Real-time leaderboard
-- ✅ Stage results management
-- ✅ Rider database
-- ✅ Admin authentication (magic link)
-- ✅ Public viewing, admin editing
-- ✅ Responsive design
-- ✅ Tailwind v4 styling
-
-## Admin Access
-
-1. Go to `/login`
-2. Enter your admin email
-3. Check email for magic link
-4. Click link to authenticate
-5. You can now edit data on `/admin` pages
-
-## Deployment
-
-### Vercel (Recommended)
+## Setup
 
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-
-# Follow prompts, add environment variables when asked
+npm install
+cp .env.example .env.local   # fill in (see the table below)
+npm run dev                  # local dev (set VITE_DATA_BASE_URL to see data)
+npm run check                # lint + typecheck (web AND api/lib)
+npm test                     # vitest incl. the golden suite (128 × 9 cells)
 ```
-
-### Manual Build
-
-```bash
-npm run build
-# Upload dist/ folder to your hosting provider
-```
-
-## Tech Stack
-
-- **Frontend:** React 18, TypeScript, Vite
-- **Styling:** Tailwind CSS v4
-- **Database:** Supabase (PostgreSQL)
-- **Data Fetching:** TanStack Query (React Query)
-- **Routing:** React Router v6
-- **Auth:** Supabase Auth (magic links)
-- **Deployment:** Vercel
-
-## Development
-
-```bash
-npm run dev      # Start dev server
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
-```
-
-## Phase A — omgeving & runbook (juli 2026)
-
-> NB: de rest van deze README is verouderd (herschrijven staat gepland in WP-B8).
-> Deze sectie is actueel en hoort bij `docs/implementation-plan.md`.
 
 ### Environment variables
 
-Zie `.env.example` voor de volledige lijst met uitleg. Samengevat:
+See [.env.example](.env.example) for details. Server values are Vercel env
+vars (secrets scoped **Production only** — that's what keeps preview
+deployments from writing production data); `VITE_*` are build-time.
 
-| Variabele | Waar | Doel |
+| Variable | Where | Purpose |
 |---|---|---|
-| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Vercel (server) | DB-toegang voor API-routes |
-| `BLOB_READ_WRITE_TOKEN` | Vercel (server) | Snapshots publiceren naar Vercel Blob |
-| `ADMIN_TOKEN` | Vercel (server) | Interim beheertoken (WP-A0); vereist op alle schrijf-routes |
-| `SCRAPER_TOKEN` | Vercel (server) | Optioneel token voor scripts/scraper |
-| `ADMIN_EMAILS` | Vercel (server) | Allowlist voor OTP-login (WP-A4) |
-| `SEASON` | Vercel (server) | Seizoen in snapshot-paden (default 2026) |
-| `VITE_DATA_BASE_URL` | Vercel (build) | Publieke Blob-store origin voor de frontend |
-| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Vercel (build) | OTP-loginscherm (WP-A4) |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Vercel (server) + local `.env` | DB access for API routes and scripts |
+| `BLOB_READ_WRITE_TOKEN` | Vercel (server) + local `.env` | publish snapshots to Vercel Blob |
+| `ADMIN_TOKEN` | Vercel (server) | static admin credential (UI fallback + scripts) |
+| `SCRAPER_TOKEN` | Vercel (server) | optional second token for scripted submissions |
+| `ADMIN_EMAILS` | Vercel (server) | allowlist for the e-mail login |
+| `SEASON` | Vercel (server) | season in snapshot paths (default 2026) |
+| `VITE_DATA_BASE_URL` | Vercel (build) + local | public Blob store origin |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Vercel (build) | e-mail login screen |
 
-### Dashboard-checklist (eenmalig, handmatig — WP-A0/Q15/Q17/Q21)
+### Database
 
-> Uitgebreide stap-voor-stap instructies (met verificatie per stap):
-> `docs/phase-a-go-live.md`.
+SQL migrations live in [supabase/migrations/](supabase/migrations/) — run
+them **in order** in the Supabase SQL editor (000 base schema, 001 phase A,
+002 phase B1). They are idempotent. Full dashboard walkthrough (auth, blob
+store, env vars, smoke tests): [docs/phase-a-go-live.md](docs/phase-a-go-live.md).
 
-Deze stappen kan alleen de eigenaar in de dashboards doen; vink af en noteer de uitkomst hier:
+## Scripts
 
-- [ ] **Vercel plan + Fluid compute**: controleer in Project Settings dat Fluid compute aanstaat
-      en welke `maxDuration` het plan toelaat (plan gaat uit van Hobby + Fluid, 300s).
-- [ ] **Blob store URL + CORS**: noteer de publieke store-origin (voor `VITE_DATA_BASE_URL`) en
-      verifieer met `curl -I <store-url>/data/current.json` dat `access-control-allow-origin: *`
-      en een `cache-control` ≤ 60s op de pointer staan.
-- [ ] **Supabase tier**: bevestig free tier (geen backups → entry-log is de audit trail;
-      let op: free projecten pauzeren na ~1 week inactiviteit — hervatten kan via het dashboard).
-- [ ] **Preview-scoping (Q21/R16)**: zet `SUPABASE_SERVICE_ROLE_KEY`, `BLOB_READ_WRITE_TOKEN` en
-      `ADMIN_TOKEN` in Vercel op **Production only**, zodat preview-deployments nooit
-      productie-data kunnen overschrijven.
-- [ ] **`ADMIN_TOKEN` genereren**: `openssl rand -hex 32`, in Vercel zetten én eenmalig invoeren
-      op de beheerpagina (wordt in localStorage bewaard).
-- [ ] **Supabase Auth (WP-A4)**: public signups uitzetten (Authentication → Providers → Email),
-      het beheeraccount vooraf aanmaken (Authentication → Users → Invite), en
-      `ADMIN_EMAILS` + `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` in Vercel zetten.
-- [ ] **SQL uitvoeren**: draai `supabase/phase-a.sql` in de Supabase SQL-editor
-      (entry-log-tabel + transactionele swap-functie voor WP-A2).
+| Command | What it does |
+|---|---|
+| `npm run rebuild -- --apply` | **disaster recovery**: rebuild DB + snapshots from the repo (import → startlist → replay → rulings → reprocess → verify) |
+| `npm run verify:standings` | DB standings must equal the golden standings, cell for cell |
+| `npm run import:fixtures -- --apply` | import the 128 participants + selections (fixtures) |
+| `npm run apply:startlist -- --apply` | set rider teams from [data/2026/startlist.json](data/2026/startlist.json) |
+| `npm run replay:stages -- --apply --local [N…]` | enter fixture stage results through the full pipeline |
+| `npm run process:stages -- --apply N…` | recompute + republish stages from DB rows |
+| `npm run merge:riders -- --apply --keep A --remove B` | merge duplicate rider rows (then reprocess) |
 
-### Checks
+Data quirks of the 2026 season (Excel legacy: spelling variants, the
+9-rider participant, owner rulings) are documented in
+[data/2026/fixtures/README.md](data/2026/fixtures/README.md) and
+[docs/phase-a-review-findings.md](docs/phase-a-review-findings.md).
 
-```bash
-npm run check   # lint + typecheck (web én api/lib)
-npm test        # vitest (scoring golden tests, vanaf WP-A3)
+## Repository layout
+
 ```
+api/            Vercel serverless functions (enter-stage, process-stage, …)
+lib/            server + shared logic (scoring, pipeline, publish, generators)
+src/            React frontend (public pages + /admin beheer UI)
+scripts/        operational tools (see table above)
+supabase/       ordered SQL migrations
+data/2026/      startlist, rulings, golden fixtures (verbatim-Excel)
+data/2025/      legacy v1 season data (reference only)
+docs/           plans, runbook, review findings
+tests/          vitest: scoring unit tests + the golden suite
+```
+
+## Engineering notes
+
+- Any Supabase table that can exceed 1,000 rows must be read via
+  `fetchAll` ([lib/supabase-server.ts](lib/supabase-server.ts)) — PostgREST
+  silently truncates un-ranged selects.
+- The golden fixtures are verbatim-Excel: **never edit them to make code
+  pass**. Owner rulings on top of them live in
+  [data/2026/rulings.json](data/2026/rulings.json).
+- Supabase free tier pauses after ~1 week of inactivity (resume via the
+  dashboard) and has no backups — `npm run rebuild` is the recovery story.
 
 ## License
 
-Private project
+Private project.

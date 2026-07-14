@@ -73,7 +73,7 @@ computation. Measured after: full 9-stage reprocess incl. 9 publishes in
 **56 seconds** (~6 s/stage); snapshot generation 6.8 s (was ~5 min). UI
 entry is unblocked.
 
-### 7. Preview deployments read production data but write `preview/` — LOW, → WP-B8
+### 7. Preview deployments read production data but write `preview/` — FIXED (WP-B8, July 14: vite bakes VERCEL_ENV in as VITE_VERCEL_ENV; previews read the preview/ pointer)
 `lib/publish.ts` prefixes all preview writes with `preview/` (correct,
 belt-and-braces under Q21), but the frontend always fetches
 `VITE_DATA_BASE_URL + /data/current.json` — the production pointer. Testing
