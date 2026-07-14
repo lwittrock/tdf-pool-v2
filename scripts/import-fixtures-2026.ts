@@ -22,7 +22,7 @@
  *
  * Requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (reads .env.local/.env).
  * Afterwards: enter/process stages via the beheer UI, or force-reprocess
- * existing stages via POST /api/admin/process-stage.
+ * existing stages via `npm run process:stages -- --apply N…`.
  */
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -191,8 +191,7 @@ async function main(): Promise<void> {
 
   console.log(`${participants.length} deelnemers geïmporteerd met selecties`);
   console.log(
-    'Klaar. Herbereken bestaande etappes via POST /api/admin/process-stage ' +
-      '{"stage_number": N, "force": true} en de site is bij.'
+    'Klaar. Herbereken bestaande etappes via `npm run process:stages -- --apply N…` en de site is bij.'
   );
 }
 

@@ -2,9 +2,8 @@
  * Admin authorization for API routes.
  *
  * Phase A interim lockdown (WP-A0/P1): every write route and every admin GET
- * route requires a bearer token. Two static tokens are accepted:
+ * route requires a bearer token. One static token is accepted:
  *   - ADMIN_TOKEN  — used by the admin UI until OTP sessions land (WP-A4)
- *   - SCRAPER_TOKEN — for scripted submissions (Python scraper, one-off imports)
  *
  * WP-A4 extends this with Supabase Auth sessions: a JWT whose verified email
  * is in the ADMIN_EMAILS allowlist is accepted as a third credential.
@@ -15,7 +14,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export type AdminIdentity =
   | { kind: 'admin-token' }
-  | { kind: 'scraper-token' }
   | { kind: 'user'; email: string };
 
 export type AdminCheck =
@@ -46,9 +44,6 @@ export async function checkAdmin(req: VercelRequest): Promise<AdminCheck> {
 
   if (tokenMatches(token, process.env.ADMIN_TOKEN)) {
     return { ok: true, identity: { kind: 'admin-token' } };
-  }
-  if (tokenMatches(token, process.env.SCRAPER_TOKEN)) {
-    return { ok: true, identity: { kind: 'scraper-token' } };
   }
 
   const userCheck = await checkSupabaseUser(token);

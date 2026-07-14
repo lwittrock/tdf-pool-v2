@@ -60,7 +60,6 @@ deployments from writing production data); `VITE_*` are build-time.
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Vercel (server) + local `.env` | DB access for API routes and scripts |
 | `BLOB_READ_WRITE_TOKEN` | Vercel (server) + local `.env` | publish snapshots to Vercel Blob |
 | `ADMIN_TOKEN` | Vercel (server) | static admin credential (UI fallback + scripts) |
-| `SCRAPER_TOKEN` | Vercel (server) | optional second token for scripted submissions |
 | `ADMIN_EMAILS` | Vercel (server) | allowlist for the e-mail login |
 | `SEASON` | Vercel (server) | season in snapshot paths (default 2026) |
 | `VITE_DATA_BASE_URL` | Vercel (build) + local | public Blob store origin |
@@ -93,7 +92,7 @@ Data quirks of the 2026 season (Excel legacy: spelling variants, the
 ## Repository layout
 
 ```
-api/            Vercel serverless functions (enter-stage, process-stage, …)
+api/            Vercel serverless functions (enter-stage, riders-list, health)
 lib/            server + shared logic (scoring, pipeline, publish, generators)
 src/            React frontend (public pages + /admin beheer UI)
 scripts/        operational tools (see table above)

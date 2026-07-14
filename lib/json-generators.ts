@@ -70,7 +70,6 @@ export async function generateLeaderboardsJSON(): Promise<{
   leaderboard_by_stage: Record<string, LeaderboardEntry[]>;
   directie_leaderboard_by_stage: Record<string, DirectieLeaderboardEntry[]>;
 }> {
-  console.log('[Generate JSON] Building leaderboards...');
   const supabase = getServiceClient();
 
   const [{ data: stagesData }, { data: participants }, { data: directies }, { data: riders }] =
@@ -210,7 +209,6 @@ export async function generateLeaderboardsJSON(): Promise<{
  * Generate riders.json with rankings and medals
  */
 export async function generateRidersJSON(): Promise<RidersData> {
-  console.log('[Generate JSON] Building riders data...');
   const supabase = getServiceClient();
 
   const [{ data: riders }, { data: completedStages }] = await Promise.all([
@@ -307,7 +305,6 @@ export async function generateRidersJSON(): Promise<RidersData> {
 export async function generateRiderRankingsJSON(
   precomputedRiders?: RidersData
 ): Promise<RiderRankingsData> {
-  console.log('[Generate JSON] Building rider rankings...');
 
   const ridersData = precomputedRiders ?? (await generateRidersJSON());
 
@@ -361,7 +358,6 @@ export async function generateRiderRankingsJSON(
  * Generate stages_data.json (for the beheer panel)
  */
 export async function generateStagesDataJSON(): Promise<StageData[]> {
-  console.log('[Generate JSON] Building stages data...');
   const supabase = getServiceClient();
 
   const [{ data: allStages }, { data: allRiders }, { data: jerseys }, { data: combativity }, { data: dnf }] =
@@ -439,7 +435,6 @@ export async function generateStagesDataJSON(): Promise<StageData[]> {
  * Generate team_selections.json (participant team rosters)
  */
 export async function generateTeamSelectionsJSON(): Promise<Record<string, TeamSelection>> {
-  console.log('[Generate JSON] Building team selections...');
 
   const { data: participants } = await getServiceClient()
     .from('participants')
