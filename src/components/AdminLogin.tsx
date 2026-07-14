@@ -33,7 +33,12 @@ export function AdminLogin({ onTokenLogin }: AdminLoginProps) {
     setError('');
     const { error: otpError } = await supabaseAuth.auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: false },
+      options: {
+        shouldCreateUser: false,
+        // The mail's sign-in link lands directly on the beheer page
+        // (requires this URL in Supabase's Redirect URLs allow-list).
+        emailRedirectTo: `${window.location.origin}/admin`,
+      },
     });
     setBusy(false);
     if (otpError) {
@@ -105,7 +110,9 @@ export function AdminLogin({ onTokenLogin }: AdminLoginProps) {
       {!useToken && supabaseAuth && step === 'code' && (
         <form onSubmit={verifyCode}>
           <p className="text-sm text-gray-600 mb-4">
-            Vul de code in die naar <strong>{email}</strong> is gestuurd.
+            Er is een e-mail naar <strong>{email}</strong> gestuurd. Klik op de
+            inloglink in die mail — of vul hieronder de code van 6 cijfers in
+            als de mail die bevat.
           </p>
           <input
             type="text"
