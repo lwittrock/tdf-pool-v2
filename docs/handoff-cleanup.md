@@ -79,7 +79,16 @@ Ordered by value; verify each with the invariant-3 loop.
    phase-a-go-live and architecture-review; finding 5 marked fixed.
 9. **Rebuild dress rehearsal**: `npm run rebuild -- --apply` has never run
    against a scratch Supabase project end-to-end (needs a throwaway project
-   + the three migrations pasted). Nice-to-have insurance.
+   + the four migrations pasted). Nice-to-have insurance.
+10. **Directie name variants split the directie board** (found during the
+   July 14 smoke test): the DB has separate `directie` rows for "DTE",
+   "DTe", "DtE" and "Dte" (verbatim-Excel free text), so the site's
+   directie klassement shows them as four directies while the sheet's
+   groups fold them into one. Same root cause as the
+   [season-2027-plan](season-2027-plan.md) identity work. Options: fold by
+   name-key in `generateLeaderboardsJSON` (display-level), or merge the
+   `directie` rows via a ruling (data-level, needs a merge script). Owner
+   call on the canonical spellings either way.
 
 ## Operational facts a session may need
 
