@@ -39,7 +39,6 @@ export const LABELS = {
   ETAPPE_BEHEER: 'Etappe Beheer',
 
   // Leaderboard
-  STAGE_INDIVIDUAL: 'Etappe',
   STANDINGS_INDIVIDUAL: 'Algemeen',
   STANDINGS_DIRECTIE: 'Directie',
   
@@ -55,7 +54,6 @@ export const LABELS = {
   
   // Riders
   RIDER: 'Renner',
-  TEAM: 'Team',
   POINTS_PER_STAGE: 'Punten per Etappe',
   SELECTED: 'Geselecteerd',
   
