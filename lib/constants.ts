@@ -31,12 +31,12 @@ export const JERSEY_LABELS = {
 
 export const LABELS = {
   // Pages
-  KLASSEMENT: 'Klassement',
+  POULE: 'Poule',
   ETAPPES: 'Etappes',
-  RENNER_PUNTEN: 'Renner Punten',
-  TEAM_SELECTIE: 'Team Selecties',
+  RENNERPUNTEN: 'Rennerpunten',
+  PLOEGEN: 'Ploegen',
+  SPELREGELS: 'Spelregels',
   ETAPPE_BEHEER: 'Etappe Beheer',
-  OVER_DEZE_POULE: 'Over deze Poule',
 
   // Leaderboard
   STAGE_INDIVIDUAL: 'Etappe',

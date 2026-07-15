@@ -108,7 +108,13 @@ Etappes page as extra race-results page). Rejected July 15 in favor of A v2:
 it keeps the redundancy (rider stage points in two places) and leaves the
 Team-tab question unresolved.
 
-### 0.1 Naming — ✅ Decided (July 15)
+### 0.1 Naming — ✅ Decided + implemented (July 15)
+
+> **Done.** Routes lowercased (`/poule`, `/etappes`, `/rennerpunten`,
+> `/ploegen`, `/spelregels`); page files/components renamed; nav, h1s, titles,
+> and the ploeg/team vocabulary updated; old PascalCase routes redirect (and
+> React Router's case-insensitive matching resolves same-word paths anyway).
+
 
 Owner rejected "Klassement" and "Renners"; picked **Poule** over the
 recommended "Stand" and **Ploegen** over "Teamselecties". Final:

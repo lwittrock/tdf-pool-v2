@@ -1,5 +1,5 @@
 /**
- * Klassement Page
+ * Poule Page — participant standings (Dag · Algemeen · Directie tabs).
  */
 
 import React, { useState, useMemo } from 'react'
@@ -78,8 +78,8 @@ function StageContributions({ entry }: { entry: LeaderboardEntry }) {
   );
 }
 
-function HomePage() {
-  usePageTitle(LABELS.KLASSEMENT);
+function Poule() {
+  usePageTitle(LABELS.POULE);
   const [activeView, setActiveView] = useState<ViewType>('standings_individual');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
@@ -196,7 +196,7 @@ function HomePage() {
     <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
       <header className="mb-6 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">
-          Klassement
+          Poule
         </h1>
         <p className="text-sm sm:text-base text-tdf-text-secondary mt-2">
           Na etappe {currentStageNum}{lastUpdated && ` (${lastUpdated})`}
@@ -535,4 +535,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default Poule;

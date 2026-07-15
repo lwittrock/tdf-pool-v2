@@ -286,7 +286,7 @@ function Etappes() {
           )}
 
           <div className="mt-8 text-center">
-            <Link to="/Klassement" className="text-sm text-tdf-primary hover:underline">
+            <Link to="/poule" className="text-sm text-tdf-primary hover:underline">
               Dagstand deelnemers →
             </Link>
           </div>

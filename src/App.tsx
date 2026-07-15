@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
-import HomePage from './pages/Klassement';
+import Poule from './pages/Poule';
 import Etappes from './pages/Etappes';
-import RennerPunten from './pages/RennerPunten';
-import TeamSelectie from './pages/TeamSelectie';
-import OverDezePoule from './pages/OverDezePoule';
+import Rennerpunten from './pages/Rennerpunten';
+import Ploegen from './pages/Ploegen';
+import Spelregels from './pages/Spelregels';
 import EtappeBeheer from './pages/EtappeBeheer';
 
-// Navigation items (public site only — beheer is bereikbaar via /EtappeBeheer,
+// Navigation items (public site only — beheer is bereikbaar via /admin,
 // achter login; bewust niet in de publieke navigatie)
 const navItems = [
-  { path: '/Klassement', label: 'Klassement' },
-  { path: '/Etappes', label: 'Etappes' },
-  { path: '/RennerPunten', label: 'Renner Punten' },
-  { path: '/TeamSelectie', label: 'Team Selectie' },
-  { path: '/OverDezePoule', label: 'Over deze Poule' },
+  { path: '/poule', label: 'Poule' },
+  { path: '/etappes', label: 'Etappes' },
+  { path: '/rennerpunten', label: 'Rennerpunten' },
+  { path: '/ploegen', label: 'Ploegen' },
+  { path: '/spelregels', label: 'Spelregels' },
 ];
 
 // Animated hamburger icon
@@ -34,7 +34,7 @@ function Navigation() {
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   const linkClass = (path: string) => {
-    const isActive = pathname === path || (path === '/Klassement' && pathname === '/');
+    const isActive = pathname === path || (path === '/poule' && pathname === '/');
     if (mobileMenuOpen) {
       return `block py-3 px-4 rounded transition-colors ${
         isActive ? 'text-tdf-accent font-semibold bg-gray-700/50' : 'text-white hover:bg-gray-700/30'
@@ -96,16 +96,24 @@ function App() {
       <Navigation />
       <main className="max-w-7xl mx-auto">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/Klassement" element={<HomePage />} />
-          <Route path="/Etappes" element={<Etappes />} />
-          <Route path="/RennerPunten" element={<RennerPunten />} />
-          <Route path="/TeamSelectie" element={<TeamSelectie />} />
-          <Route path="/EtappeBeheer" element={<EtappeBeheer />} />
+          <Route path="/" element={<Poule />} />
+          <Route path="/poule" element={<Poule />} />
+          <Route path="/etappes" element={<Etappes />} />
+          <Route path="/rennerpunten" element={<Rennerpunten />} />
+          <Route path="/ploegen" element={<Ploegen />} />
+          <Route path="/spelregels" element={<Spelregels />} />
           <Route path="/admin" element={<EtappeBeheer />} />
-          <Route path="/OverDezePoule" element={<OverDezePoule />} />
-          {/* Unknown paths (incl. lowercase /klassement) fall back to the home standings. */}
-          <Route path="*" element={<Navigate to="/Klassement" replace />} />
+          <Route path="/EtappeBeheer" element={<EtappeBeheer />} />
+
+          {/* Redirect the previous PascalCase routes to the new lowercase ones. */}
+          <Route path="/Klassement" element={<Navigate to="/poule" replace />} />
+          <Route path="/Etappes" element={<Navigate to="/etappes" replace />} />
+          <Route path="/RennerPunten" element={<Navigate to="/rennerpunten" replace />} />
+          <Route path="/TeamSelectie" element={<Navigate to="/ploegen" replace />} />
+          <Route path="/OverDezePoule" element={<Navigate to="/spelregels" replace />} />
+
+          {/* Unknown paths (incl. lowercase typos) fall back to the home page. */}
+          <Route path="*" element={<Navigate to="/poule" replace />} />
         </Routes>
       </main>
     </BrowserRouter>

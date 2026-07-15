@@ -1,5 +1,5 @@
 /**
- * RennerPunten Page
+ * Rennerpunten Page — cumulative rider standings.
  */
 
 import React, { useState, useMemo } from 'react';
@@ -97,8 +97,8 @@ function StagePointsBreakdown({ rider }: { rider: RiderRankingsStageEntry }) {
   );
 }
 
-function RennerPunten() {
-  usePageTitle(LABELS.RENNER_PUNTEN);
+function Rennerpunten() {
+  usePageTitle(LABELS.RENNERPUNTEN);
   const [activeView, setActiveView] = useState<ViewType>('total');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
@@ -213,7 +213,7 @@ function RennerPunten() {
       {/* Header */}
       <header className="mb-6 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">
-          Renner Punten
+          Rennerpunten
         </h1>
         <p className="text-sm sm:text-base text-tdf-text-secondary mt-2">
           Na etappe {metadata.current_stage}{lastUpdated && ` (${lastUpdated})`}
@@ -543,4 +543,4 @@ function RennerPunten() {
   );
 }
 
-export default RennerPunten;
+export default Rennerpunten;

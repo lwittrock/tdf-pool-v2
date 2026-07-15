@@ -1,14 +1,6 @@
 /**
- * TeamSelectie Page (Optimized)
- * 
- * Optimizations:
- * - Uses shared types from lib/types.ts
- * - Uses utility functions from lib/data-transforms.ts
- * - Uses constants from lib/constants.ts
- * - Removed duplicate type definitions
- * - Removed duplicate helper functions
- * - Proper memoization
- * - Type-safe throughout
+ * Ploegen Page — rider popularity, and one participant's ploeg (their 10
+ * selected renners) when a deelnemer is searched.
  */
 
 import React, { useState, useMemo } from 'react';
@@ -27,8 +19,8 @@ import {
 import { JERSEY_ICONS, SELECTION_ICONS, SELECTION_THRESHOLDS, LABELS } from '../../lib/constants';
 import type { RidersData, RiderStageData, StageInfo } from '../../lib/types';
 
-function TeamSelectionsPage() {
-  usePageTitle(LABELS.TEAM_SELECTIE);
+function Ploegen() {
+  usePageTitle(LABELS.PLOEGEN);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 
@@ -140,7 +132,7 @@ function TeamSelectionsPage() {
   // Loading state
   if (loading) {
     return (
-      <Layout title="Team Selecties">
+      <Layout title={LABELS.PLOEGEN}>
         <div className="text-center py-12">Loading...</div>
       </Layout>
     );
@@ -149,7 +141,7 @@ function TeamSelectionsPage() {
   // Error state
   if (error) {
     return (
-      <Layout title="Team Selecties">
+      <Layout title={LABELS.PLOEGEN}>
         <div className="text-center py-12 text-red-600">Error: {error.message}</div>
       </Layout>
     );
@@ -158,25 +150,25 @@ function TeamSelectionsPage() {
   if (!ridersData || !teamSelectionsData) return null;
 
   return (
-    <Layout title="Team Selecties">
+    <Layout title={LABELS.PLOEGEN}>
       <main>
         {/* Search */}
         <div className="mb-6">
           <SearchInput 
             value={searchTerm}
             onChange={setSearchTerm}
-            placeholder="Toon team van deelnemer..."
+            placeholder="Toon ploeg van deelnemer..."
           />
         </div>
 
         {/* Header */}
         {selectedParticipant ? (
           <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Team van {selectedParticipant.name}
+            Ploeg van {selectedParticipant.name}
           </h2>
         ) : (
           <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Renner Populariteit
+            Rennerpopulariteit
           </h2>
         )}
         <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
@@ -371,7 +363,7 @@ function TeamSelectionsPage() {
 
         {displayData.length === 0 && (
           <div className="text-center py-12 text-tdf-text-secondary">
-            {selectedParticipant ? 'Geen team gevonden voor deze deelnemer' : 'Geen renners gevonden'}
+            {selectedParticipant ? 'Geen ploeg gevonden voor deze deelnemer' : 'Geen renners gevonden'}
           </div>
         )}
       </main>
@@ -379,4 +371,4 @@ function TeamSelectionsPage() {
   );
 }
 
-export default TeamSelectionsPage;
+export default Ploegen;

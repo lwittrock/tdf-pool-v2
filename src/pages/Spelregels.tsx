@@ -2,10 +2,10 @@ import Layout from '../components/Layout';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { LABELS } from '../../lib/constants';
 
-const AboutPage = () => {
-  usePageTitle(LABELS.OVER_DEZE_POULE);
+const Spelregels = () => {
+  usePageTitle(LABELS.SPELREGELS);
   return (
-    <Layout title={LABELS.OVER_DEZE_POULE}>
+    <Layout title={LABELS.SPELREGELS}>
       <div className="text-center py-12 text-tdf-text-secondary">
         Deze pagina is in aanbouw.
       </div>
@@ -13,4 +13,4 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+export default Spelregels;
