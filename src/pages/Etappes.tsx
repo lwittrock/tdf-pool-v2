@@ -16,71 +16,41 @@ import { MedalIcon } from '../components/shared/MedalDisplay';
 import { CombativityIcon } from '../components/shared/CombativityIcon';
 import { DagploegIcon } from '../components/shared/DagploegIcon';
 import { JERSEY_ICONS, JERSEY_LABELS, LABELS } from '../../lib/constants';
-import { STAGE_SCHEDULE, TDF_TOTAL_STAGES } from '../../lib/stage-schedule';
 import type { StageData, RiderStageData } from '../../lib/types';
 
 const JERSEY_ORDER = ['yellow', 'green', 'polka_dot', 'white'] as const;
 
-/** Merged header facts for a stage: snapshot data wins, schedule fills gaps. */
-interface StageHeaderData {
-  stageNumber: number;
-  date: string | null;
-  route: string | null;
-  distance: string | null;
-  type: string | null;
-  wonHow: string | null;
-}
-
-function buildHeaderData(stageNumber: number, stage?: StageData): StageHeaderData {
-  const sched = STAGE_SCHEDULE[stageNumber];
-  const departure = stage?.departure_city || sched?.departure_city || null;
-  const arrival = stage?.arrival_city || sched?.arrival_city || null;
-  return {
-    stageNumber,
-    date: stage?.date || sched?.date || null,
-    route: departure && arrival ? `${departure} → ${arrival}` : null,
-    distance: stage?.distance || sched?.distance || null,
-    type: stage?.stage_type || stage?.difficulty || sched?.stage_type || null,
-    wonHow: stage?.won_how || null,
-  };
-}
-
 /**
- * Stage number chips 1..21. Completed stages (with results) and scheduled
- * upcoming stages are both selectable; scheduled-not-yet-raced ones are shown
- * lighter. Only truly-unknown stages are disabled.
+ * Stage number chips. Every stage in the snapshot is selectable; completed
+ * stages (with results) are solid, upcoming ones outlined.
  */
 function StageSelector({
+  stageNumbers,
   completed,
-  scheduled,
   selected,
   onSelect,
 }: {
+  stageNumbers: number[];
   completed: Set<number>;
-  scheduled: Set<number>;
   selected: number;
   onSelect: (n: number) => void;
 }) {
   return (
     <div className="flex flex-wrap gap-2 mb-6 justify-center">
-      {Array.from({ length: TDF_TOTAL_STAGES }, (_, i) => i + 1).map((n) => {
+      {stageNumbers.map((n) => {
         const isDone = completed.has(n);
-        const selectable = isDone || scheduled.has(n);
         const isActive = n === selected;
         return (
           <button
             key={n}
-            onClick={() => selectable && onSelect(n)}
-            disabled={!selectable}
+            onClick={() => onSelect(n)}
             aria-current={isActive ? 'true' : undefined}
             className={`w-10 h-10 rounded-lg font-semibold text-sm transition-all ${
               isActive
                 ? 'bg-tdf-accent text-tdf-on-accent'
                 : isDone
                 ? 'bg-tdf-button-inactive text-tdf-button-text hover:brightness-95'
-                : selectable
-                ? 'bg-white text-tdf-text-secondary border border-gray-300 hover:brightness-95'
-                : 'bg-gray-100 text-gray-300 cursor-not-allowed'
+                : 'bg-white text-tdf-text-secondary border border-gray-300 hover:brightness-95'
             }`}
           >
             {n}
@@ -92,28 +62,29 @@ function StageSelector({
 }
 
 /** Route + facts card for the selected stage. */
-function StageHeader({ header }: { header: StageHeaderData }) {
-  const dateLabel = header.date
-    ? new Date(header.date).toLocaleDateString('nl-NL', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-      })
+function StageHeader({ stage }: { stage: StageData }) {
+  const dateLabel = stage.date
+    ? new Date(stage.date).toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })
     : null;
-  const facts = [header.distance ? `${header.distance} km` : null, header.type].filter(Boolean);
+  const route =
+    stage.departure_city && stage.arrival_city ? `${stage.departure_city} → ${stage.arrival_city}` : null;
+  const facts = [
+    stage.distance ? `${stage.distance} km` : null,
+    stage.stage_type || stage.difficulty,
+  ].filter(Boolean);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4">
       <h2 className="text-lg sm:text-2xl font-bold text-tdf-heading">
-        Etappe {header.stageNumber}
+        Etappe {stage.stage_number}
         {dateLabel && <span className="font-normal text-tdf-text-secondary"> · {dateLabel}</span>}
       </h2>
-      {header.route && <p className="text-sm sm:text-base text-tdf-text-primary mt-1">{header.route}</p>}
+      {route && <p className="text-sm sm:text-base text-tdf-text-primary mt-1">{route}</p>}
       {facts.length > 0 && (
         <p className="text-xs sm:text-sm text-tdf-text-secondary mt-1">{facts.join(' · ')}</p>
       )}
-      {header.wonHow && (
-        <p className="text-xs sm:text-sm text-tdf-text-muted mt-1 italic">Gewonnen: {header.wonHow}</p>
+      {stage.won_how && (
+        <p className="text-xs sm:text-sm text-tdf-text-muted mt-1 italic">Gewonnen: {stage.won_how}</p>
       )}
     </div>
   );
@@ -166,11 +137,14 @@ function Etappes() {
   const loading = mLoading || sLoading || rLoading;
   const error = mError || sError || rError;
 
+  const stageNumbers = useMemo(
+    () => (stagesData ?? []).map((s) => s.stage_number).sort((a, b) => a - b),
+    [stagesData]
+  );
   const completed = useMemo(
     () => new Set((stagesData ?? []).filter((s) => s.is_complete).map((s) => s.stage_number)),
     [stagesData]
   );
-  const scheduled = useMemo(() => new Set(Object.keys(STAGE_SCHEDULE).map(Number)), []);
 
   const activeStage = selectedStage ?? metadata?.current_stage ?? 1;
   const stageKey = `stage_${activeStage}`;
@@ -207,7 +181,6 @@ function Etappes() {
   if (error) return <ErrorState message={error.message} />;
   if (!metadata || !stagesData || !ridersData) return null;
 
-  const header = buildHeaderData(activeStage, stage);
   const finishers = stage?.top_20_finishers ?? [];
   const hasTimeGaps = finishers.some((f) => f.time_gap);
   const hasDropouts = (stage?.dnf_riders.length ?? 0) + (stage?.dns_riders.length ?? 0) > 0;
@@ -248,15 +221,15 @@ function Etappes() {
       </header>
 
       <StageSelector
+        stageNumbers={stageNumbers}
         completed={completed}
-        scheduled={scheduled}
         selected={activeStage}
         onSelect={setSelectedStage}
       />
 
-      <StageHeader header={header} />
+      {stage && <StageHeader stage={stage} />}
 
-      {!stage ? (
+      {!stage || !stage.is_complete ? (
         <div className="text-center py-10 text-tdf-text-secondary">
           Deze etappe is nog niet verreden.
         </div>

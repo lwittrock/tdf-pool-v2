@@ -20,6 +20,7 @@
     "apply:startlist": "tsx scripts/apply-startlist.ts",
     "merge:riders": "tsx scripts/merge-riders.ts",
     "process:stages": "tsx scripts/process-stages.ts",
+    "apply:stage-schedule": "tsx scripts/apply-stage-schedule.ts",
     "verify:standings": "tsx scripts/verify-standings.ts",
     "rebuild": "tsx scripts/rebuild.ts"
   },
