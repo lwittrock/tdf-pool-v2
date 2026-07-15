@@ -84,6 +84,9 @@ function Poule() {
   const [activeView, setActiveView] = useState<ViewType>('standings_individual');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  // Algemeen sort (5.9): total points (default) or Olympic-lexicographic medals.
+  const [sortKey, setSortKey] = useState<'points' | 'medals'>('points');
+  const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
 
   // Fetch split data
   const { data: metadata, isLoading: metadataLoading, error: metadataError } = useMetadata();
@@ -229,26 +232,81 @@ function Poule() {
     },
   ];
 
+  // ---- Algemeen sort (5.9) ----------------------------------------------------
+  // Olympic-lexicographic medal score, packed into one number for reuse in
+  // competitionRankMap: golds dominate silvers dominate bronzes.
+  const medalScore = (name: string) => {
+    const m = medalsByParticipant.get(name) ?? NO_MEDALS;
+    return m.gold * 1e6 + m.silver * 1e3 + m.bronze;
+  };
+  const medalSorted = sortKey === 'medals';
+  const dirSign = sortDir === 'desc' ? 1 : -1;
+
+  const toggleSort = (key: 'points' | 'medals') => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'desc' ? 'asc' : 'desc'));
+    } else {
+      setSortKey(key);
+      setSortDir('desc');
+    }
+  };
+
+  // Positie follows the active sort key (tie-aware); +/- is meaningful only for
+  // the points ranking, so it's hidden while medal-sorted.
+  const algemeenRankMap = medalSorted
+    ? competitionRankMap(currentLeaderboard, (e) => medalScore(e.participant_name), (e) => e.participant_name)
+    : overallRankMap;
+
+  const algemeenRows = (rows: LeaderboardEntry[]) =>
+    [...rows].sort((a, b) => {
+      if (medalSorted) {
+        const d = medalScore(b.participant_name) - medalScore(a.participant_name);
+        if (d !== 0) return d * dirSign;
+      }
+      return (b.overall_score - a.overall_score) * dirSign;
+    });
+
+  const sortArrow = (key: 'points' | 'medals') =>
+    sortKey === key ? (sortDir === 'desc' ? ' ▼' : ' ▲') : '';
+  const sortableHeader = (key: 'points' | 'medals', label: string) => (
+    <button
+      type="button"
+      onClick={() => toggleSort(key)}
+      aria-label={`Sorteer op ${label}`}
+      className={`inline-flex items-center gap-0.5 hover:text-tdf-text-primary ${sortKey === key ? 'text-tdf-text-primary' : ''}`}
+    >
+      {label}
+      <span className={sortKey === key ? '' : 'text-gray-400'}>{sortKey === key ? sortArrow(key) : ' ⇅'}</span>
+    </button>
+  );
+
   const standingsColumns: Column<LeaderboardEntry>[] = [
     {
       key: 'pos',
       header: 'Positie',
       cellClassName: 'font-medium',
-      render: (e) => overallRankMap.get(e.participant_name) ?? e.overall_rank,
+      render: (e) => algemeenRankMap.get(e.participant_name) ?? e.overall_rank,
     },
-    { key: 'change', header: '+/-', align: 'center', render: (e) => <RankChange change={e.overall_rank_change} /> },
+    ...(medalSorted
+      ? []
+      : [{
+          key: 'change',
+          header: '+/-',
+          align: 'center' as const,
+          render: (e: LeaderboardEntry) => <RankChange change={e.overall_rank_change} />,
+        }]),
     { key: 'deelnemer', header: 'Deelnemer', render: (e) => e.participant_name },
     { key: 'directie', header: 'Directie', cellClassName: 'text-gray-600', render: (e) => e.directie_name },
     {
       key: 'punten',
-      header: 'Totaal Punten',
+      header: sortableHeader('points', 'Totaal Punten'),
       align: 'right',
       cellClassName: 'font-semibold',
       render: (e) => e.overall_score,
     },
     {
       key: 'medals',
-      header: 'Etappe Medailles',
+      header: sortableHeader('medals', 'Etappe Medailles'),
       align: 'center',
       render: (e) => (medalsByParticipant.get(e.participant_name) ?? NO_MEDALS).display || '—',
     },
@@ -360,10 +418,28 @@ function Poule() {
       {/* ALGEMEEN KLASSEMENT VIEW */}
       {activeView === 'standings_individual' && (
         <main>
+          {/* Sort chips — mobile only (desktop sorts via column headers) */}
+          <div className="flex items-center gap-2 mb-3 lg:hidden">
+            <span className="text-xs text-tdf-text-secondary">Sorteer:</span>
+            {(['points', 'medals'] as const).map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => toggleSort(key)}
+                className={`px-3 py-1 rounded-lg text-sm font-medium ${
+                  sortKey === key ? 'bg-tdf-accent text-tdf-on-accent' : 'bg-tdf-button-inactive text-tdf-button-text'
+                }`}
+              >
+                {key === 'points' ? 'Punten' : 'Medailles'}
+                {sortKey === key && sortArrow(key)}
+              </button>
+            ))}
+          </div>
+
           <div className="block lg:hidden space-y-2">
-            {(filteredResults as LeaderboardEntry[]).map((entry) => {
+            {algemeenRows(filteredResults as LeaderboardEntry[]).map((entry) => {
               const medals = medalsByParticipant.get(entry.participant_name) ?? NO_MEDALS;
-              const rank = overallRankMap.get(entry.participant_name) ?? entry.overall_rank;
+              const rank = algemeenRankMap.get(entry.participant_name) ?? entry.overall_rank;
               return (
                 <ExpandableCard
                   key={entry.participant_name}
@@ -373,8 +449,10 @@ function Poule() {
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-center justify-center min-w-[50px]">
                         <div className="text-lg font-bold text-tdf-text-primary">#{rank}</div>
-                        {/* rank_change is based on dense server ranks; tie display may differ by design */}
-                        <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
+                        {/* rank_change describes the points ranking; hide it while medal-sorted */}
+                        {!medalSorted && (
+                          <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
+                        )}
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -398,7 +476,7 @@ function Poule() {
 
           <StandingsTable
             columns={standingsColumns}
-            rows={filteredResults as LeaderboardEntry[]}
+            rows={algemeenRows(filteredResults as LeaderboardEntry[])}
             getRowKey={(e) => e.participant_name}
             onRowClick={(e) => toggleItemDetails(e.participant_name)}
             isRowExpanded={(e) => isOpen(e.participant_name)}
