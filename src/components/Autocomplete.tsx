@@ -12,9 +12,11 @@ interface AutocompleteProps {
   onChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  /** Shown in the dropdown when the query matches nothing. */
+  emptyLabel?: string;
 }
 
-export function Autocomplete({ options, value, onChange, placeholder, disabled }: AutocompleteProps) {
+export function Autocomplete({ options, value, onChange, placeholder, disabled, emptyLabel = 'Geen renners gevonden' }: AutocompleteProps) {
   const [inputValue, setInputValue] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -132,7 +134,7 @@ export function Autocomplete({ options, value, onChange, placeholder, disabled }
       
       {isOpen && filteredOptions.length === 0 && inputValue && (
         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg px-3 py-2 text-gray-500 text-sm">
-          Geen renners gevonden
+          {emptyLabel}
         </div>
       )}
     </div>

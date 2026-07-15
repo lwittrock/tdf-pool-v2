@@ -6,14 +6,13 @@
 import React, { useState, useMemo } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
-import { SearchInput } from '../components/Button';
+import { Autocomplete } from '../components/Autocomplete';
 import { useRiders, useTeamSelections } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import {
   getRiderStages,
   calculateSelectionCounts,
   calculateSelectionPercentage,
-  matchesSearch,
   createRiderRankMap
 } from '../../lib/data-transforms';
 import { JERSEY_ICONS, SELECTION_ICONS, SELECTION_THRESHOLDS, LABELS } from '../../lib/constants';
@@ -48,22 +47,21 @@ function Ploegen() {
     return createRiderRankMap(ridersData as RidersData);
   }, [ridersData]);
 
-  // Get selected participant's team
+  // Deelnemer options for the autocomplete: name + directie as the subtitle.
+  const participantOptions = useMemo(() => {
+    if (!teamSelectionsData) return [];
+    return Object.entries(teamSelectionsData)
+      .map(([name, data]) => ({ id: name, name, team: data.directie_name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [teamSelectionsData]);
+
+  // The autocomplete resolves to an exact deelnemer name (or ''), so the team
+  // swap is deterministic — no more first-match guessing.
   const selectedParticipant = useMemo(() => {
     if (!teamSelectionsData || !searchTerm) return null;
-
-    const participantEntry = Object.entries(teamSelectionsData).find(([name, data]) => 
-      matchesSearch(name, searchTerm) ||
-      matchesSearch(data.directie_name, searchTerm)
-    );
-    
-    if (!participantEntry) return null;
-    
-    const [name, data] = participantEntry;
-    return {
-      name,
-      team: data.riders
-    };
+    const data = teamSelectionsData[searchTerm];
+    if (!data) return null;
+    return { name: searchTerm, team: data.riders };
   }, [teamSelectionsData, searchTerm]);
 
   // Popularity rankings (all riders sorted by selection count)
@@ -152,12 +150,14 @@ function Ploegen() {
   return (
     <Layout title={LABELS.PLOEGEN}>
       <main>
-        {/* Search */}
+        {/* Deelnemer search (swaps the list to that participant's ploeg) */}
         <div className="mb-6">
-          <SearchInput 
+          <Autocomplete
+            options={participantOptions}
             value={searchTerm}
             onChange={setSearchTerm}
             placeholder="Toon ploeg van deelnemer..."
+            emptyLabel="Geen deelnemer gevonden"
           />
         </div>
 
