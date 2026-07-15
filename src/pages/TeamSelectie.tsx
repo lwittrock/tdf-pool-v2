@@ -16,17 +16,19 @@ import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { SearchInput } from '../components/Button';
 import { useRiders, useTeamSelections } from '../hooks/useTdfData';
-import { 
-  getRiderStages, 
+import { usePageTitle } from '../hooks/usePageTitle';
+import {
+  getRiderStages,
   calculateSelectionCounts,
   calculateSelectionPercentage,
   matchesSearch,
   createRiderRankMap
 } from '../../lib/data-transforms';
-import { JERSEY_ICONS, SELECTION_ICONS, SELECTION_THRESHOLDS } from '../../lib/constants';
+import { JERSEY_ICONS, SELECTION_ICONS, SELECTION_THRESHOLDS, LABELS } from '../../lib/constants';
 import type { RidersData, RiderStageData, StageInfo } from '../../lib/types';
 
 function TeamSelectionsPage() {
+  usePageTitle(LABELS.TEAM_SELECTIE);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
 

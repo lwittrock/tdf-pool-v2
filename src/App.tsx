@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import HomePage from './pages/Klassement';
 import RennerPunten from './pages/RennerPunten';
 import TeamSelectie from './pages/TeamSelectie';
@@ -101,9 +101,11 @@ function App() {
           <Route path="/EtappeBeheer" element={<EtappeBeheer />} />
           <Route path="/admin" element={<EtappeBeheer />} />
           <Route path="/OverDezePoule" element={<OverDezePoule />} />
+          {/* Unknown paths (incl. lowercase /klassement) fall back to the home standings. */}
+          <Route path="*" element={<Navigate to="/Klassement" replace />} />
         </Routes>
       </main>
-    </BrowserRouter >
+    </BrowserRouter>
   );
 }
 

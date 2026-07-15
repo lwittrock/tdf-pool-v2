@@ -2,10 +2,20 @@
 
 /* Custom theme colors for TdF Pool */
 @theme {
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
   /* TdF Yellow theme */
   --color-tdf-primary: #ca8a04;
   --color-tdf-accent: #eab308;
   --color-tdf-score: #ca8a04;
+  /* Darker amber for sub-h1 headings/captions — passes AA on the light bg,
+     unlike --color-tdf-primary which is borderline at small sizes (finding 7.2). */
+  --color-tdf-heading: #a16207;
+  /* Text that sits on the accent-yellow fill (active tab, buttons): dark, so
+     it clears AA where white-on-yellow does not (finding 7.1). */
+  --color-tdf-on-accent: #1f2937;
   
   /* Grays for backgrounds and text */
   --color-tdf-bg: #f9fafb;

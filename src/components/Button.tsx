@@ -11,9 +11,10 @@ export function TabButton({ onClick, active = false, children, className = '' }:
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
         active
-          ? 'bg-tdf-accent text-white border-2 border-tdf-accent'
+          ? 'bg-tdf-accent text-tdf-on-accent border-2 border-tdf-accent'
           : 'bg-tdf-button-inactive text-tdf-button-text border-2 border-transparent'
       } ${className}`}
     >

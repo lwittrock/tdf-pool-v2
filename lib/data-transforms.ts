@@ -8,6 +8,7 @@
 import type {
   RiderData,
   RidersData,
+  RiderStageData,
   StageInfo,
   MedalCounts,
   LeaderboardsData,
@@ -15,51 +16,102 @@ import type {
 import { MEDAL_POSITIONS, formatMedalDisplay } from './scoring-constants.js';
 
 // ============================================================================
-// Rider Stage Transformations
+// Display Formatting
 // ============================================================================
 
 /**
- * Convert rider stages object to sorted array of StageInfo
+ * Dutch date for the page-header freshness line, e.g. "15 juli".
+ * Returns null when the input isn't a valid date.
+ */
+export function formatLastUpdated(iso: string): string | null {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' });
+}
+
+// ============================================================================
+// Rider Stage Transformations
+// ============================================================================
+
+/** A gap-filled placeholder for a stage in which the rider scored nothing. */
+function emptyStage(stageNum: number, cumulative_total: number): StageInfo {
+  return {
+    stageNum,
+    stageKey: `stage_${stageNum}`,
+    date: '',
+    stage_finish_points: 0,
+    stage_finish_position: 0,
+    stage_total: 0,
+    cumulative_total,
+  };
+}
+
+/**
+ * Insert zero-point placeholders for every stage from 1..upToStage that the
+ * rider isn't already scored in, so the per-stage list has no silent gaps
+ * (a zero stage is indistinguishable from missing data otherwise). Carries the
+ * running cumulative forward through the filled stages.
+ */
+function fillStageGaps(stages: StageInfo[], upToStage: number): StageInfo[] {
+  const byNum = new Map(stages.map((s) => [s.stageNum, s]));
+  const filled: StageInfo[] = [];
+  let cumulative = 0;
+  for (let n = 1; n <= upToStage; n++) {
+    const present = byNum.get(n);
+    if (present) {
+      cumulative = present.cumulative_total;
+      filled.push(present);
+    } else {
+      filled.push(emptyStage(n, cumulative));
+    }
+  }
+  return filled;
+}
+
+function toStageInfo(stageKey: string, stageData: RiderStageData): StageInfo {
+  return {
+    stageNum: parseInt(stageKey.replace('stage_', '')),
+    stageKey,
+    date: stageData.date,
+    stage_finish_points: stageData.stage_finish_points,
+    stage_finish_position: stageData.stage_finish_position,
+    jersey_points: stageData.jersey_points,
+    stage_total: stageData.stage_total,
+    cumulative_total: stageData.cumulative_total,
+  };
+}
+
+/**
+ * Convert rider stages object to sorted array of StageInfo.
+ * Pass `upToStage` to gap-fill absent stages with zero placeholders.
  */
 export function getRiderStages(
   ridersData: RidersData,
-  riderName: string
+  riderName: string,
+  upToStage?: number
 ): StageInfo[] {
   const rider = ridersData[riderName];
   if (!rider?.stages) return [];
 
-  return Object.entries(rider.stages)
-    .map(([stageKey, stageData]) => ({
-      stageNum: parseInt(stageKey.replace('stage_', '')),
-      stageKey,
-      date: stageData.date,
-      stage_finish_points: stageData.stage_finish_points,
-      stage_finish_position: stageData.stage_finish_position,
-      jersey_points: stageData.jersey_points,
-      stage_total: stageData.stage_total,
-      cumulative_total: stageData.cumulative_total,
-    }))
+  const stages = Object.entries(rider.stages)
+    .map(([stageKey, stageData]) => toStageInfo(stageKey, stageData))
     .sort((a, b) => a.stageNum - b.stageNum);
+
+  return upToStage ? fillStageGaps(stages, upToStage) : stages;
 }
 
 /**
- * Get stage info from RiderData
+ * Get stage info from RiderData.
+ * Pass `upToStage` to gap-fill absent stages with zero placeholders.
  */
-export function getRiderStagesFromData(rider: RiderData): StageInfo[] {
+export function getRiderStagesFromData(rider: RiderData, upToStage?: number): StageInfo[] {
   if (!rider?.stages) return [];
 
-  return Object.entries(rider.stages)
-    .map(([stageKey, stageData]) => ({
-      stageNum: parseInt(stageKey.replace('stage_', '')),
-      stageKey,
-      date: stageData.date,
-      stage_finish_points: stageData.stage_finish_points,
-      stage_finish_position: stageData.stage_finish_position,
-      jersey_points: stageData.jersey_points,
-      stage_total: stageData.stage_total,
-      cumulative_total: stageData.cumulative_total,
-    }))
+  const stages = Object.entries(rider.stages)
+    .map(([stageKey, stageData]) => toStageInfo(stageKey, stageData))
     .sort((a, b) => a.stageNum - b.stageNum);
+
+  return upToStage ? fillStageGaps(stages, upToStage) : stages;
 }
 
 // ============================================================================

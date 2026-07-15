@@ -61,6 +61,7 @@ export const LABELS = {
   // Messages
   LOADING: 'Laden...',
   ERROR: 'Fout',
+  RETRY: 'Opnieuw proberen',
   NO_DATA: 'Geen gegevens beschikbaar',
   NO_RESULTS: 'Geen resultaten gevonden',
 } as const;

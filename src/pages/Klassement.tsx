@@ -3,10 +3,14 @@
  */
 
 import React, { useState, useMemo } from 'react'
-import { useMetadata, useLeaderboards } from '../hooks/useTdfData';
+import { useMetadata, useLeaderboards, useStagesData } from '../hooks/useTdfData';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { RankChange } from '../components/shared/RankChange';
 import { MedalIcon } from '../components/shared/MedalDisplay';
-import { competitionRankMap, getAllParticipantMedals, getParticipantStages } from '../../lib/data-transforms';
+import { TabButton, SearchInput } from '../components/Button';
+import { LoadingState, ErrorState } from '../components/StatusStates';
+import { competitionRankMap, getAllParticipantMedals, getParticipantStages, formatLastUpdated } from '../../lib/data-transforms';
+import { LABELS } from '../../lib/constants';
 import type { MedalCounts } from '../../lib/types';
 
 interface LeaderboardEntry {
@@ -75,6 +79,7 @@ function StageContributions({ entry }: { entry: LeaderboardEntry }) {
 }
 
 function HomePage() {
+  usePageTitle(LABELS.KLASSEMENT);
   const [activeView, setActiveView] = useState<ViewType>('standings_individual');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
@@ -82,6 +87,9 @@ function HomePage() {
   // Fetch split data
   const { data: metadata, isLoading: metadataLoading, error: metadataError } = useMetadata();
   const { data: leaderboardsData, isLoading: leaderboardsLoading, error: leaderboardsError } = useLeaderboards();
+  // Only feeds the Dag tab's route line; the page renders fine while (or if
+  // ever) this snapshot is still loading, so it doesn't gate the page.
+  const { data: stagesData } = useStagesData();
 
   const loading = metadataLoading || leaderboardsLoading;
   const error = metadataError || leaderboardsError;
@@ -156,36 +164,23 @@ function HomePage() {
   }, [activeView, searchTerm, currentLeaderboard, currentDirectieLeaderboard]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-tdf-bg">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-tdf-primary mb-4">Loading...</div>
-          <div className="text-tdf-text-secondary">Fetching race data...</div>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-tdf-bg">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-red-600 mb-4">Error</div>
-          <div className="text-tdf-text-secondary mb-4">{error.message}</div>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="px-4 py-2 bg-tdf-accent text-white rounded hover:bg-yellow-600"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorState message={error.message} />;
   }
 
   if (!metadata || !leaderboardsData) return null;
 
   const currentStageNum = metadata.current_stage;
+  const lastUpdated = formatLastUpdated(metadata.last_updated);
+
+  // Route line for the Dag tab ("Ennezat → Le Mont-Dore"), when known.
+  const currentStageInfo = stagesData?.find((s) => s.stage_number === currentStageNum);
+  const stageRoute = currentStageInfo?.departure_city && currentStageInfo?.arrival_city
+    ? `${currentStageInfo.departure_city} → ${currentStageInfo.arrival_city}`
+    : null;
 
   const toggleItemDetails = (itemName: string) => {
     setExpandedItem(prev => prev === itemName ? null : itemName);
@@ -203,57 +198,33 @@ function HomePage() {
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">
           Klassement
         </h1>
+        <p className="text-sm sm:text-base text-tdf-text-secondary mt-2">
+          Na etappe {currentStageNum}{lastUpdated && ` (${lastUpdated})`}
+        </p>
       </header>
 
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
-          <button
-            onClick={() => switchView('standings_individual')}
-            className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
-              activeView === 'standings_individual'
-                ? 'bg-tdf-accent text-white border-2 border-yellow-500'
-                : 'bg-gray-200 text-gray-700 border-2 border-transparent'
-            }`}
-          >
-            Algemeen
-          </button>
-          <button
-            onClick={() => switchView('stage_individual')}
-            className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
-              activeView === 'stage_individual'
-                ? 'bg-tdf-accent text-white border-2 border-yellow-500'
-                : 'bg-gray-200 text-gray-700 border-2 border-transparent'
-            }`}
-          >
-            Etappe
-          </button>
-          <button
-            onClick={() => switchView('standings_directie')}
-            className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
-              activeView === 'standings_directie'
-                ? 'bg-tdf-accent text-white border-2 border-yellow-500'
-                : 'bg-gray-200 text-gray-700 border-2 border-transparent'
-            }`}
-          >
-            Directie
-          </button>
+          <TabButton active={activeView === 'stage_individual'} onClick={() => switchView('stage_individual')}>
+            Dag
+          </TabButton>
+          <TabButton active={activeView === 'standings_individual'} onClick={() => switchView('standings_individual')}>
+            {LABELS.STANDINGS_INDIVIDUAL}
+          </TabButton>
+          <TabButton active={activeView === 'standings_directie'} onClick={() => switchView('standings_directie')}>
+            {LABELS.STANDINGS_DIRECTIE}
+          </TabButton>
         </div>
 
-        <div className="w-full">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Zoek deelnemer of directie..."
-            className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-tdf-accent focus:outline-none text-sm sm:text-base"
-          />
-        </div>
+        <SearchInput value={searchTerm} onChange={setSearchTerm} placeholder={LABELS.SEARCH_PLACEHOLDER} />
       </div>
 
       {/* ETAPPE VIEW */}
       {activeView === 'stage_individual' && (
         <main>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">Etappe {currentStageNum} Klassement</h2>
+          <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
+            Etappe {currentStageNum}{stageRoute && `: ${stageRoute}`}
+          </p>
 
           <div className="block lg:hidden space-y-2">
             {(filteredResults as LeaderboardEntry[]).map((entry) => {
@@ -346,8 +317,6 @@ function HomePage() {
       {/* ALGEMEEN KLASSEMENT VIEW */}
       {activeView === 'standings_individual' && (
         <main>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">Algemeen Klassement</h2>
-
           <div className="block lg:hidden space-y-2">
             {(filteredResults as LeaderboardEntry[]).map((entry) => {
               const medals = medalsByParticipant.get(entry.participant_name) ?? NO_MEDALS;
@@ -459,7 +428,6 @@ function HomePage() {
       {/* DIRECTIE KLASSEMENT VIEW */}
       {activeView === 'standings_directie' && (
         <main>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-4 text-tdf-primary">Directie Klassement</h2>
           <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
             Gemiddelde van de top {metadata.top_n_participants_for_directie} deelnemers per directie
           </p>
@@ -558,6 +526,10 @@ function HomePage() {
             </table>
           </div>
         </main>
+      )}
+
+      {filteredResults.length === 0 && (
+        <div className="text-center py-12 text-tdf-text-secondary">{LABELS.NO_RESULTS}</div>
       )}
     </div>
   );

@@ -4,8 +4,11 @@
 
 import React, { useState, useMemo } from 'react';
 import { useMetadata, useRiders, useRiderRankings } from '../hooks/useTdfData';
-import { competitionRankMap, getRiderStagesFromData } from '../../lib/data-transforms';
-import { JERSEY_ICONS, JERSEY_LABELS } from '../../lib/constants';
+import { usePageTitle } from '../hooks/usePageTitle';
+import { TabButton, SearchInput } from '../components/Button';
+import { LoadingState, ErrorState } from '../components/StatusStates';
+import { competitionRankMap, getRiderStagesFromData, formatLastUpdated } from '../../lib/data-transforms';
+import { JERSEY_ICONS, JERSEY_LABELS, LABELS } from '../../lib/constants';
 import { MEDALS } from '../../lib/scoring-constants';
 import type { RidersData, RiderData, RiderRankingsStageEntry, RiderStageData, StageInfo } from '../../lib/types';
 
@@ -95,6 +98,7 @@ function StagePointsBreakdown({ rider }: { rider: RiderRankingsStageEntry }) {
 }
 
 function RennerPunten() {
+  usePageTitle(LABELS.RENNER_PUNTEN);
   const [activeView, setActiveView] = useState<ViewType>('total');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
@@ -192,35 +196,17 @@ function RennerPunten() {
 
   // Loading state
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-tdf-bg">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-tdf-primary mb-4">Loading...</div>
-          <div className="text-tdf-text-secondary">Fetching rider data...</div>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   // Error state
   if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-tdf-bg">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-red-600 mb-4">Error</div>
-          <div className="text-tdf-text-secondary mb-4">{error.message}</div>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="px-4 py-2 bg-tdf-accent text-white rounded hover:bg-yellow-600"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorState message={error.message} />;
   }
 
   if (!metadata || !ridersData || !riderRankings) return null;
+
+  const lastUpdated = formatLastUpdated(metadata.last_updated);
 
   return (
     <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
@@ -229,62 +215,36 @@ function RennerPunten() {
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">
           Renner Punten
         </h1>
+        <p className="text-sm sm:text-base text-tdf-text-secondary mt-2">
+          Na etappe {metadata.current_stage}{lastUpdated && ` (${lastUpdated})`}
+        </p>
       </header>
 
       {/* View Toggle Buttons */}
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
-          <button
-            onClick={() => switchView('total')}
-            className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
-              activeView === 'total'
-                ? 'bg-tdf-accent text-white border-2 border-yellow-500'
-                : 'bg-gray-200 text-gray-700 border-2 border-transparent'
-            }`}
-          >
-            Algemeen
-          </button>
-          <button
-            onClick={() => switchView('stage')}
-            className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
-              activeView === 'stage'
-                ? 'bg-tdf-accent text-white border-2 border-yellow-500'
-                : 'bg-gray-200 text-gray-700 border-2 border-transparent'
-            }`}
-          >
-            Etappe
-          </button>
-          <button
-            onClick={() => switchView('team')}
-            className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
-              activeView === 'team'
-                ? 'bg-tdf-accent text-white border-2 border-yellow-500'
-                : 'bg-gray-200 text-gray-700 border-2 border-transparent'
-            }`}
-          >
-            Team
-          </button>
+          <TabButton active={activeView === 'total'} onClick={() => switchView('total')}>
+            {LABELS.STANDINGS_INDIVIDUAL}
+          </TabButton>
+          <TabButton active={activeView === 'stage'} onClick={() => switchView('stage')}>
+            {LABELS.STAGE_INDIVIDUAL}
+          </TabButton>
+          <TabButton active={activeView === 'team'} onClick={() => switchView('team')}>
+            {LABELS.TEAM}
+          </TabButton>
         </div>
 
         {/* Search */}
-        <div className="w-full">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Zoek renner of team..."
-            className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-tdf-accent focus:outline-none text-sm sm:text-base"
-          />
-        </div>
+        <SearchInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Zoek renner of team..."
+        />
       </div>
 
       {/* ETAPPE VIEW */}
       {activeView === 'stage' && (
         <main>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Etappe {metadata.current_stage} Klassement
-          </h2>
-          
           {/* Mobile Cards */}
           <div className="block lg:hidden space-y-2">
             {filteredResults.map((rider: any) => {
@@ -352,7 +312,7 @@ function RennerPunten() {
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Positie</th>
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Renner</th>
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Team</th>
-                  <th className="px-4 py-4 text-right text-sm font-semibold text-gray-600">Totaal Punten</th>
+                  <th className="px-4 py-4 text-right text-sm font-semibold text-gray-600">Etappe Punten</th>
                 </tr>
               </thead>
               <tbody>
@@ -417,10 +377,6 @@ function RennerPunten() {
       {/* TOTAAL VIEW */}
       {activeView === 'total' && (
         <main>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Algemeen Klassement
-          </h2>
-          
           {/* Mobile Cards */}
           <div className="block lg:hidden space-y-2">
             {filteredResults.map((rider: any) => {
@@ -455,7 +411,7 @@ function RennerPunten() {
                     <div className="px-3 pb-3 bg-tdf-bg border-t border-gray-200">
                       <div className="pt-3">
                         <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Etappe</h3>
-                        {getRiderStagesFromData(riderData).map((stage) => {
+                        {getRiderStagesFromData(riderData, metadata.current_stage).map((stage) => {
                           const stageAwards = getStageJerseys(stage);
                           return (
                             <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
@@ -464,7 +420,7 @@ function RennerPunten() {
                                 {(stageAwards.jerseys.length > 0 || stageAwards.hasCombative) && (
                                   <div className="flex gap-0.5 items-center">
                                     {stageAwards.jerseys.map(jersey => (
-                                      <img 
+                                      <img
                                         key={jersey}
                                         src={JERSEY_ICONS[jersey]}
                                         alt={`${jersey} jersey`}
@@ -476,8 +432,12 @@ function RennerPunten() {
                                 )}
                               </div>
                               <div className="flex items-center gap-3">
-                                <span className="text-xs text-tdf-text-secondary">#{stage.stage_finish_position}</span>
-                                <span className="text-sm font-bold text-tdf-text-primary">{stage.stage_total}</span>
+                                {stage.stage_finish_position > 0 && (
+                                  <span className="text-xs text-tdf-text-secondary">#{stage.stage_finish_position}</span>
+                                )}
+                                <span className={`text-sm font-bold ${stage.stage_total > 0 ? 'text-tdf-text-primary' : 'text-tdf-text-muted'}`}>
+                                  {stage.stage_total > 0 ? stage.stage_total : '—'}
+                                </span>
                               </div>
                             </div>
                           );
@@ -523,7 +483,7 @@ function RennerPunten() {
                           <td colSpan={5} className="px-4 py-4">
                             <div className="ml-8 max-w-md">
                               <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Etappe</h3>
-                              {getRiderStagesFromData(riderData).map((stage) => {
+                              {getRiderStagesFromData(riderData, metadata.current_stage).map((stage) => {
                                 const stageAwards = getStageJerseys(stage);
                                 return (
                                   <div key={stage.stageKey} className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
@@ -532,7 +492,7 @@ function RennerPunten() {
                                       {(stageAwards.jerseys.length > 0 || stageAwards.hasCombative) && (
                                         <div className="flex gap-1 items-center">
                                           {stageAwards.jerseys.map(jersey => (
-                                            <img 
+                                            <img
                                               key={jersey}
                                               src={JERSEY_ICONS[jersey]}
                                               alt={`${jersey} jersey`}
@@ -544,8 +504,12 @@ function RennerPunten() {
                                       )}
                                     </div>
                                     <div className="flex items-center gap-3">
-                                      <span className="text-xs text-tdf-text-secondary">#{stage.stage_finish_position}</span>
-                                      <span className="text-sm font-bold">{stage.stage_total}</span>
+                                      {stage.stage_finish_position > 0 && (
+                                        <span className="text-xs text-tdf-text-secondary">#{stage.stage_finish_position}</span>
+                                      )}
+                                      <span className={`text-sm font-bold ${stage.stage_total > 0 ? '' : 'text-tdf-text-muted'}`}>
+                                        {stage.stage_total > 0 ? stage.stage_total : '—'}
+                                      </span>
                                     </div>
                                   </div>
                                 );
@@ -566,14 +530,14 @@ function RennerPunten() {
       {/* TEAM VIEW */}
       {activeView === 'team' && (
         <main>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
-            Team Klassement
-          </h2>
-          
           <div className="bg-white rounded-lg shadow-md p-6 text-center">
             <p className="text-gray-600">Team klassement komt binnenkort beschikbaar.</p>
           </div>
         </main>
+      )}
+
+      {activeView !== 'team' && filteredResults.length === 0 && (
+        <div className="text-center py-12 text-tdf-text-secondary">{LABELS.NO_RESULTS}</div>
       )}
     </div>
   );
