@@ -6,6 +6,8 @@
 
 interface CombativityIconProps {
   size?: 'sm' | 'md';
+  /** Explicit pixel size, overriding the `size` preset. */
+  sizePx?: number;
   riderNumber?: string | number;
   className?: string;
 }
@@ -20,10 +22,12 @@ const DIMENSIONS = {
  */
 export function CombativityIcon({
   size = 'sm',
+  sizePx,
   riderNumber,
   className = '',
 }: CombativityIconProps) {
-  const { size: dimensions, fontSize } = DIMENSIONS[size];
+  const dimensions = sizePx ?? DIMENSIONS[size].size;
+  const fontSize = sizePx ? Math.round(sizePx * 0.66) : DIMENSIONS[size].fontSize;
 
   return (
     <svg

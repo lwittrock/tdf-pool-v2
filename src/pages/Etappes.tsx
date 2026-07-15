@@ -1,18 +1,20 @@
 /**
  * Etappes Page — public, read-only race results per stage.
  *
- * The race itself (top-20, jerseys, strijdlust, DNF), separate from the pool
- * scoring views. The results table's points column is joined from
- * rider_rankings so it doubles as the rider stage ranking.
+ * The race itself (results, jerseys, strijdlust, dagploeg, DNF), separate from
+ * the pool scoring views. Per-stage points are joined from the riders snapshot
+ * (which keeps every rider's per-stage breakdown), so the results list doubles
+ * as the rider stage ranking and also carries the jersey/strijdlust-only
+ * scorers below the top-20.
  */
 
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { useMetadata, useStagesData, useRiders } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { MedalIcon } from '../components/shared/MedalDisplay';
 import { CombativityIcon } from '../components/shared/CombativityIcon';
+import { DagploegIcon } from '../components/shared/DagploegIcon';
 import { JERSEY_ICONS, JERSEY_LABELS, LABELS } from '../../lib/constants';
 import type { StageData, RiderStageData } from '../../lib/types';
 
@@ -91,6 +93,11 @@ function StageHeader({ stage }: { stage: StageData }) {
   );
 }
 
+/** A fixed 20px slot so every strip icon centers on the same baseline. */
+function IconSlot({ children }: { children: React.ReactNode }) {
+  return <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">{children}</span>;
+}
+
 /** Jersey holders + strijdlust + dagploeg after this stage. */
 function JerseyStrip({ stage }: { stage: StageData }) {
   return (
@@ -98,20 +105,22 @@ function JerseyStrip({ stage }: { stage: StageData }) {
       {JERSEY_ORDER.map((jersey) =>
         stage.jerseys[jersey] ? (
           <div key={jersey} className="flex items-center gap-2">
-            <img src={JERSEY_ICONS[jersey]} alt={JERSEY_LABELS[jersey]} className="w-5 h-5" />
+            <IconSlot>
+              <img src={JERSEY_ICONS[jersey]} alt={JERSEY_LABELS[jersey]} className="w-5 h-5" />
+            </IconSlot>
             <span className="text-sm text-tdf-text-primary">{stage.jerseys[jersey]}</span>
           </div>
         ) : null
       )}
       {stage.combativity && (
         <div className="flex items-center gap-2">
-          <CombativityIcon size="md" />
+          <IconSlot><CombativityIcon sizePx={15} /></IconSlot>
           <span className="text-sm text-tdf-text-primary">{stage.combativity}</span>
         </div>
       )}
       {stage.dagploeg && (
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-tdf-text-secondary uppercase">Dagploeg</span>
+          <IconSlot><DagploegIcon sizePx={17} /></IconSlot>
           <span className="text-sm text-tdf-text-primary">{stage.dagploeg}</span>
         </div>
       )}
@@ -156,14 +165,15 @@ function Etappes() {
     return map;
   }, [ridersData, stageKey]);
 
-  // Jersey/strijdlust scorers who finished outside the top-20.
+  // Jersey/strijdlust scorers who finished outside the top-20, best first —
+  // appended to the results below the top-20 as ">20" rows.
   const otherScorers = useMemo(() => {
     if (!stage) return [];
     const finisherNames = new Set(stage.top_20_finishers.map((f) => f.rider_name));
     return [...stageByRider.entries()]
       .filter(([name, s]) => s.stage_total > 0 && !finisherNames.has(name))
       .sort((a, b) => b[1].stage_total - a[1].stage_total)
-      .map(([name, s]) => ({ name, stage: s }));
+      .map(([name]) => name);
   }, [stage, stageByRider]);
 
   if (loading) return <LoadingState />;
@@ -178,14 +188,35 @@ function Etappes() {
   const pointsOf = (name: string) => stageByRider.get(name)?.stage_total ?? 0;
   const jerseysFor = (name: string): typeof JERSEY_ORDER[number][] =>
     stage ? JERSEY_ORDER.filter((j) => stage.jerseys[j] === name) : [];
+  const isCombative = (name: string) => stage?.combativity === name;
+
+  // Top-20 finishers, then the jersey/strijdlust-only scorers as ">20" rows —
+  // one list, one card/row treatment. `position: null` renders as ">20".
+  type ResultRow = { key: string; position: number | null; name: string; timeGap: string | null };
+  const resultRows: ResultRow[] = [
+    ...finishers.map((f) => ({
+      key: `f${f.position}`,
+      position: f.position as number | null,
+      name: f.rider_name,
+      timeGap: f.time_gap,
+    })),
+    ...otherScorers.map((name) => ({ key: `o${name}`, position: null, name, timeGap: null })),
+  ];
+
+  /** Jersey + strijdlust markers for a rider's row. */
+  const RowIcons = ({ name, size }: { name: string; size: number }) => (
+    <>
+      {jerseysFor(name).map((j) => (
+        <img key={j} src={JERSEY_ICONS[j]} alt={JERSEY_LABELS[j]} style={{ width: size, height: size }} className="flex-shrink-0" />
+      ))}
+      {isCombative(name) && <CombativityIcon sizePx={size} />}
+    </>
+  );
 
   return (
     <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
       <header className="mb-6 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">Etappes</h1>
-        <p className="text-sm sm:text-base text-tdf-text-secondary mt-2">
-          Uitslagen en informatie per etappe
-        </p>
       </header>
 
       <StageSelector completed={completed} selected={activeStage} onSelect={setSelectedStage} />
@@ -201,25 +232,25 @@ function Etappes() {
 
           {/* Mobile cards */}
           <div className="block lg:hidden space-y-2">
-            {finishers.map((f) => (
-              <div key={f.position} className="bg-white rounded-lg shadow-md p-3">
+            {resultRows.map((r) => (
+              <div key={r.key} className="bg-white rounded-lg shadow-md p-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1 min-w-[44px]">
-                    <span className="text-lg font-bold text-tdf-text-primary">{f.position}</span>
-                    <MedalIcon position={f.position} />
+                    <span className={`font-bold ${r.position === null ? 'text-sm text-tdf-text-muted' : 'text-lg text-tdf-text-primary'}`}>
+                      {r.position ?? '>20'}
+                    </span>
+                    {r.position !== null && <MedalIcon position={r.position} />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-tdf-text-primary truncate">{f.rider_name}</span>
-                      {jerseysFor(f.rider_name).map((j) => (
-                        <img key={j} src={JERSEY_ICONS[j]} alt={JERSEY_LABELS[j]} className="w-4 h-4 flex-shrink-0" />
-                      ))}
+                      <span className="font-bold text-sm text-tdf-text-primary truncate">{r.name}</span>
+                      <RowIcons name={r.name} size={16} />
                     </div>
-                    <div className="text-xs text-tdf-text-secondary truncate">{teamOf(f.rider_name)}</div>
+                    <div className="text-xs text-tdf-text-secondary truncate">{teamOf(r.name)}</div>
                   </div>
                   <div className="text-right">
-                    {f.time_gap && <div className="text-xs text-tdf-text-secondary">{f.time_gap}</div>}
-                    <div className="text-lg font-bold text-tdf-score">{pointsOf(f.rider_name)}</div>
+                    {r.timeGap && <div className="text-xs text-tdf-text-secondary">{r.timeGap}</div>}
+                    <div className="text-lg font-bold text-tdf-score">{pointsOf(r.name)}</div>
                   </div>
                 </div>
               </div>
@@ -241,25 +272,24 @@ function Etappes() {
                 </tr>
               </thead>
               <tbody>
-                {finishers.map((f, idx) => (
-                  <tr key={f.position} className={idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}>
-                    <td className="px-4 py-3 text-sm font-medium">
-                      {f.position} <MedalIcon position={f.position} className="ml-1" />
+                {resultRows.map((r, idx) => (
+                  <tr key={r.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}>
+                    <td className={`px-4 py-3 text-sm font-medium ${r.position === null ? 'text-tdf-text-muted' : ''}`}>
+                      {r.position ?? '>20'}
+                      {r.position !== null && <MedalIcon position={r.position} className="ml-1" />}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex items-center gap-2">
-                        <span>{f.rider_name}</span>
-                        {jerseysFor(f.rider_name).map((j) => (
-                          <img key={j} src={JERSEY_ICONS[j]} alt={JERSEY_LABELS[j]} className="w-5 h-5" />
-                        ))}
+                        <span>{r.name}</span>
+                        <RowIcons name={r.name} size={20} />
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-tdf-text-secondary">{teamOf(f.rider_name)}</td>
+                    <td className="px-4 py-3 text-sm text-tdf-text-secondary">{teamOf(r.name)}</td>
                     {hasTimeGaps && (
-                      <td className="px-4 py-3 text-sm text-right text-tdf-text-secondary">{f.time_gap ?? ''}</td>
+                      <td className="px-4 py-3 text-sm text-right text-tdf-text-secondary">{r.timeGap ?? ''}</td>
                     )}
                     <td className="px-4 py-3 text-sm text-right font-semibold text-tdf-score">
-                      {pointsOf(f.rider_name)}
+                      {pointsOf(r.name)}
                     </td>
                   </tr>
                 ))}
@@ -267,48 +297,15 @@ function Etappes() {
             </table>
           </div>
 
-          {otherScorers.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-sm font-semibold mb-2 text-tdf-text-highlight">Overige puntenscoorders</h3>
-              <div className="flex flex-wrap gap-x-6 gap-y-1">
-                {otherScorers.map((s) => (
-                  <OtherScorer key={s.name} name={s.name} stage={s.stage} />
-                ))}
-              </div>
-            </div>
-          )}
-
           {hasDropouts && (
             <p className="mt-6 text-xs sm:text-sm text-tdf-text-muted">
               {stage.dnf_riders.length > 0 && <>Uitgevallen (DNF): {stage.dnf_riders.join(', ')}. </>}
               {stage.dns_riders.length > 0 && <>Niet gestart (DNS): {stage.dns_riders.join(', ')}.</>}
             </p>
           )}
-
-          <div className="mt-8 text-center">
-            <Link to="/poule" className="text-sm text-tdf-primary hover:underline">
-              Dagstand deelnemers →
-            </Link>
-          </div>
         </>
       )}
     </div>
-  );
-}
-
-/** A jersey/strijdlust scorer shown below the top-20. */
-function OtherScorer({ name, stage }: { name: string; stage: RiderStageData }) {
-  const jerseys = JERSEY_ORDER.filter((j) => (stage.jersey_points?.[j] ?? 0) > 0);
-  const hasCombative = (stage.jersey_points?.combative ?? 0) > 0;
-  return (
-    <span className="flex items-center gap-1.5 text-sm text-tdf-text-secondary">
-      {jerseys.map((j) => (
-        <img key={j} src={JERSEY_ICONS[j]} alt={JERSEY_LABELS[j]} className="w-4 h-4" />
-      ))}
-      {hasCombative && <CombativityIcon size="sm" />}
-      {name}
-      <span className="font-bold text-tdf-text-primary">{stage.stage_total}</span>
-    </span>
   );
 }
 
