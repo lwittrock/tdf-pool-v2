@@ -29,13 +29,18 @@ import type {
  * Get current stage number (highest completed stage)
  */
 export async function getCurrentStage(): Promise<number> {
-  const { data } = await getServiceClient()
+  const { data, error } = await getServiceClient()
     .from('stages')
     .select('stage_number')
     .eq('is_complete', true)
     .order('stage_number', { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  // Never treat a query failure as "no completed stages" — returning 0 here
+  // silently bakes current_stage: 0 into the published metadata, which points
+  // the whole frontend at a non-existent stage_0 and blanks every board.
+  if (error) throw new Error(`getCurrentStage failed: ${error.message}`);
 
   return data?.stage_number || 0;
 }
