@@ -2,12 +2,13 @@
  * Poule Page — participant standings (Dag · Algemeen · Directie tabs).
  */
 
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useMetadata, useLeaderboards, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { RankChange } from '../components/shared/RankChange';
 import { MedalIcon } from '../components/shared/MedalDisplay';
 import { TabButton, SearchInput } from '../components/Button';
+import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { competitionRankMap, getAllParticipantMedals, getParticipantStages, formatLastUpdated } from '../../lib/data-transforms';
 import { LABELS } from '../../lib/constants';
@@ -192,6 +193,85 @@ function Poule() {
     setExpandedItem(null);
   };
 
+  const isOpen = (name: string) => expandedItem === name;
+
+  // Per-etappe list for a participant, shared by the Algemeen card and row.
+  const participantStageList = (name: string) =>
+    getParticipantStages(leaderboardsData, name).map((stage) => (
+      <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
+        <span className="text-sm text-gray-700">Etappe {stage.stageNum}:</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-tdf-text-secondary">#{stage.stage_rank}</span>
+          <span className="text-sm font-bold">{stage.stage_score}</span>
+        </div>
+      </div>
+    ));
+
+  // ---- Column specs -----------------------------------------------------------
+  const stageColumns: Column<LeaderboardEntry>[] = [
+    {
+      key: 'pos',
+      header: 'Positie',
+      cellClassName: 'font-medium',
+      render: (entry) => {
+        const rank = stageRankMap.get(entry.participant_name) ?? entry.stage_rank;
+        return (<>{rank} <MedalIcon position={rank} className="ml-1" /></>);
+      },
+    },
+    { key: 'deelnemer', header: 'Deelnemer', render: (e) => e.participant_name },
+    { key: 'directie', header: 'Directie', cellClassName: 'text-gray-600', render: (e) => e.directie_name },
+    {
+      key: 'punten',
+      header: 'Etappe Punten',
+      align: 'right',
+      cellClassName: 'font-semibold',
+      render: (e) => e.stage_score,
+    },
+  ];
+
+  const standingsColumns: Column<LeaderboardEntry>[] = [
+    {
+      key: 'pos',
+      header: 'Positie',
+      cellClassName: 'font-medium',
+      render: (e) => overallRankMap.get(e.participant_name) ?? e.overall_rank,
+    },
+    { key: 'change', header: '+/-', align: 'center', render: (e) => <RankChange change={e.overall_rank_change} /> },
+    { key: 'deelnemer', header: 'Deelnemer', render: (e) => e.participant_name },
+    { key: 'directie', header: 'Directie', cellClassName: 'text-gray-600', render: (e) => e.directie_name },
+    {
+      key: 'punten',
+      header: 'Totaal Punten',
+      align: 'right',
+      cellClassName: 'font-semibold',
+      render: (e) => e.overall_score,
+    },
+    {
+      key: 'medals',
+      header: 'Etappe Medailles',
+      align: 'center',
+      render: (e) => (medalsByParticipant.get(e.participant_name) ?? NO_MEDALS).display || '—',
+    },
+  ];
+
+  const directieColumns: Column<DirectieEntry>[] = [
+    {
+      key: 'pos',
+      header: 'Positie',
+      cellClassName: 'font-medium',
+      render: (e) => directieOverallRankMap.get(e.directie_name) ?? e.overall_rank,
+    },
+    { key: 'change', header: '+/-', align: 'center', render: (e) => <RankChange change={e.overall_rank_change} /> },
+    { key: 'directie', header: 'Directie', cellClassName: 'font-medium', render: (e) => e.directie_name },
+    {
+      key: 'punten',
+      header: 'Totaal Punten',
+      align: 'right',
+      cellClassName: 'font-semibold',
+      render: (e) => e.overall_score.toFixed(1),
+    },
+  ];
+
   return (
     <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
       <header className="mb-6 sm:mb-12 text-center">
@@ -229,13 +309,12 @@ function Poule() {
           <div className="block lg:hidden space-y-2">
             {(filteredResults as LeaderboardEntry[]).map((entry) => {
               const rank = stageRankMap.get(entry.participant_name) ?? entry.stage_rank;
-
               return (
-                <div key={entry.participant_name} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <div
-                    onClick={() => toggleItemDetails(entry.participant_name)}
-                    className="p-3 cursor-pointer active:bg-tdf-bg"
-                  >
+                <ExpandableCard
+                  key={entry.participant_name}
+                  expanded={isOpen(entry.participant_name)}
+                  onToggle={() => toggleItemDetails(entry.participant_name)}
+                  header={
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-center justify-center min-w-[50px]">
                         <div className="text-lg font-bold text-tdf-text-primary">#{rank}</div>
@@ -253,64 +332,28 @@ function Poule() {
                         )}
                       </div>
                     </div>
-                  </div>
-
-                  {expandedItem === entry.participant_name && (
-                    <div className="px-3 pb-3 bg-tdf-bg border-t border-gray-200">
-                      <div className="pt-3">
-                        <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Renner</h3>
-                        <StageContributions entry={entry} />
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  }
+                >
+                  <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Renner</h3>
+                  <StageContributions entry={entry} />
+                </ExpandableCard>
               );
             })}
           </div>
 
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Positie</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Deelnemer</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Directie</th>
-                  <th className="px-4 py-4 text-right text-sm font-semibold text-gray-600">Etappe Punten</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(filteredResults as LeaderboardEntry[]).map((entry, idx) => {
-                  const rank = stageRankMap.get(entry.participant_name) ?? entry.stage_rank;
-
-                  return (
-                    <React.Fragment key={entry.participant_name}>
-                      <tr
-                        className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
-                        onClick={() => toggleItemDetails(entry.participant_name)}
-                      >
-                        <td className="px-4 py-3 text-sm font-medium">
-                          {rank} <MedalIcon position={rank} className="ml-1" />
-                        </td>
-                        <td className="px-4 py-3 text-sm">{entry.participant_name}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{entry.directie_name}</td>
-                        <td className="px-4 py-3 text-sm text-right font-semibold">{entry.stage_score}</td>
-                      </tr>
-                      {expandedItem === entry.participant_name && (
-                        <tr className="bg-gray-100">
-                          <td colSpan={4} className="px-4 py-4">
-                            <div className="ml-8 max-w-md">
-                              <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Renner</h3>
-                              <StageContributions entry={entry} />
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <StandingsTable
+            columns={stageColumns}
+            rows={filteredResults as LeaderboardEntry[]}
+            getRowKey={(e) => e.participant_name}
+            onRowClick={(e) => toggleItemDetails(e.participant_name)}
+            isRowExpanded={(e) => isOpen(e.participant_name)}
+            renderExpanded={(entry) => (
+              <div className="ml-8 max-w-md">
+                <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Renner</h3>
+                <StageContributions entry={entry} />
+              </div>
+            )}
+          />
         </main>
       )}
 
@@ -321,107 +364,51 @@ function Poule() {
             {(filteredResults as LeaderboardEntry[]).map((entry) => {
               const medals = medalsByParticipant.get(entry.participant_name) ?? NO_MEDALS;
               const rank = overallRankMap.get(entry.participant_name) ?? entry.overall_rank;
-
               return (
-                <div key={entry.participant_name} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <div
-                    onClick={() => toggleItemDetails(entry.participant_name)}
-                    className="p-3 cursor-pointer active:bg-tdf-bg"
-                  >
+                <ExpandableCard
+                  key={entry.participant_name}
+                  expanded={isOpen(entry.participant_name)}
+                  onToggle={() => toggleItemDetails(entry.participant_name)}
+                  header={
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-center justify-center min-w-[50px]">
                         <div className="text-lg font-bold text-tdf-text-primary">#{rank}</div>
                         {/* rank_change is based on dense server ranks; tie display may differ by design */}
                         <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="font-bold text-sm text-tdf-text-primary truncate">{entry.participant_name}</div>
                         <div className="text-xs text-tdf-text-secondary truncate">{entry.directie_name}</div>
                       </div>
-                      
+
                       <div className="text-right">
                         <div className="text-lg font-bold text-tdf-primary">{entry.overall_score}</div>
                         {medals.display && <div className="text-sm leading-none mt-0.5">{medals.display}</div>}
                       </div>
                     </div>
-                  </div>
-
-                  {expandedItem === entry.participant_name && (
-                    <div className="px-3 pb-3 bg-tdf-bg border-t border-gray-200">
-                      <div className="pt-3">
-                        <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Etappe</h3>
-                        {getParticipantStages(leaderboardsData, entry.participant_name).map((stage) => (
-                          <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
-                            <span className="text-sm text-gray-700">Etappe {stage.stageNum}:</span>
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs text-tdf-text-secondary">#{stage.stage_rank}</span>
-                              <span className="text-sm font-bold">{stage.stage_score}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  }
+                >
+                  <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Etappe</h3>
+                  {participantStageList(entry.participant_name)}
+                </ExpandableCard>
               );
             })}
           </div>
 
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Positie</th>
-                  <th className="px-4 py-4 text-center text-sm font-semibold text-gray-600">+/-</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Deelnemer</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Directie</th>
-                  <th className="px-4 py-4 text-right text-sm font-semibold text-gray-600">Totaal Punten</th>
-                  <th className="px-4 py-4 text-center text-sm font-semibold text-gray-600">Etappe Medailles</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(filteredResults as LeaderboardEntry[]).map((entry, idx) => {
-                  const medals = medalsByParticipant.get(entry.participant_name) ?? NO_MEDALS;
-                  const rank = overallRankMap.get(entry.participant_name) ?? entry.overall_rank;
-
-                  return (
-                    <React.Fragment key={entry.participant_name}>
-                      <tr
-                        className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
-                        onClick={() => toggleItemDetails(entry.participant_name)}
-                      >
-                        <td className="px-4 py-3 text-sm font-medium">{rank}</td>
-                        <td className="px-4 py-3 text-sm text-center"><RankChange change={entry.overall_rank_change} /></td>
-                        <td className="px-4 py-3 text-sm">{entry.participant_name}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{entry.directie_name}</td>
-                        <td className="px-4 py-3 text-sm text-right font-semibold">{entry.overall_score}</td>
-                        <td className="px-4 py-3 text-sm text-center">{medals.display || '—'}</td>
-                      </tr>
-                      {expandedItem === entry.participant_name && (
-                        <tr className="bg-gray-100">
-                          <td colSpan={6} className="px-4 py-4">
-                            <div className="ml-8 max-w-md">
-                              <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Etappe</h3>
-                              {getParticipantStages(leaderboardsData, entry.participant_name).map((stage) => (
-                                <div key={stage.stageKey} className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
-                                  <span className="text-sm text-gray-600">Etappe {stage.stageNum}:</span>
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-xs text-tdf-text-secondary">#{stage.stage_rank}</span>
-                                    <span className="text-sm font-bold">{stage.stage_score}</span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <StandingsTable
+            columns={standingsColumns}
+            rows={filteredResults as LeaderboardEntry[]}
+            getRowKey={(e) => e.participant_name}
+            onRowClick={(e) => toggleItemDetails(e.participant_name)}
+            isRowExpanded={(e) => isOpen(e.participant_name)}
+            renderExpanded={(entry) => (
+              <div className="ml-8 max-w-md">
+                <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Etappe</h3>
+                {participantStageList(entry.participant_name)}
+              </div>
+            )}
+          />
         </main>
       )}
 
@@ -434,97 +421,67 @@ function Poule() {
 
           <div className="block lg:hidden space-y-2">
             {(filteredResults as DirectieEntry[]).map((entry) => (
-              <div key={entry.directie_name} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div
-                  onClick={() => toggleItemDetails(entry.directie_name)}
-                  className="p-3 cursor-pointer active:bg-tdf-bg"
-                >
+              <ExpandableCard
+                key={entry.directie_name}
+                expanded={isOpen(entry.directie_name)}
+                onToggle={() => toggleItemDetails(entry.directie_name)}
+                header={
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-center justify-center min-w-[50px]">
                       <div className="text-lg font-bold text-tdf-text-primary">#{directieOverallRankMap.get(entry.directie_name) ?? entry.overall_rank}</div>
                       <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-sm text-tdf-text-primary truncate">{entry.directie_name}</div>
                     </div>
-                    
+
                     <div className="text-right min-w-[60px]">
                       <div className="text-lg font-bold text-tdf-primary">{entry.overall_score.toFixed(1)}</div>
                     </div>
                   </div>
-                </div>
-
-                {expandedItem === entry.directie_name && (
-                  <div className="px-3 pb-3 bg-tdf-bg border-t border-gray-200">
-                    <div className="pt-3">
-                      <h3 className="text-xs font-semibold mb-2 text-gray-600">Totale Bijdragen per Deelnemer</h3>
-                      {entry.overall_participant_contributions.map((participant, pidx) => (
-                        <div key={participant.participant_name} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-xs font-semibold text-tdf-text-secondary">#{pidx + 1}</span>
-                            <span className="text-sm text-gray-700 truncate">{participant.participant_name}</span>
-                          </div>
-                          <span className="text-sm font-bold text-tdf-text-primary">{participant.overall_score}</span>
-                        </div>
-                      ))}
+                }
+              >
+                <h3 className="text-xs font-semibold mb-2 text-gray-600">Totale Bijdragen per Deelnemer</h3>
+                {entry.overall_participant_contributions.map((participant, pidx) => (
+                  <div key={participant.participant_name} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="text-xs font-semibold text-tdf-text-secondary">#{pidx + 1}</span>
+                      <span className="text-sm text-gray-700 truncate">{participant.participant_name}</span>
                     </div>
+                    <span className="text-sm font-bold text-tdf-text-primary">{participant.overall_score}</span>
                   </div>
-                )}
-              </div>
+                ))}
+              </ExpandableCard>
             ))}
           </div>
 
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Positie</th>
-                  <th className="px-4 py-4 text-center text-sm font-semibold text-gray-600">+/-</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-600">Directie</th>
-                  <th className="px-4 py-4 text-right text-sm font-semibold text-gray-600">Totaal Punten</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(filteredResults as DirectieEntry[]).map((entry, idx) => (
-                  <React.Fragment key={entry.directie_name}>
-                    <tr
-                      className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
-                      onClick={() => toggleItemDetails(entry.directie_name)}
+          <StandingsTable
+            columns={directieColumns}
+            rows={filteredResults as DirectieEntry[]}
+            getRowKey={(e) => e.directie_name}
+            onRowClick={(e) => toggleItemDetails(e.directie_name)}
+            isRowExpanded={(e) => isOpen(e.directie_name)}
+            renderExpanded={(entry) => (
+              <div className="ml-8 max-w-2xl">
+                <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Totale Bijdragen per Deelnemer</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {entry.overall_participant_contributions.map((participant, pidx) => (
+                    <div
+                      key={participant.participant_name}
+                      className="flex justify-between items-center py-2 px-3 rounded hover:bg-gray-200"
                     >
-                      <td className="px-4 py-3 text-sm font-medium">{directieOverallRankMap.get(entry.directie_name) ?? entry.overall_rank}</td>
-                      <td className="px-4 py-3 text-sm text-center"><RankChange change={entry.overall_rank_change} /></td>
-                      <td className="px-4 py-3 text-sm font-medium">{entry.directie_name}</td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold">{entry.overall_score.toFixed(1)}</td>
-                    </tr>
-                    {expandedItem === entry.directie_name && (
-                      <tr className="bg-gray-100">
-                        <td colSpan={4} className="px-4 py-4">
-                          <div className="ml-8 max-w-2xl">
-                            <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Totale Bijdragen per Deelnemer</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                              {entry.overall_participant_contributions.map((participant, pidx) => (
-                                <div
-                                  key={participant.participant_name}
-                                  className="flex justify-between items-center py-2 px-3 rounded hover:bg-gray-200"
-                                >
-                                  <span className="text-sm flex items-center gap-2 text-gray-600">
-                                    <span className="text-xs font-semibold w-5 text-gray-400">#{pidx + 1}</span>
-                                    {participant.participant_name}
-                                  </span>
-                                  <span className="text-sm font-bold">{participant.overall_score}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      <span className="text-sm flex items-center gap-2 text-gray-600">
+                        <span className="text-xs font-semibold w-5 text-gray-400">#{pidx + 1}</span>
+                        {participant.participant_name}
+                      </span>
+                      <span className="text-sm font-bold">{participant.overall_score}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          />
         </main>
       )}
 

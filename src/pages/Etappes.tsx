@@ -12,6 +12,7 @@ import { useState, useMemo } from 'react';
 import { useMetadata, useStagesData, useRiders } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { LoadingState, ErrorState } from '../components/StatusStates';
+import { StandingsTable, type Column } from '../components/shared/StandingsTable';
 import { MedalIcon } from '../components/shared/MedalDisplay';
 import { CombativityIcon } from '../components/shared/CombativityIcon';
 import { DagploegIcon } from '../components/shared/DagploegIcon';
@@ -214,6 +215,52 @@ function Etappes() {
     </>
   );
 
+  const columns: Column<ResultRow>[] = [
+    {
+      key: 'pos',
+      header: 'Positie',
+      cellClassName: 'font-medium',
+      render: (r) => (
+        <span className={r.position === null ? 'text-tdf-text-muted' : ''}>
+          {r.position ?? '>20'}
+          {r.position !== null && <MedalIcon position={r.position} className="ml-1" />}
+        </span>
+      ),
+    },
+    {
+      key: 'renner',
+      header: 'Renner',
+      render: (r) => (
+        <div className="flex items-center gap-2">
+          <span>{r.name}</span>
+          <RowIcons name={r.name} size={20} />
+        </div>
+      ),
+    },
+    {
+      key: 'team',
+      header: 'Team',
+      cellClassName: 'text-tdf-text-secondary',
+      render: (r) => teamOf(r.name),
+    },
+    ...(hasTimeGaps
+      ? [{
+          key: 'tijd',
+          header: 'Tijd',
+          align: 'right' as const,
+          cellClassName: 'text-tdf-text-secondary',
+          render: (r: ResultRow) => r.timeGap ?? '',
+        }]
+      : []),
+    {
+      key: 'punten',
+      header: 'Punten',
+      align: 'right',
+      cellClassName: 'font-semibold text-tdf-score',
+      render: (r) => pointsOf(r.name),
+    },
+  ];
+
   return (
     <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
       <header className="mb-6 sm:mb-12 text-center">
@@ -265,44 +312,7 @@ function Etappes() {
           </div>
 
           {/* Desktop table */}
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-table-header">
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-tdf-text-highlight">Positie</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-tdf-text-highlight">Renner</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-tdf-text-highlight">Team</th>
-                  {hasTimeGaps && (
-                    <th className="px-4 py-4 text-right text-sm font-semibold text-tdf-text-highlight">Tijd</th>
-                  )}
-                  <th className="px-4 py-4 text-right text-sm font-semibold text-tdf-text-highlight">Punten</th>
-                </tr>
-              </thead>
-              <tbody>
-                {resultRows.map((r, idx) => (
-                  <tr key={r.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}>
-                    <td className={`px-4 py-3 text-sm font-medium ${r.position === null ? 'text-tdf-text-muted' : ''}`}>
-                      {r.position ?? '>20'}
-                      {r.position !== null && <MedalIcon position={r.position} className="ml-1" />}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <span>{r.name}</span>
-                        <RowIcons name={r.name} size={20} />
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-tdf-text-secondary">{teamOf(r.name)}</td>
-                    {hasTimeGaps && (
-                      <td className="px-4 py-3 text-sm text-right text-tdf-text-secondary">{r.timeGap ?? ''}</td>
-                    )}
-                    <td className="px-4 py-3 text-sm text-right font-semibold text-tdf-score">
-                      {pointsOf(r.name)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <StandingsTable columns={columns} rows={resultRows} getRowKey={(r) => r.key} />
 
           {hasDropouts && (
             <p className="mt-6 text-xs sm:text-sm text-tdf-text-muted">
