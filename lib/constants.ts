@@ -32,6 +32,7 @@ export const JERSEY_LABELS = {
 export const LABELS = {
   // Pages
   KLASSEMENT: 'Klassement',
+  ETAPPES: 'Etappes',
   RENNER_PUNTEN: 'Renner Punten',
   TEAM_SELECTIE: 'Team Selecties',
   ETAPPE_BEHEER: 'Etappe Beheer',

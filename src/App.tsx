@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import HomePage from './pages/Klassement';
+import Etappes from './pages/Etappes';
 import RennerPunten from './pages/RennerPunten';
 import TeamSelectie from './pages/TeamSelectie';
 import OverDezePoule from './pages/OverDezePoule';
@@ -10,6 +11,7 @@ import EtappeBeheer from './pages/EtappeBeheer';
 // achter login; bewust niet in de publieke navigatie)
 const navItems = [
   { path: '/Klassement', label: 'Klassement' },
+  { path: '/Etappes', label: 'Etappes' },
   { path: '/RennerPunten', label: 'Renner Punten' },
   { path: '/TeamSelectie', label: 'Team Selectie' },
   { path: '/OverDezePoule', label: 'Over deze Poule' },
@@ -96,6 +98,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/Klassement" element={<HomePage />} />
+          <Route path="/Etappes" element={<Etappes />} />
           <Route path="/RennerPunten" element={<RennerPunten />} />
           <Route path="/TeamSelectie" element={<TeamSelectie />} />
           <Route path="/EtappeBeheer" element={<EtappeBeheer />} />

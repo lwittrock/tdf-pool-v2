@@ -219,7 +219,26 @@ Routes go lowercase; old PascalCase routes redirect (`/Klassement`→`/poule`,
 
 ---
 
-## 1. New page: Etappes (public stage results) — ✅ Decided
+## 1. New page: Etappes (public stage results) — ✅ Built (July 15)
+
+**Status: implemented** at `src/pages/Etappes.tsx`, route `/Etappes`, nav item
+between Klassement and Renner Punten. v1 ships: stage chip selector (1–21,
+completed selectable / future muted, default = current stage), stage header
+card, jersey/strijdlust/dagploeg strip, results table + mobile cards with a
+points column, "Overige puntenscoorders", DNF/DNS line, and a cross-link to the
+Poule Dag tab. Built on the shared components (LoadingState/ErrorState,
+MedalIcon, CombativityIcon, usePageTitle).
+
+**Data note (important):** the deployed `rider_rankings` snapshot only contains
+the *current* stage's rankings, so per-stage points must come from the `riders`
+snapshot (which keeps every rider's full per-stage breakdown) — the page joins
+points via `ridersData[name].stages[stage_N].stage_total`, not `rider_rankings`.
+Also: several early stages have null date/route/distance metadata, so the header
+card renders sparse for them until the beheer data is backfilled.
+
+Original design notes retained below.
+
+
 
 The biggest addition. A public, read-only page showing the race itself — per-stage
 information and results — separate from the beheer entry screens and from the
