@@ -21,6 +21,7 @@
     "merge:riders": "tsx scripts/merge-riders.ts",
     "process:stages": "tsx scripts/process-stages.ts",
     "apply:stage-schedule": "tsx scripts/apply-stage-schedule.ts",
+    "normalize:directies": "tsx scripts/normalize-directies.ts",
     "verify:standings": "tsx scripts/verify-standings.ts",
     "rebuild": "tsx scripts/rebuild.ts"
   },
