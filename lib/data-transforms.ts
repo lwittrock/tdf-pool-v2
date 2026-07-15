@@ -7,12 +7,10 @@
 
 import type {
   RiderData,
-  RiderStageData,
   RidersData,
   StageInfo,
   MedalCounts,
   LeaderboardsData,
-  LeaderboardEntry,
 } from './types';
 import { MEDAL_POSITIONS, formatMedalDisplay } from './scoring-constants.js';
 
@@ -69,21 +67,6 @@ export function getRiderStagesFromData(rider: RiderData): StageInfo[] {
 // ============================================================================
 
 /**
- * Extract which jerseys a rider earned in a stage
- */
-export function getStageJerseys(stageData: RiderStageData | undefined): string[] {
-  if (!stageData?.jersey_points) return [];
-
-  const jerseys: string[] = [];
-  if (stageData.jersey_points.yellow > 0) jerseys.push('yellow');
-  if (stageData.jersey_points.green > 0) jerseys.push('green');
-  if (stageData.jersey_points.polka_dot > 0) jerseys.push('polka_dot');
-  if (stageData.jersey_points.white > 0) jerseys.push('white');
-
-  return jerseys;
-}
-
-/**
  * Get stage awards (jerseys + combativity)
  */
 export function getStageAwards(stage: StageInfo): {
@@ -132,25 +115,6 @@ export function calculateMedalsFromPositions(positions: number[]): MedalCounts {
     bronze,
     display: formatMedalDisplay(gold, silver, bronze),
   };
-}
-
-/**
- * Calculate medal counts for a rider based on stage finishes
- */
-export function getRiderMedals(
-  ridersData: RidersData,
-  riderName: string
-): MedalCounts {
-  const rider = ridersData[riderName];
-  if (!rider?.stages) {
-    return { gold: 0, silver: 0, bronze: 0, display: '' };
-  }
-
-  const positions = Object.values(rider.stages).map(
-    (stageData) => stageData.stage_finish_position
-  );
-
-  return calculateMedalsFromPositions(positions);
 }
 
 /**
@@ -232,18 +196,6 @@ export function createRiderRankMap(ridersData: RidersData): Record<string, numbe
   return rankMap;
 }
 
-/**
- * Check if rider is in top N
- */
-export function isTopRider(
-  riderName: string,
-  rankMap: Record<string, number>,
-  threshold: number = 10
-): boolean {
-  const rank = rankMap[riderName];
-  return rank !== undefined && rank <= threshold;
-}
-
 // ============================================================================
 // Selection Statistics
 // ============================================================================
@@ -284,47 +236,4 @@ export function calculateSelectionPercentage(
  */
 export function matchesSearch(text: string, searchTerm: string): boolean {
   return text.toLowerCase().includes(searchTerm.toLowerCase().trim());
-}
-
-/**
- * Filter leaderboard entries by search term
- */
-export function filterLeaderboardEntries(
-  entries: LeaderboardEntry[],
-  searchTerm: string
-): LeaderboardEntry[] {
-  const search = searchTerm.toLowerCase().trim();
-  if (!search) return entries;
-
-  return entries.filter(
-    (entry) =>
-      entry.participant_name.toLowerCase().includes(search) ||
-      entry.directie_name.toLowerCase().includes(search)
-  );
-}
-
-// ============================================================================
-// Formatting Utilities
-// ============================================================================
-
-/**
- * Format date string (if needed in future)
- */
-export function formatDate(dateString: string): string {
-  // For now just return as-is, but allows for future formatting
-  return dateString;
-}
-
-/**
- * Format stage key to stage number
- */
-export function stageKeyToNumber(stageKey: string): number {
-  return parseInt(stageKey.replace('stage_', ''));
-}
-
-/**
- * Format stage number to stage key
- */
-export function stageNumberToKey(stageNumber: number): string {
-  return `stage_${stageNumber}`;
 }
