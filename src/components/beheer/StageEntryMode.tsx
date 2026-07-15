@@ -76,11 +76,6 @@ export function StageEntryMode({
           tot de invoerder ze gezien heeft (fact 5) */}
       {submitResult && (
         <div className="mb-4 space-y-3">
-          <div className="p-4 bg-blue-50 text-blue-800 rounded-lg text-sm">
-            Opgeslagen en verwerkt — de site is binnen ±2 minuten bijgewerkt.
-            Winnende ploeg (team van de etappewinnaar):{' '}
-            <strong>{submitResult.winning_team}</strong>
-          </div>
           {submitResult.warnings.length > 0 && (
             <div className="p-4 bg-orange-100 text-orange-800 rounded-lg text-sm">
               <div className="font-semibold mb-1">Let op (niet blokkerend — de etappe is opgeslagen):</div>
