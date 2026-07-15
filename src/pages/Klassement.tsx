@@ -5,7 +5,9 @@
 import React, { useState, useMemo } from 'react'
 import { useMetadata, useLeaderboards } from '../hooks/useTdfData';
 import { RankChange } from '../components/shared/RankChange';
-import { getParticipantMedals, getParticipantStages } from '../../lib/data-transforms';
+import { MedalIcon } from '../components/shared/MedalDisplay';
+import { competitionRankMap, getAllParticipantMedals, getParticipantStages } from '../../lib/data-transforms';
+import type { MedalCounts } from '../../lib/types';
 
 interface LeaderboardEntry {
   participant_name: string;
@@ -31,6 +33,47 @@ interface DirectieEntry {
 
 type ViewType = 'stage_individual' | 'standings_individual' | 'standings_directie';
 
+const NO_MEDALS: MedalCounts = { gold: 0, silver: 0, bronze: 0, display: '' };
+
+/**
+ * Single-stage breakdown for one participant: rider contributions plus the
+ * Dagploeg bonus — the +6 sits in stage_score but not in
+ * stage_rider_contributions, so it gets its own line or the breakdown would
+ * not sum to the shown total.
+ */
+function StageContributions({ entry }: { entry: LeaderboardEntry }) {
+  const contributions = Object.entries(entry.stage_rider_contributions ?? {})
+    .map(([riderName, points]) => ({ riderName, points: points ?? 0 }))
+    .sort((a, b) => b.points - a.points);
+  const contribSum = contributions.reduce((sum, c) => sum + c.points, 0);
+  const ploegBonus = entry.stage_score - contribSum;
+
+  if (contributions.length === 0 && ploegBonus <= 0) {
+    return <div className="text-sm text-gray-500 py-1 px-2">Geen punten in deze etappe</div>;
+  }
+
+  return (
+    <>
+      {contributions.map((c) => (
+        <div key={c.riderName} className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
+          <span className="text-sm text-gray-600">{c.riderName}</span>
+          <span className="text-sm font-bold">{c.points}</span>
+        </div>
+      ))}
+      {ploegBonus > 0 && (
+        <div className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
+          <span className="text-sm text-gray-600">Ploegenbonus</span>
+          <span className="text-sm font-bold">{ploegBonus}</span>
+        </div>
+      )}
+      <div className="flex justify-between py-1 px-2 mt-1 border-t border-gray-300">
+        <span className="text-sm font-semibold text-gray-700">Totaal</span>
+        <span className="text-sm font-bold">{entry.stage_score}</span>
+      </div>
+    </>
+  );
+}
+
 function HomePage() {
   const [activeView, setActiveView] = useState<ViewType>('standings_individual');
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,13 +98,33 @@ function HomePage() {
     return leaderboardsData.directie_leaderboard_by_stage[currentStageKey] || [];
   }, [metadata, leaderboardsData]);
 
+  // Tie-aware display ranks (competition ranking: 1,2,2,4), derived from the
+  // FULL lists so search filtering never renumbers. Server ranks in the
+  // snapshot stay dense and keep feeding the rank_change arrows.
+  const stageRankMap = useMemo(
+    () => competitionRankMap(currentLeaderboard, (e) => e.stage_score, (e) => e.participant_name),
+    [currentLeaderboard]
+  );
+  const overallRankMap = useMemo(
+    () => competitionRankMap(currentLeaderboard, (e) => e.overall_score, (e) => e.participant_name),
+    [currentLeaderboard]
+  );
+  const directieOverallRankMap = useMemo(
+    () => competitionRankMap(currentDirectieLeaderboard, (e) => e.overall_score, (e) => e.directie_name),
+    [currentDirectieLeaderboard]
+  );
+  const medalsByParticipant = useMemo(
+    () => (leaderboardsData ? getAllParticipantMedals(leaderboardsData) : new Map<string, MedalCounts>()),
+    [leaderboardsData]
+  );
+
   // Filter and sort results
   const filteredResults = useMemo(() => {
     const searchLower = searchTerm.toLowerCase().trim();
     
     // Get the base data for each view (sorted by rank)
     if (activeView === 'standings_individual') {
-      const baseData = [...currentLeaderboard].sort((a, b) => a.overall_rank - b.overall_rank);
+      const baseData = [...currentLeaderboard].sort((a, b) => b.overall_score - a.overall_score);
       
       if (!searchLower) return baseData;
       
@@ -70,7 +133,7 @@ function HomePage() {
         p.directie_name.toLowerCase().includes(searchLower)
       );
     } else if (activeView === 'stage_individual') {
-      const baseData = [...currentLeaderboard].sort((a, b) => a.stage_rank - b.stage_rank);
+      const baseData = [...currentLeaderboard].sort((a, b) => b.stage_score - a.stage_score);
       
       if (!searchLower) return baseData;
       
@@ -79,7 +142,7 @@ function HomePage() {
         p.directie_name.toLowerCase().includes(searchLower)
       );
     } else {
-      const baseData = [...currentDirectieLeaderboard].sort((a, b) => a.overall_rank - b.overall_rank);
+      const baseData = [...currentDirectieLeaderboard].sort((a, b) => b.overall_score - a.overall_score);
       
       if (!searchLower) return baseData;
       
@@ -128,6 +191,12 @@ function HomePage() {
     setExpandedItem(prev => prev === itemName ? null : itemName);
   };
 
+  // Names are the expansion keys in every view, so collapse when switching tabs.
+  const switchView = (view: ViewType) => {
+    setActiveView(view);
+    setExpandedItem(null);
+  };
+
   return (
     <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
       <header className="mb-6 sm:mb-12 text-center">
@@ -139,7 +208,7 @@ function HomePage() {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveView('standings_individual')}
+            onClick={() => switchView('standings_individual')}
             className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
               activeView === 'standings_individual'
                 ? 'bg-tdf-accent text-white border-2 border-yellow-500'
@@ -149,7 +218,7 @@ function HomePage() {
             Algemeen
           </button>
           <button
-            onClick={() => setActiveView('stage_individual')}
+            onClick={() => switchView('stage_individual')}
             className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
               activeView === 'stage_individual'
                 ? 'bg-tdf-accent text-white border-2 border-yellow-500'
@@ -159,7 +228,7 @@ function HomePage() {
             Etappe
           </button>
           <button
-            onClick={() => setActiveView('standings_directie')}
+            onClick={() => switchView('standings_directie')}
             className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
               activeView === 'standings_directie'
                 ? 'bg-tdf-accent text-white border-2 border-yellow-500'
@@ -187,24 +256,45 @@ function HomePage() {
           <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">Etappe {currentStageNum} Klassement</h2>
 
           <div className="block lg:hidden space-y-2">
-            {(filteredResults as LeaderboardEntry[]).map((entry) => (
-              <div key={entry.participant_name} className="bg-white rounded-lg shadow-md p-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col items-center justify-center min-w-[50px]">
-                    <div className="text-lg font-bold text-tdf-text-primary">#{entry.stage_rank}</div>
+            {(filteredResults as LeaderboardEntry[]).map((entry) => {
+              const rank = stageRankMap.get(entry.participant_name) ?? entry.stage_rank;
+
+              return (
+                <div key={entry.participant_name} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div
+                    onClick={() => toggleItemDetails(entry.participant_name)}
+                    className="p-3 cursor-pointer active:bg-tdf-bg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-center justify-center min-w-[50px]">
+                        <div className="text-lg font-bold text-tdf-text-primary">#{rank}</div>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-sm text-tdf-text-primary truncate">{entry.participant_name}</div>
+                        <div className="text-xs text-tdf-text-secondary truncate">{entry.directie_name}</div>
+                      </div>
+
+                      <div className="text-right min-w-[60px]">
+                        <div className="text-lg font-bold text-tdf-primary">{entry.stage_score}</div>
+                        {rank <= 3 && (
+                          <div className="text-sm leading-none mt-0.5"><MedalIcon position={rank} /></div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-sm text-tdf-text-primary truncate">{entry.participant_name}</div>
-                    <div className="text-xs text-tdf-text-secondary truncate">{entry.directie_name}</div>
-                  </div>
-                  
-                  <div className="text-right min-w-[60px]">
-                    <div className="text-lg font-bold text-tdf-primary">{entry.stage_score}</div>
-                  </div>
+
+                  {expandedItem === entry.participant_name && (
+                    <div className="px-3 pb-3 bg-tdf-bg border-t border-gray-200">
+                      <div className="pt-3">
+                        <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Renner</h3>
+                        <StageContributions entry={entry} />
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="hidden lg:block overflow-x-auto">
@@ -218,17 +308,35 @@ function HomePage() {
                 </tr>
               </thead>
               <tbody>
-                {(filteredResults as LeaderboardEntry[]).map((entry, idx) => (
-                  <tr
-                    key={entry.participant_name}
-                    className={`${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
-                  >
-                    <td className="px-4 py-3 text-sm font-medium">{entry.stage_rank}</td>
-                    <td className="px-4 py-3 text-sm">{entry.participant_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{entry.directie_name}</td>
-                    <td className="px-4 py-3 text-sm text-right font-semibold">{entry.stage_score}</td>
-                  </tr>
-                ))}
+                {(filteredResults as LeaderboardEntry[]).map((entry, idx) => {
+                  const rank = stageRankMap.get(entry.participant_name) ?? entry.stage_rank;
+
+                  return (
+                    <React.Fragment key={entry.participant_name}>
+                      <tr
+                        className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
+                        onClick={() => toggleItemDetails(entry.participant_name)}
+                      >
+                        <td className="px-4 py-3 text-sm font-medium">
+                          {rank} <MedalIcon position={rank} className="ml-1" />
+                        </td>
+                        <td className="px-4 py-3 text-sm">{entry.participant_name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{entry.directie_name}</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold">{entry.stage_score}</td>
+                      </tr>
+                      {expandedItem === entry.participant_name && (
+                        <tr className="bg-gray-100">
+                          <td colSpan={4} className="px-4 py-4">
+                            <div className="ml-8 max-w-md">
+                              <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Renner</h3>
+                              <StageContributions entry={entry} />
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -242,7 +350,8 @@ function HomePage() {
 
           <div className="block lg:hidden space-y-2">
             {(filteredResults as LeaderboardEntry[]).map((entry) => {
-              const medals = getParticipantMedals(leaderboardsData, entry.participant_name);
+              const medals = medalsByParticipant.get(entry.participant_name) ?? NO_MEDALS;
+              const rank = overallRankMap.get(entry.participant_name) ?? entry.overall_rank;
 
               return (
                 <div key={entry.participant_name} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -252,7 +361,8 @@ function HomePage() {
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-center justify-center min-w-[50px]">
-                        <div className="text-lg font-bold text-tdf-text-primary">#{entry.overall_rank}</div>
+                        <div className="text-lg font-bold text-tdf-text-primary">#{rank}</div>
+                        {/* rank_change is based on dense server ranks; tie display may differ by design */}
                         <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
                       </div>
                       
@@ -303,7 +413,8 @@ function HomePage() {
               </thead>
               <tbody>
                 {(filteredResults as LeaderboardEntry[]).map((entry, idx) => {
-                  const medals = getParticipantMedals(leaderboardsData, entry.participant_name);
+                  const medals = medalsByParticipant.get(entry.participant_name) ?? NO_MEDALS;
+                  const rank = overallRankMap.get(entry.participant_name) ?? entry.overall_rank;
 
                   return (
                     <React.Fragment key={entry.participant_name}>
@@ -311,7 +422,7 @@ function HomePage() {
                         className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
                         onClick={() => toggleItemDetails(entry.participant_name)}
                       >
-                        <td className="px-4 py-3 text-sm font-medium">{entry.overall_rank}</td>
+                        <td className="px-4 py-3 text-sm font-medium">{rank}</td>
                         <td className="px-4 py-3 text-sm text-center"><RankChange change={entry.overall_rank_change} /></td>
                         <td className="px-4 py-3 text-sm">{entry.participant_name}</td>
                         <td className="px-4 py-3 text-sm text-gray-600">{entry.directie_name}</td>
@@ -362,7 +473,7 @@ function HomePage() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-center justify-center min-w-[50px]">
-                      <div className="text-lg font-bold text-tdf-text-primary">#{entry.overall_rank}</div>
+                      <div className="text-lg font-bold text-tdf-text-primary">#{directieOverallRankMap.get(entry.directie_name) ?? entry.overall_rank}</div>
                       <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
                     </div>
                     
@@ -413,7 +524,7 @@ function HomePage() {
                       className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
                       onClick={() => toggleItemDetails(entry.directie_name)}
                     >
-                      <td className="px-4 py-3 text-sm font-medium">{entry.overall_rank}</td>
+                      <td className="px-4 py-3 text-sm font-medium">{directieOverallRankMap.get(entry.directie_name) ?? entry.overall_rank}</td>
                       <td className="px-4 py-3 text-sm text-center"><RankChange change={entry.overall_rank_change} /></td>
                       <td className="px-4 py-3 text-sm font-medium">{entry.directie_name}</td>
                       <td className="px-4 py-3 text-sm text-right font-semibold">{entry.overall_score.toFixed(1)}</td>

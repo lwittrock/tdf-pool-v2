@@ -118,22 +118,32 @@ export function calculateMedalsFromPositions(positions: number[]): MedalCounts {
 }
 
 /**
- * Calculate stage medal counts for a participant
+ * Tie-aware stage medal counts for ALL participants, computed once.
+ * Ranks are derived per stage from stage_score (competition ranking), so
+ * tied participants each earn the medal. Note: a tie for gold means the
+ * next rank is 3 — silver is skipped that stage, by 1,2,2,4 semantics.
  */
-export function getParticipantMedals(
-  leaderboardsData: LeaderboardsData,
-  participantName: string
-): MedalCounts {
-  const positions: number[] = [];
+export function getAllParticipantMedals(
+  leaderboardsData: LeaderboardsData
+): Map<string, MedalCounts> {
+  const counts = new Map<string, { gold: number; silver: number; bronze: number }>();
 
   Object.values(leaderboardsData.leaderboard_by_stage).forEach((stageData) => {
-    const entry = stageData.find((p) => p.participant_name === participantName);
-    if (entry) {
-      positions.push(entry.stage_rank);
-    }
+    assignCompetitionRanks(stageData, (e) => e.stage_score).forEach(({ item, rank }) => {
+      if (rank > MEDAL_POSITIONS.BRONZE) return;
+      const entry = counts.get(item.participant_name) ?? { gold: 0, silver: 0, bronze: 0 };
+      if (rank === MEDAL_POSITIONS.GOLD) entry.gold++;
+      else if (rank === MEDAL_POSITIONS.SILVER) entry.silver++;
+      else entry.bronze++;
+      counts.set(item.participant_name, entry);
+    });
   });
 
-  return calculateMedalsFromPositions(positions);
+  const medals = new Map<string, MedalCounts>();
+  counts.forEach(({ gold, silver, bronze }, name) => {
+    medals.set(name, { gold, silver, bronze, display: formatMedalDisplay(gold, silver, bronze) });
+  });
+  return medals;
 }
 
 // ============================================================================
@@ -141,7 +151,9 @@ export function getParticipantMedals(
 // ============================================================================
 
 /**
- * Get all stages for a participant with their scores
+ * Get all stages for a participant with their scores.
+ * stage_rank is the tie-aware competition rank derived from stage_score,
+ * not the dense server rank stored in the snapshot.
  */
 export function getParticipantStages(
   leaderboardsData: LeaderboardsData,
@@ -161,13 +173,14 @@ export function getParticipantStages(
 
   Object.entries(leaderboardsData.leaderboard_by_stage).forEach(
     ([stageKey, stageData]) => {
-      const entry = stageData.find((p) => p.participant_name === participantName);
-      if (entry) {
+      const ranked = assignCompetitionRanks(stageData, (e) => e.stage_score);
+      const found = ranked.find(({ item }) => item.participant_name === participantName);
+      if (found) {
         stages.push({
           stageNum: parseInt(stageKey.replace('stage_', '')),
           stageKey,
-          stage_score: entry.stage_score,
-          stage_rank: entry.stage_rank,
+          stage_score: found.item.stage_score,
+          stage_rank: found.rank,
         });
       }
     }
@@ -179,6 +192,41 @@ export function getParticipantStages(
 // ============================================================================
 // Ranking Utilities
 // ============================================================================
+
+/**
+ * Standard competition ranking ("1224"): stable sort by score desc; equal
+ * scores share a rank; the next distinct score skips ranks. Client-side
+ * display only — snapshots keep their dense server ranks.
+ */
+export function assignCompetitionRanks<T>(
+  items: readonly T[],
+  getScore: (item: T) => number
+): Array<{ item: T; rank: number }> {
+  const sorted = [...items].sort((a, b) => getScore(b) - getScore(a));
+  let prevScore = Number.NaN;
+  let prevRank = 0;
+  return sorted.map((item, idx) => {
+    const score = getScore(item);
+    const rank = score === prevScore ? prevRank : idx + 1;
+    prevScore = score;
+    prevRank = rank;
+    return { item, rank };
+  });
+}
+
+/**
+ * Key → competition rank, derived from the FULL list (build before any
+ * search filtering so filtering never renumbers).
+ */
+export function competitionRankMap<T>(
+  items: readonly T[],
+  getScore: (item: T) => number,
+  getKey: (item: T) => string
+): Map<string, number> {
+  return new Map(
+    assignCompetitionRanks(items, getScore).map(({ item, rank }) => [getKey(item), rank])
+  );
+}
 
 /**
  * Create overall rank map for riders

@@ -4,10 +4,10 @@
 
 import React, { useState, useMemo } from 'react';
 import { useMetadata, useRiders, useRiderRankings } from '../hooks/useTdfData';
-import { getRiderStagesFromData } from '../../lib/data-transforms';
-import { JERSEY_ICONS } from '../../lib/constants';
+import { competitionRankMap, getRiderStagesFromData } from '../../lib/data-transforms';
+import { JERSEY_ICONS, JERSEY_LABELS } from '../../lib/constants';
 import { MEDALS } from '../../lib/scoring-constants';
-import type { RidersData, RiderData, RiderStageData, StageInfo } from '../../lib/types';
+import type { RidersData, RiderData, RiderRankingsStageEntry, RiderStageData, StageInfo } from '../../lib/types';
 
 // Combative Icon Component
 interface CombativeIconProps {
@@ -45,6 +45,55 @@ const CombativeIcon = ({ size = 'sm' }: CombativeIconProps) => {
 
 type ViewType = 'stage' | 'total' | 'team';
 
+/**
+ * Single-stage points composition for a rider: finish points plus jersey and
+ * combativity points, summing to stage_points.
+ */
+function StagePointsBreakdown({ rider }: { rider: RiderRankingsStageEntry }) {
+  const jp = rider.jersey_points;
+  const jerseyRows = (['yellow', 'green', 'polka_dot', 'white'] as const)
+    .filter((jersey) => (jp?.[jersey] ?? 0) > 0);
+  const combative = jp?.combative ?? 0;
+  const hasRows = rider.stage_finish_points > 0 || jerseyRows.length > 0 || combative > 0;
+
+  if (!hasRows) {
+    return <div className="text-sm text-gray-500 py-1 px-2">Geen punten in deze etappe</div>;
+  }
+
+  return (
+    <>
+      {rider.stage_finish_points > 0 && (
+        <div className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
+          <span className="text-sm text-gray-600">Aankomst (#{rider.stage_finish_position})</span>
+          <span className="text-sm font-bold">{rider.stage_finish_points}</span>
+        </div>
+      )}
+      {jerseyRows.map((jersey) => (
+        <div key={jersey} className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
+          <span className="text-sm text-gray-600 flex items-center gap-2">
+            <img src={JERSEY_ICONS[jersey]} alt={`${jersey} jersey`} className="w-4 h-4" />
+            {JERSEY_LABELS[jersey]}
+          </span>
+          <span className="text-sm font-bold">{jp[jersey]}</span>
+        </div>
+      ))}
+      {combative > 0 && (
+        <div className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
+          <span className="text-sm text-gray-600 flex items-center gap-2">
+            <CombativeIcon size="sm" />
+            Strijdlust
+          </span>
+          <span className="text-sm font-bold">{combative}</span>
+        </div>
+      )}
+      <div className="flex justify-between py-1 px-2 mt-1 border-t border-gray-300">
+        <span className="text-sm font-semibold text-gray-700">Totaal</span>
+        <span className="text-sm font-bold">{rider.stage_points}</span>
+      </div>
+    </>
+  );
+}
+
 function RennerPunten() {
   const [activeView, setActiveView] = useState<ViewType>('total');
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,6 +126,18 @@ function RennerPunten() {
     return riderRankings?.total_rankings || [];
   }, [riderRankings]);
 
+  // Tie-aware display ranks (competition ranking: 1,2,2,4), derived from the
+  // FULL lists so search filtering never renumbers. The dense server ranks in
+  // the snapshot are only used as fallback.
+  const stageDisplayRanks = useMemo(
+    () => competitionRankMap(stageRankings, (r) => r.stage_points, (r) => r.name),
+    [stageRankings]
+  );
+  const totalDisplayRanks = useMemo(
+    () => competitionRankMap(totalRankings, (r) => r.total_points, (r) => r.name),
+    [totalRankings]
+  );
+
   // Filter based on search
   const filteredResults = useMemo(() => {
     const searchLower = searchTerm.toLowerCase().trim();
@@ -89,6 +150,12 @@ function RennerPunten() {
       rider.team.toLowerCase().includes(searchLower)
     );
   }, [activeView, searchTerm, stageRankings, totalRankings]);
+
+  // Rider names are the expansion keys in every view, so collapse when switching tabs.
+  const switchView = (view: ViewType) => {
+    setActiveView(view);
+    setExpandedRider(null);
+  };
 
   // Helper functions
   const renderMedal = (position: number) => {
@@ -168,7 +235,7 @@ function RennerPunten() {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveView('total')}
+            onClick={() => switchView('total')}
             className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
               activeView === 'total'
                 ? 'bg-tdf-accent text-white border-2 border-yellow-500'
@@ -178,7 +245,7 @@ function RennerPunten() {
             Algemeen
           </button>
           <button
-            onClick={() => setActiveView('stage')}
+            onClick={() => switchView('stage')}
             className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
               activeView === 'stage'
                 ? 'bg-tdf-accent text-white border-2 border-yellow-500'
@@ -188,7 +255,7 @@ function RennerPunten() {
             Etappe
           </button>
           <button
-            onClick={() => setActiveView('team')}
+            onClick={() => switchView('team')}
             className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
               activeView === 'team'
                 ? 'bg-tdf-accent text-white border-2 border-yellow-500'
@@ -222,41 +289,56 @@ function RennerPunten() {
           <div className="block lg:hidden space-y-2">
             {filteredResults.map((rider: any) => {
               const { jerseys, hasCombative } = getStageJerseys(rider);
-              
+              const rank = stageDisplayRanks.get(rider.name) ?? rider.stage_rank;
+
               return (
-                <div key={rider.name} className="bg-white rounded-lg shadow-md p-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex flex-col items-center justify-center min-w-[50px]">
-                      <div className="text-lg font-bold text-tdf-text-primary">#{rider.stage_rank}</div>
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <div className="font-bold text-sm text-tdf-text-primary truncate">{rider.name}</div>
-                        {(jerseys.length > 0 || hasCombative) && (
-                          <div className="flex gap-0.5 items-center">
-                            {jerseys.map(jersey => (
-                              <img 
-                                key={jersey}
-                                src={JERSEY_ICONS[jersey]}
-                                alt={`${jersey} jersey`}
-                                className="w-4 h-4"
-                              />
-                            ))}
-                            {hasCombative && <CombativeIcon size="md" />}
-                          </div>
-                        )}
+                <div key={rider.name} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div
+                    onClick={() => setExpandedRider(expandedRider === rider.name ? null : rider.name)}
+                    className="p-3 cursor-pointer active:bg-tdf-bg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-center justify-center min-w-[50px]">
+                        <div className="text-lg font-bold text-tdf-text-primary">#{rank}</div>
                       </div>
-                      <div className="text-xs text-tdf-text-secondary truncate">{rider.team}</div>
-                    </div>
-                    
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-tdf-primary">{rider.stage_points}</div>
-                      <div className="text-xs text-tdf-text-secondary">
-                        {rider.stage_finish_position > 0 && `#${rider.stage_finish_position} ${renderMedal(rider.stage_finish_position)}`}
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="font-bold text-sm text-tdf-text-primary truncate">{rider.name}</div>
+                          {(jerseys.length > 0 || hasCombative) && (
+                            <div className="flex gap-0.5 items-center">
+                              {jerseys.map(jersey => (
+                                <img
+                                  key={jersey}
+                                  src={JERSEY_ICONS[jersey]}
+                                  alt={`${jersey} jersey`}
+                                  className="w-4 h-4"
+                                />
+                              ))}
+                              {hasCombative && <CombativeIcon size="md" />}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-xs text-tdf-text-secondary truncate">{rider.team}</div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-tdf-primary">{rider.stage_points}</div>
+                        <div className="text-xs text-tdf-text-secondary">
+                          {rider.stage_finish_position > 0 && `#${rider.stage_finish_position} ${renderMedal(rider.stage_finish_position)}`}
+                        </div>
                       </div>
                     </div>
                   </div>
+
+                  {expandedRider === rider.name && (
+                    <div className="px-3 pb-3 bg-tdf-bg border-t border-gray-200">
+                      <div className="pt-3">
+                        <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten Opbouw</h3>
+                        <StagePointsBreakdown rider={rider} />
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -276,41 +358,54 @@ function RennerPunten() {
               <tbody>
                 {filteredResults.map((rider: any, idx: number) => {
                   const { jerseys, hasCombative } = getStageJerseys(rider);
-                  
+                  const rank = stageDisplayRanks.get(rider.name) ?? rider.stage_rank;
+
                   return (
-                    <tr
-                      key={rider.name}
-                      className={`${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
-                    >
-                      <td className="px-4 py-3 text-sm font-medium">{rider.stage_rank}</td>
-                      <td className="px-4 py-3 text-sm">
-                        <div className="flex items-center gap-2">
-                          <span>{rider.name}</span>
-                          {rider.stage_finish_position > 0 && (
-                            <span className="text-xs text-gray-500">
-                              (#{rider.stage_finish_position} {renderMedal(rider.stage_finish_position)})
-                            </span>
-                          )}
-                          {(jerseys.length > 0 || hasCombative) && (
-                            <div className="flex gap-1 items-center ml-2">
-                              {jerseys.map(jersey => (
-                                <img 
-                                  key={jersey}
-                                  src={JERSEY_ICONS[jersey]}
-                                  alt={`${jersey} jersey`}
-                                  className="w-5 h-5"
-                                />
-                              ))}
-                              {hasCombative && <CombativeIcon size="md" />}
+                    <React.Fragment key={rider.name}>
+                      <tr
+                        className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
+                        onClick={() => setExpandedRider(expandedRider === rider.name ? null : rider.name)}
+                      >
+                        <td className="px-4 py-3 text-sm font-medium">{rank}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span>{rider.name}</span>
+                            {rider.stage_finish_position > 0 && (
+                              <span className="text-xs text-gray-500">
+                                (#{rider.stage_finish_position} {renderMedal(rider.stage_finish_position)})
+                              </span>
+                            )}
+                            {(jerseys.length > 0 || hasCombative) && (
+                              <div className="flex gap-1 items-center ml-2">
+                                {jerseys.map(jersey => (
+                                  <img
+                                    key={jersey}
+                                    src={JERSEY_ICONS[jersey]}
+                                    alt={`${jersey} jersey`}
+                                    className="w-5 h-5"
+                                  />
+                                ))}
+                                {hasCombative && <CombativeIcon size="md" />}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{rider.team}</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold">
+                          {rider.stage_points}
+                        </td>
+                      </tr>
+                      {expandedRider === rider.name && (
+                        <tr className="bg-gray-100">
+                          <td colSpan={4} className="px-4 py-4">
+                            <div className="ml-8 max-w-md">
+                              <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten Opbouw</h3>
+                              <StagePointsBreakdown rider={rider} />
                             </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{rider.team}</td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold">
-                        {rider.stage_points}
-                      </td>
-                    </tr>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </tbody>
@@ -339,7 +434,7 @@ function RennerPunten() {
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-center justify-center min-w-[50px]">
-                        <div className="text-lg font-bold text-tdf-text-primary">#{rider.overall_rank}</div>
+                        <div className="text-lg font-bold text-tdf-text-primary">#{totalDisplayRanks.get(rider.name) ?? rider.overall_rank}</div>
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -417,7 +512,7 @@ function RennerPunten() {
                         className={`cursor-pointer hover:bg-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
                         onClick={() => setExpandedRider(expandedRider === rider.name ? null : rider.name)}
                       >
-                        <td className="px-4 py-3 text-sm font-medium">{rider.overall_rank}</td>
+                        <td className="px-4 py-3 text-sm font-medium">{totalDisplayRanks.get(rider.name) ?? rider.overall_rank}</td>
                         <td className="px-4 py-3 text-sm">{rider.name}</td>
                         <td className="px-4 py-3 text-sm text-gray-600">{rider.team}</td>
                         <td className="px-4 py-3 text-sm text-right font-semibold">{rider.total_points}</td>
