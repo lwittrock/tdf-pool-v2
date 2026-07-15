@@ -109,8 +109,10 @@ export function getPointsForJersey(
 }
 
 /**
- * Format medal counts into display string
- * @example formatMedalDisplay(2, 1, 3) => "🥇🥇 🥈 🥉🥉🥉"
+ * Format medal counts into a compact "emoji + count" display string. Counts
+ * are far easier to scan (and compare) than repeated emoji, especially when
+ * medals are the active sort key on /poule (7.4).
+ * @example formatMedalDisplay(2, 1, 3) => "🥇2 🥈1 🥉3"
  */
 export function formatMedalDisplay(
   gold: number,
@@ -118,9 +120,9 @@ export function formatMedalDisplay(
   bronze: number
 ): string {
   const parts: string[] = [];
-  if (gold > 0) parts.push(MEDALS.GOLD.repeat(gold));
-  if (silver > 0) parts.push(MEDALS.SILVER.repeat(silver));
-  if (bronze > 0) parts.push(MEDALS.BRONZE.repeat(bronze));
+  if (gold > 0) parts.push(`${MEDALS.GOLD}${gold}`);
+  if (silver > 0) parts.push(`${MEDALS.SILVER}${silver}`);
+  if (bronze > 0) parts.push(`${MEDALS.BRONZE}${bronze}`);
   return parts.join(' ');
 }
 

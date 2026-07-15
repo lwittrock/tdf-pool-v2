@@ -22,6 +22,7 @@
     "process:stages": "tsx scripts/process-stages.ts",
     "apply:stage-schedule": "tsx scripts/apply-stage-schedule.ts",
     "normalize:directies": "tsx scripts/normalize-directies.ts",
+    "republish": "tsx scripts/republish.ts",
     "verify:standings": "tsx scripts/verify-standings.ts",
     "rebuild": "tsx scripts/rebuild.ts"
   },
