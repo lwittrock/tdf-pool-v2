@@ -163,11 +163,11 @@ function Ploegen() {
 
         {/* Header */}
         {selectedParticipant ? (
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-heading">
             Ploeg van {selectedParticipant.name}
           </h2>
         ) : (
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-primary">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-tdf-heading">
             Rennerpopulariteit
           </h2>
         )}
