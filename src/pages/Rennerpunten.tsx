@@ -8,6 +8,7 @@ import { useMetadata, useRiders, useRiderRankings, useStagesData } from '../hook
 import { usePageTitle } from '../hooks/usePageTitle';
 import { SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
+import { FreshnessNote } from '../components/shared/FreshnessNote';
 import { RiderName } from '../components/shared/RiderName';
 import { abandonedRiderSet } from '../../lib/data-transforms';
 import { LoadingState, ErrorState } from '../components/StatusStates';
@@ -168,7 +169,7 @@ function Rennerpunten() {
     { key: 'team', header: 'Team', cellClassName: 'text-tdf-text-highlight', render: (r) => r.team },
     {
       key: 'punten',
-      header: 'Totaal Punten',
+      header: 'Punten',
       align: 'right',
       cellClassName: 'font-semibold',
       render: (r) => r.total_points,
@@ -182,7 +183,7 @@ function Rennerpunten() {
   ];
 
   return (
-    <Layout title="Rennerpunten" subtitle={`Na etappe ${metadata.current_stage}${lastUpdated ? ` (${lastUpdated})` : ''}`}>
+    <Layout title="Rennerpunten">
       {/* Search */}
       <div className="mb-6">
         <SearchInput
@@ -190,6 +191,7 @@ function Rennerpunten() {
           onChange={setSearchTerm}
           placeholder="Zoek renner of team..."
         />
+        <FreshnessNote stage={metadata.current_stage} lastUpdated={lastUpdated} className="mt-2" />
       </div>
 
       <main>

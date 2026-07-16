@@ -37,7 +37,7 @@ export function SearchInput({ value, onChange, placeholder = "Zoek..." }: Search
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3 pr-10 rounded-lg bg-white border-2 border-gray-300 text-tdf-text-primary focus:border-tdf-accent text-sm sm:text-base"
+        className="w-full px-4 py-3 pr-10 rounded-lg bg-white border-2 border-gray-300 text-tdf-text-primary focus:outline-none focus:border-tdf-accent text-sm sm:text-base"
       />
       {value && (
         <button

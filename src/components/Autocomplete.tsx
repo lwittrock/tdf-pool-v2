@@ -103,7 +103,7 @@ export function Autocomplete({ options, value, onChange, placeholder, disabled, 
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tdf-accent disabled:bg-gray-100 disabled:cursor-not-allowed"
+        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-tdf-accent disabled:bg-gray-100 disabled:cursor-not-allowed"
       />
       
       {isOpen && filteredOptions.length > 0 && (
@@ -213,7 +213,7 @@ export function MultiAutocomplete({ options, selectedValues, onChange, placehold
         }}
         onFocus={() => setIsOpen(true)}
         placeholder={placeholder}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tdf-accent"
+        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-tdf-accent"
       />
 
       {/* Dropdown */}

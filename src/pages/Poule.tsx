@@ -11,6 +11,7 @@ import { RankChange } from '../components/shared/RankChange';
 import { MedalIcon } from '../components/shared/MedalDisplay';
 import { TabButton, SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
+import { FreshnessNote } from '../components/shared/FreshnessNote';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { competitionRankMap, getAllParticipantMedals, getParticipantStages, formatLastUpdated } from '../../lib/data-transforms';
 import { LABELS } from '../../lib/constants';
@@ -238,7 +239,7 @@ function Poule() {
     { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
     {
       key: 'punten',
-      header: 'Etappe Punten',
+      header: 'Punten',
       align: 'right',
       cellClassName: 'font-semibold',
       render: (e) => e.stage_score,
@@ -312,7 +313,7 @@ function Poule() {
     { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
     {
       key: 'punten',
-      header: sortableHeader('points', 'Totaal Punten'),
+      header: sortableHeader('points', 'Punten'),
       align: 'right',
       cellClassName: 'font-semibold',
       render: (e) => e.overall_score,
@@ -336,7 +337,7 @@ function Poule() {
     { key: 'directie', header: 'Directie', cellClassName: 'font-medium', render: (e) => e.directie_name },
     {
       key: 'punten',
-      header: 'Totaal Punten',
+      header: 'Punten',
       align: 'right',
       cellClassName: 'font-semibold',
       render: (e) => e.overall_score.toFixed(1),
@@ -344,7 +345,7 @@ function Poule() {
   ];
 
   return (
-    <Layout title="Poule" subtitle={`Na etappe ${currentStageNum}${lastUpdated ? ` (${lastUpdated})` : ''}`}>
+    <Layout title="Poule">
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
           <TabButton active={activeView === 'stage_individual'} onClick={() => switchView('stage_individual')}>
@@ -359,6 +360,7 @@ function Poule() {
         </div>
 
         <SearchInput value={searchTerm} onChange={setSearchTerm} placeholder={LABELS.SEARCH_PLACEHOLDER} />
+        <FreshnessNote stage={currentStageNum} lastUpdated={lastUpdated} />
       </div>
 
       {/* ETAPPE VIEW */}

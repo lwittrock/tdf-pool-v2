@@ -212,7 +212,9 @@ function Etappes() {
       {jerseysFor(name).map((j) => (
         <img key={j} src={JERSEY_ICONS[j]} alt={JERSEY_LABELS[j]} style={{ width: size, height: size }} className="flex-shrink-0" />
       ))}
-      {isCombative(name) && <CombativityIcon sizePx={size} />}
+      {/* The solid red square reads heavier than the jersey glyphs, so render it
+          a touch smaller to balance inline next to the name. */}
+      {isCombative(name) && <CombativityIcon sizePx={Math.round(size * 0.8)} />}
     </>
   );
 
@@ -234,7 +236,7 @@ function Etappes() {
       render: (r) => (
         <div className="flex items-center gap-2">
           <span>{r.name}</span>
-          <RowIcons name={r.name} size={20} />
+          <RowIcons name={r.name} size={16} />
         </div>
       ),
     },
