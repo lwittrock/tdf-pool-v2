@@ -4,28 +4,42 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { Autocomplete } from '../components/Autocomplete';
-import { useRiders, useTeamSelections } from '../hooks/useTdfData';
+import { RiderName } from '../components/shared/RiderName';
+import { useRiders, useTeamSelections, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import {
   getRiderStages,
   calculateSelectionCounts,
   calculateSelectionPercentage,
-  createRiderRankMap
+  createRiderRankMap,
+  abandonedRiderSet
 } from '../../lib/data-transforms';
 import { JERSEY_ICONS, SELECTION_ICONS, SELECTION_THRESHOLDS, LABELS } from '../../lib/constants';
 import type { RidersData, RiderStageData, StageInfo } from '../../lib/types';
 
 function Ploegen() {
   usePageTitle(LABELS.PLOEGEN);
-  const [searchTerm, setSearchTerm] = useState('');
+  // Deelnemer is kept in the URL (?deelnemer=X) so /poule can deep-link to a
+  // participant's ploeg (5.6) and the view is shareable.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('deelnemer') ?? '');
   const [expandedRider, setExpandedRider] = useState<string | null>(null);
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setSearchParams(value ? { deelnemer: value } : {}, { replace: true });
+  };
 
   // Fetch data
   const { data: ridersData, isLoading: ridersLoading, error: ridersError } = useRiders();
   const { data: teamSelectionsData, isLoading: selectionsLoading, error: selectionsError } = useTeamSelections();
+  // Optional: only feeds the DNF/DNS marking, so it never gates the page.
+  const { data: stagesData } = useStagesData();
+  const abandoned = useMemo(() => abandonedRiderSet(stagesData), [stagesData]);
 
   const loading = ridersLoading || selectionsLoading;
   const error = ridersError || selectionsError;
@@ -155,7 +169,7 @@ function Ploegen() {
           <Autocomplete
             options={participantOptions}
             value={searchTerm}
-            onChange={setSearchTerm}
+            onChange={handleSearchChange}
             placeholder="Toon ploeg van deelnemer..."
             emptyLabel="Geen deelnemer gevonden"
           />
@@ -171,7 +185,7 @@ function Ploegen() {
             Rennerpopulariteit
           </h2>
         )}
-        <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
+        <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-tdf-text-highlight">
           Gebaseerd op {totalParticipants} deelnemers met elk 10 renners.
         </p>
 
@@ -196,7 +210,7 @@ function Ploegen() {
                   middle={
                     <>
                       <div className="font-bold text-sm text-tdf-text-primary truncate">
-                        {rider.name}
+                        <RiderName name={rider.name} abandoned={abandoned.has(rider.name)} />
                       </div>
                       <div className="text-xs text-tdf-text-secondary truncate">
                         {rider.team}
@@ -276,7 +290,7 @@ function Ploegen() {
               {displayData.map((rider, idx) => (
                 <React.Fragment key={rider.name}>
                   <tr
-                    className={`cursor-pointer hover:bg-gray-100 ${
+                    className={`cursor-pointer hover:bg-tdf-card-hover ${
                       idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'
                     }`}
                     onClick={() => setExpandedRider(
@@ -293,7 +307,9 @@ function Ploegen() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-tdf-text-primary">{rider.name}</td>
+                    <td className="px-4 py-3 text-sm text-tdf-text-primary">
+                      <RiderName name={rider.name} abandoned={abandoned.has(rider.name)} />
+                    </td>
                     <td className="px-4 py-3 text-sm text-tdf-text-secondary">{rider.team}</td>
                     <td className="px-4 py-3 text-sm text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -313,7 +329,7 @@ function Ploegen() {
                     </td>
                   </tr>
                   {expandedRider === rider.name && (
-                    <tr className="bg-gray-100">
+                    <tr className="bg-tdf-card-hover">
                       <td colSpan={4} className="px-4 py-4">
                         <div className="ml-8 max-w-md">
                           <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Etappe</h3>

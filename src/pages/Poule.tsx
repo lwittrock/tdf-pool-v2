@@ -3,6 +3,8 @@
  */
 
 import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom';
+import Layout from '../components/Layout';
 import { useMetadata, useLeaderboards, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { RankChange } from '../components/shared/RankChange';
@@ -54,25 +56,25 @@ function StageContributions({ entry }: { entry: LeaderboardEntry }) {
   const ploegBonus = entry.stage_score - contribSum;
 
   if (contributions.length === 0 && ploegBonus <= 0) {
-    return <div className="text-sm text-gray-500 py-1 px-2">Geen punten in deze etappe</div>;
+    return <div className="text-sm text-tdf-text-secondary py-1 px-2">Geen punten in deze etappe</div>;
   }
 
   return (
     <>
       {contributions.map((c) => (
-        <div key={c.riderName} className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
-          <span className="text-sm text-gray-600">{c.riderName}</span>
+        <div key={c.riderName} className="flex justify-between py-1 px-2 rounded hover:bg-table-header">
+          <span className="text-sm text-tdf-text-highlight">{c.riderName}</span>
           <span className="text-sm font-bold">{c.points}</span>
         </div>
       ))}
       {ploegBonus > 0 && (
-        <div className="flex justify-between py-1 px-2 rounded hover:bg-gray-200">
-          <span className="text-sm text-gray-600">Ploegenbonus</span>
+        <div className="flex justify-between py-1 px-2 rounded hover:bg-table-header">
+          <span className="text-sm text-tdf-text-highlight">Ploegenbonus</span>
           <span className="text-sm font-bold">{ploegBonus}</span>
         </div>
       )}
       <div className="flex justify-between py-1 px-2 mt-1 border-t border-gray-300">
-        <span className="text-sm font-semibold text-gray-700">Totaal</span>
+        <span className="text-sm font-semibold text-tdf-text-highlight">Totaal</span>
         <span className="text-sm font-bold">{entry.stage_score}</span>
       </div>
     </>
@@ -198,11 +200,22 @@ function Poule() {
 
   const isOpen = (name: string) => expandedItem === name;
 
+  // Deep-link from a participant's Algemeen expansion to their ploeg (5.6).
+  const ploegLink = (name: string) => (
+    <Link
+      to={`/ploegen?deelnemer=${encodeURIComponent(name)}`}
+      onClick={(e) => e.stopPropagation()}
+      className="inline-block mt-3 text-sm font-medium text-tdf-heading hover:underline"
+    >
+      Bekijk ploeg van {name} →
+    </Link>
+  );
+
   // Per-etappe list for a participant, shared by the Algemeen card and row.
   const participantStageList = (name: string) =>
     getParticipantStages(leaderboardsData, name).map((stage) => (
       <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
-        <span className="text-sm text-gray-700">Etappe {stage.stageNum}:</span>
+        <span className="text-sm text-tdf-text-highlight">Etappe {stage.stageNum}:</span>
         <div className="flex items-center gap-3">
           <span className="text-xs text-tdf-text-secondary">#{stage.stage_rank}</span>
           <span className="text-sm font-bold">{stage.stage_score}</span>
@@ -222,7 +235,7 @@ function Poule() {
       },
     },
     { key: 'deelnemer', header: 'Deelnemer', render: (e) => e.participant_name },
-    { key: 'directie', header: 'Directie', cellClassName: 'text-gray-600', render: (e) => e.directie_name },
+    { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
     {
       key: 'punten',
       header: 'Etappe Punten',
@@ -276,7 +289,7 @@ function Poule() {
       className={`inline-flex items-center gap-0.5 hover:text-tdf-text-primary ${sortKey === key ? 'text-tdf-text-primary' : ''}`}
     >
       {label}
-      <span className={sortKey === key ? '' : 'text-gray-400'}>{sortKey === key ? sortArrow(key) : ' ⇅'}</span>
+      <span className={sortKey === key ? '' : 'text-tdf-text-muted'}>{sortKey === key ? sortArrow(key) : ' ⇅'}</span>
     </button>
   );
 
@@ -296,7 +309,7 @@ function Poule() {
           render: (e: LeaderboardEntry) => <RankChange change={e.overall_rank_change} />,
         }]),
     { key: 'deelnemer', header: 'Deelnemer', render: (e) => e.participant_name },
-    { key: 'directie', header: 'Directie', cellClassName: 'text-gray-600', render: (e) => e.directie_name },
+    { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
     {
       key: 'punten',
       header: sortableHeader('points', 'Totaal Punten'),
@@ -331,16 +344,7 @@ function Poule() {
   ];
 
   return (
-    <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
-      <header className="mb-6 sm:mb-12 text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">
-          Poule
-        </h1>
-        <p className="text-sm sm:text-base text-tdf-text-secondary mt-2">
-          Na etappe {currentStageNum}{lastUpdated && ` (${lastUpdated})`}
-        </p>
-      </header>
-
+    <Layout title="Poule" subtitle={`Na etappe ${currentStageNum}${lastUpdated ? ` (${lastUpdated})` : ''}`}>
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
           <TabButton active={activeView === 'stage_individual'} onClick={() => switchView('stage_individual')}>
@@ -360,7 +364,7 @@ function Poule() {
       {/* ETAPPE VIEW */}
       {activeView === 'stage_individual' && (
         <main>
-          <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
+          <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-tdf-text-highlight">
             Etappe {currentStageNum}{stageRoute && `: ${stageRoute}`}
           </p>
 
@@ -392,7 +396,7 @@ function Poule() {
                     </div>
                   }
                 >
-                  <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Renner</h3>
+                  <h3 className="text-xs font-semibold mb-2 text-tdf-text-highlight">Punten per Renner</h3>
                   <StageContributions entry={entry} />
                 </ExpandableCard>
               );
@@ -407,7 +411,7 @@ function Poule() {
             isRowExpanded={(e) => isOpen(e.participant_name)}
             renderExpanded={(entry) => (
               <div className="ml-8 max-w-md">
-                <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Renner</h3>
+                <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Renner</h3>
                 <StageContributions entry={entry} />
               </div>
             )}
@@ -467,8 +471,9 @@ function Poule() {
                     </div>
                   }
                 >
-                  <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Etappe</h3>
+                  <h3 className="text-xs font-semibold mb-2 text-tdf-text-highlight">Punten per Etappe</h3>
                   {participantStageList(entry.participant_name)}
+                  {ploegLink(entry.participant_name)}
                 </ExpandableCard>
               );
             })}
@@ -482,8 +487,9 @@ function Poule() {
             isRowExpanded={(e) => isOpen(e.participant_name)}
             renderExpanded={(entry) => (
               <div className="ml-8 max-w-md">
-                <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Etappe</h3>
+                <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Etappe</h3>
                 {participantStageList(entry.participant_name)}
+                {ploegLink(entry.participant_name)}
               </div>
             )}
           />
@@ -493,7 +499,7 @@ function Poule() {
       {/* DIRECTIE KLASSEMENT VIEW */}
       {activeView === 'standings_directie' && (
         <main>
-          <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-gray-600">
+          <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-tdf-text-highlight">
             Gemiddelde van de top {metadata.top_n_participants_for_directie} deelnemers per directie
           </p>
 
@@ -520,12 +526,12 @@ function Poule() {
                   </div>
                 }
               >
-                <h3 className="text-xs font-semibold mb-2 text-gray-600">Totale Bijdragen per Deelnemer</h3>
+                <h3 className="text-xs font-semibold mb-2 text-tdf-text-highlight">Totale Bijdragen per Deelnemer</h3>
                 {entry.overall_participant_contributions.map((participant, pidx) => (
                   <div key={participant.participant_name} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <span className="text-xs font-semibold text-tdf-text-secondary">#{pidx + 1}</span>
-                      <span className="text-sm text-gray-700 truncate">{participant.participant_name}</span>
+                      <span className="text-sm text-tdf-text-highlight truncate">{participant.participant_name}</span>
                     </div>
                     <span className="text-sm font-bold text-tdf-text-primary">{participant.overall_score}</span>
                   </div>
@@ -542,15 +548,15 @@ function Poule() {
             isRowExpanded={(e) => isOpen(e.directie_name)}
             renderExpanded={(entry) => (
               <div className="ml-8 max-w-2xl">
-                <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Totale Bijdragen per Deelnemer</h3>
+                <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Totale Bijdragen per Deelnemer</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {entry.overall_participant_contributions.map((participant, pidx) => (
                     <div
                       key={participant.participant_name}
-                      className="flex justify-between items-center py-2 px-3 rounded hover:bg-gray-200"
+                      className="flex justify-between items-center py-2 px-3 rounded hover:bg-table-header"
                     >
-                      <span className="text-sm flex items-center gap-2 text-gray-600">
-                        <span className="text-xs font-semibold w-5 text-gray-400">#{pidx + 1}</span>
+                      <span className="text-sm flex items-center gap-2 text-tdf-text-highlight">
+                        <span className="text-xs font-semibold w-5 text-tdf-text-muted">#{pidx + 1}</span>
                         {participant.participant_name}
                       </span>
                       <span className="text-sm font-bold">{participant.overall_score}</span>
@@ -566,7 +572,7 @@ function Poule() {
       {filteredResults.length === 0 && (
         <div className="text-center py-12 text-tdf-text-secondary">{LABELS.NO_RESULTS}</div>
       )}
-    </div>
+    </Layout>
   );
 }
 

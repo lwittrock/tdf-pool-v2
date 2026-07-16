@@ -51,14 +51,16 @@ export function StandingsTable<T>({
   const expandable = Boolean(onRowClick);
 
   return (
-    <div className="hidden lg:block overflow-x-auto">
+    <div className="hidden lg:block">
       <table className="w-full">
         <thead>
-          <tr className="bg-table-header">
+          {/* Sticky to the page scroll: each th carries its own bg so rows
+              don't bleed through as they scroll under it (6.3). */}
+          <tr>
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`px-4 py-4 text-sm font-semibold text-tdf-text-highlight ${alignClass[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
+                className={`sticky top-0 z-10 bg-table-header px-4 py-4 text-sm font-semibold text-tdf-text-highlight ${alignClass[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
               >
                 {col.header}
               </th>
@@ -73,7 +75,7 @@ export function StandingsTable<T>({
             return (
               <React.Fragment key={key}>
                 <tr
-                  className={`${expandable ? 'cursor-pointer hover:bg-gray-100' : ''} ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
+                  className={`${expandable ? 'cursor-pointer hover:bg-tdf-card-hover' : ''} ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   tabIndex={expandable ? 0 : undefined}
                   aria-expanded={expandable ? expanded : undefined}
@@ -98,7 +100,7 @@ export function StandingsTable<T>({
                   ))}
                 </tr>
                 {expandedContent && (
-                  <tr className="bg-gray-100">
+                  <tr className="bg-tdf-card-hover">
                     <td colSpan={columns.length} className="px-4 py-4">
                       {expandedContent}
                     </td>

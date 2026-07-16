@@ -3,10 +3,13 @@
  */
 
 import { useState, useMemo } from 'react';
-import { useMetadata, useRiders, useRiderRankings } from '../hooks/useTdfData';
+import Layout from '../components/Layout';
+import { useMetadata, useRiders, useRiderRankings, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
+import { RiderName } from '../components/shared/RiderName';
+import { abandonedRiderSet } from '../../lib/data-transforms';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { competitionRankMap, getRiderStagesFromData, formatLastUpdated } from '../../lib/data-transforms';
 import { JERSEY_ICONS, LABELS } from '../../lib/constants';
@@ -55,6 +58,9 @@ function Rennerpunten() {
   const { data: metadata, isLoading: metadataLoading, error: metadataError } = useMetadata();
   const { data: ridersData, isLoading: ridersLoading, error: ridersError } = useRiders();
   const { data: riderRankings, isLoading: rankingsLoading, error: rankingsError } = useRiderRankings();
+  // Optional: only feeds the DNF/DNS marking, so it never gates the page.
+  const { data: stagesData } = useStagesData();
+  const abandoned = useMemo(() => abandonedRiderSet(stagesData), [stagesData]);
 
   const loading = metadataLoading || ridersLoading || rankingsLoading;
   const error = metadataError || ridersError || rankingsError;
@@ -129,7 +135,7 @@ function Rennerpunten() {
       return (
         <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700">Etappe {stage.stageNum}:</span>
+            <span className="text-sm text-tdf-text-highlight">Etappe {stage.stageNum}:</span>
             {(stageAwards.jerseys.length > 0 || stageAwards.hasCombative) && (
               <div className="flex gap-0.5 items-center">
                 {stageAwards.jerseys.map((jersey) => (
@@ -158,8 +164,8 @@ function Rennerpunten() {
       cellClassName: 'font-medium',
       render: (r) => totalDisplayRanks.get(r.name) ?? r.overall_rank,
     },
-    { key: 'renner', header: 'Renner', render: (r) => r.name },
-    { key: 'team', header: 'Team', cellClassName: 'text-gray-600', render: (r) => r.team },
+    { key: 'renner', header: 'Renner', render: (r) => <RiderName name={r.name} abandoned={abandoned.has(r.name)} /> },
+    { key: 'team', header: 'Team', cellClassName: 'text-tdf-text-highlight', render: (r) => r.team },
     {
       key: 'punten',
       header: 'Totaal Punten',
@@ -176,17 +182,7 @@ function Rennerpunten() {
   ];
 
   return (
-    <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
-      {/* Header */}
-      <header className="mb-6 sm:mb-12 text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">
-          Rennerpunten
-        </h1>
-        <p className="text-sm sm:text-base text-tdf-text-secondary mt-2">
-          Na etappe {metadata.current_stage}{lastUpdated && ` (${lastUpdated})`}
-        </p>
-      </header>
-
+    <Layout title="Rennerpunten" subtitle={`Na etappe ${metadata.current_stage}${lastUpdated ? ` (${lastUpdated})` : ''}`}>
       {/* Search */}
       <div className="mb-6">
         <SearchInput
@@ -213,7 +209,9 @@ function Rennerpunten() {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="font-bold text-sm text-tdf-text-primary truncate">{rider.name}</div>
+                      <div className="font-bold text-sm text-tdf-text-primary truncate">
+                        <RiderName name={rider.name} abandoned={abandoned.has(rider.name)} />
+                      </div>
                       <div className="text-xs text-tdf-text-secondary truncate">{rider.team}</div>
                     </div>
 
@@ -228,7 +226,7 @@ function Rennerpunten() {
               >
                 {riderData && (
                   <>
-                    <h3 className="text-xs font-semibold mb-2 text-gray-600">Punten per Etappe</h3>
+                    <h3 className="text-xs font-semibold mb-2 text-tdf-text-highlight">Punten per Etappe</h3>
                     {stageBreakdown(riderData)}
                   </>
                 )}
@@ -249,7 +247,7 @@ function Rennerpunten() {
             if (!riderData) return null;
             return (
               <div className="ml-8 max-w-md">
-                <h3 className="text-sm font-semibold mb-2 pb-2 text-gray-600 border-b">Punten per Etappe</h3>
+                <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Etappe</h3>
                 {stageBreakdown(riderData)}
               </div>
             );
@@ -260,7 +258,7 @@ function Rennerpunten() {
       {filteredResults.length === 0 && (
         <div className="text-center py-12 text-tdf-text-secondary">{LABELS.NO_RESULTS}</div>
       )}
-    </div>
+    </Layout>
   );
 }
 

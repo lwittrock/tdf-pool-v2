@@ -10,6 +10,7 @@ import type {
   RidersData,
   RiderStageData,
   StageInfo,
+  StageData,
   MedalCounts,
   LeaderboardsData,
 } from './types';
@@ -112,6 +113,19 @@ export function getRiderStagesFromData(rider: RiderData, upToStage?: number): St
     .sort((a, b) => a.stageNum - b.stageNum);
 
   return upToStage ? fillStageGaps(stages, upToStage) : stages;
+}
+
+/**
+ * Set of rider names who have abandoned (DNF or DNS in any stage), from the
+ * stages_data snapshot. Used to mark abandoned riders on the rider lists (5.5).
+ */
+export function abandonedRiderSet(stages: StageData[] | undefined): Set<string> {
+  const out = new Set<string>();
+  for (const stage of stages ?? []) {
+    for (const name of stage.dnf_riders ?? []) out.add(name);
+    for (const name of stage.dns_riders ?? []) out.add(name);
+  }
+  return out;
 }
 
 // ============================================================================

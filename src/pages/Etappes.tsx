@@ -11,6 +11,7 @@
 import { useState, useMemo } from 'react';
 import { useMetadata, useStagesData, useRiders } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
+import Layout from '../components/Layout';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { StandingsTable, type Column } from '../components/shared/StandingsTable';
 import { MedalIcon } from '../components/shared/MedalDisplay';
@@ -262,11 +263,7 @@ function Etappes() {
   ];
 
   return (
-    <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-32 bg-tdf-bg">
-      <header className="mb-6 sm:mb-12 text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-tdf-primary">Etappes</h1>
-      </header>
-
+    <Layout title="Etappes">
       <StageSelector
         stageNumbers={stageNumbers}
         completed={completed}
@@ -322,7 +319,7 @@ function Etappes() {
           )}
         </>
       )}
-    </div>
+    </Layout>
   );
 }
 
