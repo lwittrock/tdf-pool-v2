@@ -14,6 +14,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # npm install (not ci): the lockfile carries platform-specific optional
+      # native/WASM deps (Tailwind v4-alpha) that differ between the dev machine
+      # (win32) and this Linux runner, which makes strict `npm ci` fail on sync.
+      - run: npm install --no-audit --no-fund
       - run: npm run check
       - run: npm test --if-present
