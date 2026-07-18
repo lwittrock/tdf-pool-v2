@@ -22,7 +22,7 @@ import {
   type StageFormData,
   type SubmitResult,
 } from '../components/beheer/stage-form';
-import { buildPrefillPatch, type PcsPrefillData } from '../../lib/prefill';
+import { buildPrefillPatch, mergePrefillIntoForm, type PcsPrefillData } from '../../lib/prefill';
 
 type ViewMode = 'list' | 'entry' | 'view';
 
@@ -115,38 +115,24 @@ function StageManagementPage() {
       const data: PcsPrefillData = body.data;
       const { patch, feedback, matchedCount } = buildPrefillPatch(data, riders);
 
-      setFormData(prev => ({
-        ...prev,
-        // Matched names may always land; raw unmatched text only fills an
-        // empty slot — never over something the beheerder typed by hand.
-        top_20_finishers: prev.top_20_finishers.map((f, i) => {
-          const p = patch.top_20_finishers[i];
-          const take = p.rider_name && (p.matched || !f.rider_name.trim());
-          return take ? { rider_name: p.rider_name, position: i + 1 } : f;
-        }),
-        jerseys: {
-          yellow: patch.jerseys.yellow || prev.jerseys.yellow,
-          green: patch.jerseys.green || prev.jerseys.green,
-          polka_dot: patch.jerseys.polka_dot || prev.jerseys.polka_dot,
-          white: patch.jerseys.white || prev.jerseys.white,
-        },
-        combativity: patch.combativity || prev.combativity,
-        dagploeg: patch.dagploeg || prev.dagploeg,
-        won_how: patch.won_how || prev.won_how,
-        dnf_riders: [...new Set([...prev.dnf_riders, ...patch.dnf_riders])],
-        dns_riders: [...new Set([...prev.dns_riders, ...patch.dns_riders])],
-      }));
+      // Merge policy (never wipe manual input, diff notes on conflicts)
+      // lives in lib/prefill.ts where it is unit-tested.
+      const { fields, notes } = mergePrefillIntoForm(formData, patch);
+      setFormData(prev => ({ ...prev, ...fields }));
       setPrefillFeedback([
-        `${matchedCount} van 20 posities ingevuld vanaf PCS — controleer en sla daarna op.`,
+        `${matchedCount} van 20 posities herkend vanaf PCS — controleer en sla daarna op.`,
         ...(data.warnings ?? []),
         ...feedback,
+        ...notes,
       ]);
     } catch (error: any) {
       setPrefillFeedback([error.message || 'PCS ophalen mislukt']);
     } finally {
       setPrefilling(false);
     }
-  }, [formData.stage_number, riders]);
+    // formData is a dependency on purpose: the merge must see the admin's
+    // latest manual edits, not the render where the handler was created.
+  }, [formData, riders]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();

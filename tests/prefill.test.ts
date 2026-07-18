@@ -6,7 +6,14 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { buildPrefillPatch, matchTeamName, type PcsPrefillData } from '../lib/prefill';
+import {
+  buildPrefillPatch,
+  matchTeamName,
+  mergePrefillIntoForm,
+  type PcsPrefillData,
+  type PrefillableFields,
+  type PrefillPatch,
+} from '../lib/prefill';
 
 const RIDERS = [
   { name: 'TADEJ POGACAR', team: 'UAE Team Emirates' },
@@ -132,6 +139,82 @@ describe('buildPrefillPatch', () => {
     );
     expect(patch.combativity).toBe('VALENTIN MADOUAS');
     expect(patch.won_how).toBe('Sprint of small group');
+  });
+});
+
+describe('mergePrefillIntoForm', () => {
+  const emptyForm = (): PrefillableFields => ({
+    top_20_finishers: Array.from({ length: 20 }, (_, i) => ({ rider_name: '', position: i + 1 })),
+    jerseys: { yellow: '', green: '', polka_dot: '', white: '' },
+    combativity: '',
+    dagploeg: '',
+    dnf_riders: [],
+    dns_riders: [],
+    won_how: '',
+  });
+  const emptyPatch = (): PrefillPatch => ({
+    top_20_finishers: Array.from({ length: 20 }, (_, i) => ({
+      rider_name: '',
+      position: i + 1,
+      matched: false,
+    })),
+    jerseys: { yellow: '', green: '', polka_dot: '', white: '' },
+    combativity: '',
+    dagploeg: '',
+    dnf_riders: [],
+    dns_riders: [],
+    won_how: '',
+  });
+
+  it('keeps a hand-corrected jersey and surfaces the difference as a note', () => {
+    const prev = emptyForm();
+    prev.jerseys.yellow = 'JONAS VINGEGAARD'; // admin's manual correction
+    const patch = emptyPatch();
+    patch.jerseys.yellow = 'TADEJ POGACAR'; // PCS disagrees
+    const { fields, notes } = mergePrefillIntoForm(prev, patch);
+    expect(fields.jerseys.yellow).toBe('JONAS VINGEGAARD');
+    expect(notes.some((n) => n.includes('Gele trui') && n.includes('TADEJ POGACAR'))).toBe(true);
+  });
+
+  it('fills empty single-value fields without notes', () => {
+    const patch = emptyPatch();
+    patch.combativity = 'VALENTIN MADOUAS';
+    patch.dagploeg = 'UAE Team Emirates';
+    const { fields, notes } = mergePrefillIntoForm(emptyForm(), patch);
+    expect(fields.combativity).toBe('VALENTIN MADOUAS');
+    expect(fields.dagploeg).toBe('UAE Team Emirates');
+    expect(notes).toEqual([]);
+  });
+
+  it('lets matched top-20 names replace earlier values, but raw text only fills empty slots', () => {
+    const prev = emptyForm();
+    prev.top_20_finishers[0].rider_name = 'OUDE INVOER';
+    prev.top_20_finishers[1].rider_name = 'HANDMATIG GOED';
+    const patch = emptyPatch();
+    patch.top_20_finishers[0] = { rider_name: 'TADEJ POGACAR', position: 1, matched: true };
+    patch.top_20_finishers[1] = { rider_name: 'RAW PCS TEKST', position: 2, matched: false };
+    const { fields } = mergePrefillIntoForm(prev, patch);
+    expect(fields.top_20_finishers[0].rider_name).toBe('TADEJ POGACAR');
+    expect(fields.top_20_finishers[1].rider_name).toBe('HANDMATIG GOED');
+  });
+
+  it('replaces DNF/DNS with the fresh PCS list and notes removals', () => {
+    const prev = emptyForm();
+    prev.dnf_riders = ['FILIPPO GANNA']; // early PCS scrape, later corrected
+    const patch = emptyPatch();
+    patch.dns_riders = ['ROMAIN BARDET'];
+    const { fields, notes } = mergePrefillIntoForm(prev, patch);
+    expect(fields.dnf_riders).toEqual([]);
+    expect(fields.dns_riders).toEqual(['ROMAIN BARDET']);
+    expect(notes.some((n) => n.includes('FILIPPO GANNA'))).toBe(true);
+  });
+
+  it('leaves DNF/DNS untouched when PCS reports no abandons yet', () => {
+    const prev = emptyForm();
+    prev.dns_riders = ['ROMAIN BARDET']; // admin knew before PCS did
+    const { fields, notes } = mergePrefillIntoForm(prev, emptyPatch());
+    expect(fields.dns_riders).toEqual(['ROMAIN BARDET']);
+    expect(notes).toEqual([]);
   });
 });
 

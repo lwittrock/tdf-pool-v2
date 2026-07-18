@@ -15,6 +15,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../../lib/require-admin.js';
+import { getSeason } from '../../lib/publish.js';
 import { fetchPcsPage, PcsFetchError } from '../../lib/pcs-fetch.js';
 import {
   parsePcsStagePage,
@@ -38,22 +39,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .json({ success: false, error: 'Ongeldige etappe (1–21 verwacht)' });
   }
 
-  const season = process.env.SEASON || '2026';
+  const season = getSeason();
   const stageUrl = pcsStageUrl(season, stage);
   const complementaryUrl = pcsComplementaryUrl(season, stage);
   const combativeUrl = pcsCombativeRidersUrl(season);
   const warnings: string[] = [];
 
-  // All three pages in parallel: wall time = one fetch, which matters
-  // inside the function's maxDuration. Only the stage page is required.
-  const [stageResult, complementary, combative] = await Promise.allSettled([
-    fetchPcsPage(stageUrl),
+  // All three pages start in parallel (wall time = one fetch), but the
+  // required stage page is awaited alone so its failure 502s immediately —
+  // the admin shouldn't wait out the best-effort fetches to hear "blocked".
+  const optionalPages = Promise.allSettled([
     fetchPcsPage(complementaryUrl).then(parsePcsComplementaryPage),
     fetchPcsPage(combativeUrl).then(parsePcsCombativeRiders),
   ]);
 
-  if (stageResult.status === 'rejected') {
-    const error = stageResult.reason;
+  let stageHtml: string;
+  try {
+    stageHtml = await fetchPcsPage(stageUrl);
+  } catch (error) {
     const kind = error instanceof PcsFetchError ? error.kind : 'network';
     const detail = error instanceof Error ? error.message : String(error);
     console.error('[Prefill Stage] stage page fetch failed:', detail);
@@ -66,7 +69,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const stagePage = parsePcsStagePage(stageResult.value);
+  const [complementary, combative] = await optionalPages;
+  const stagePage = parsePcsStagePage(stageHtml);
   if (stagePage.is_ttt) {
     warnings.push('Ploegentijdrit: PCS heeft geen individuele top-20 — vul de uitslag handmatig in.');
   } else if (stagePage.top20.length === 0) {
