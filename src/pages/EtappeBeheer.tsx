@@ -22,6 +22,7 @@ import {
   type StageFormData,
   type SubmitResult,
 } from '../components/beheer/stage-form';
+import { buildPrefillPatch, type PcsPrefillData } from '../../lib/prefill';
 
 type ViewMode = 'list' | 'entry' | 'view';
 
@@ -34,6 +35,8 @@ function StageManagementPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
+  const [prefilling, setPrefilling] = useState(false);
+  const [prefillFeedback, setPrefillFeedback] = useState<string[]>([]);
   const { refreshAll } = useRefreshTdfData();
 
   const [formData, setFormData] = useState<StageFormData>(EMPTY_FORM_DATA);
@@ -66,6 +69,7 @@ function StageManagementPage() {
     setSuccessMessage('');
     setErrorMessage('');
     setSubmitResult(null);
+    setPrefillFeedback([]);
   }, []);
 
   const handleViewStage = useCallback((stageNumber: number) => {
@@ -91,6 +95,54 @@ function StageManagementPage() {
       )
     }));
   }, []);
+
+  // PCS-prefill: fetch raw results server-side, match client-side with the
+  // paste flow's matcher, and fill the form. Only non-empty values are
+  // applied, so re-fetching later (e.g. when strijdlust comes online) never
+  // wipes fields the beheerder already filled in. Review + save unchanged.
+  const handlePcsPrefill = useCallback(async () => {
+    setPrefilling(true);
+    setPrefillFeedback([]);
+    try {
+      const response = await fetch(
+        `/api/admin/prefill-stage?stage=${formData.stage_number}`,
+        { headers: await getAdminAuthHeaders() }
+      );
+      const body = await response.json();
+      if (!response.ok) {
+        throw new Error(body.error || `PCS ophalen mislukt (${response.status})`);
+      }
+      const data: PcsPrefillData = body.data;
+      const { patch, feedback, matchedCount } = buildPrefillPatch(data, riders);
+
+      setFormData(prev => ({
+        ...prev,
+        top_20_finishers: prev.top_20_finishers.map((f, i) =>
+          patch.top_20_finishers[i].rider_name ? patch.top_20_finishers[i] : f
+        ),
+        jerseys: {
+          yellow: patch.jerseys.yellow || prev.jerseys.yellow,
+          green: patch.jerseys.green || prev.jerseys.green,
+          polka_dot: patch.jerseys.polka_dot || prev.jerseys.polka_dot,
+          white: patch.jerseys.white || prev.jerseys.white,
+        },
+        combativity: patch.combativity || prev.combativity,
+        dagploeg: patch.dagploeg || prev.dagploeg,
+        won_how: patch.won_how || prev.won_how,
+        dnf_riders: [...new Set([...prev.dnf_riders, ...patch.dnf_riders])],
+        dns_riders: [...new Set([...prev.dns_riders, ...patch.dns_riders])],
+      }));
+      setPrefillFeedback([
+        `${matchedCount} van 20 posities ingevuld vanaf PCS — controleer en sla daarna op.`,
+        ...(data.warnings ?? []),
+        ...feedback,
+      ]);
+    } catch (error: any) {
+      setPrefillFeedback([error.message || 'PCS ophalen mislukt']);
+    } finally {
+      setPrefilling(false);
+    }
+  }, [formData.stage_number, riders]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -265,6 +317,9 @@ function StageManagementPage() {
             onSubmit={handleSubmit}
             onUpdateFormData={setFormData}
             onUpdateFinisher={handleUpdateFinisher}
+            onPcsPrefill={handlePcsPrefill}
+            prefilling={prefilling}
+            prefillFeedback={prefillFeedback}
           />
         )}
       </main>

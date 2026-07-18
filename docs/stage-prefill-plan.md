@@ -1,6 +1,10 @@
 # Stage-results prefill — investigation & plan
 
 *July 18, 2026 — investigation for making per-stage entry less manual.*
+*Updated same day: prototype built and verified headless (see §6). What
+remains before use is ONE thing: the Cloudflare spike (§5 step 0), i.e.
+`npm run pcs:fixtures -- <stage>` from a network that can reach PCS, and a
+preview-deploy test of the button.*
 
 **Goal:** open `/admin`, tap one button, and the whole stage form — top-20,
 jerseys, combativity, Dagploeg, DNS/DNF — is prefilled. The admin checks it
@@ -74,13 +78,17 @@ Optionally, extend `/api/admin/riders-list` to also return
 
 ## 4. Risks & mitigations
 
-- **PCS blocks datacenter/bot traffic.** Observed today: PCS returned 403
-  to a generic fetch service (and this dev sandbox's network policy blocks
-  it entirely, so live verification must happen from Vercel). Mitigation:
-  browser-like User-Agent; **step 0 below is a spike to prove the fetch
-  works from a deployed Vercel function before building the rest.** If
-  Vercel IPs turn out to be blocked, the paste flow remains, and a tiny
-  fetch-relay elsewhere is a plan B — decide only if the spike fails.
+- **PCS sits behind Cloudflare bot protection — confirmed.** The
+  procyclingstats python package's own fetcher detects the "Just a
+  moment…" challenge page and falls back to `cloudscraper`; that (plus
+  upstream release lag) is why the package felt "semi successful". Our
+  fetcher (lib/pcs-fetch.ts) sends browser-like headers, detects the
+  challenge, and distinguishes 'blocked' from 'down'; when the env var
+  `PCS_FETCH_PROXY` is set (a URL template with `{url}`, e.g. a
+  scraping-proxy free tier), a blocked direct fetch retries through it.
+  Whether Vercel's egress IPs get challenged is the one open question —
+  **step 0 below settles it.** If blocked and no proxy is configured, the
+  endpoint returns a clear message and the paste flow remains.
 - **Markup changes mid-Tour.** Per-field independence means the blast
   radius is one empty field, and the fixture-based tests make the fix
   quick. Worst case: that field is typed by hand, i.e. today's flow.
@@ -93,17 +101,40 @@ Optionally, extend `/api/admin/riders-list` to also return
 
 ## 5. Implementation steps
 
-0. **Spike (do first, ~30 min):** deploy a throwaway authenticated
-   endpoint that fetches the stage page from Vercel and returns status +
-   first 500 bytes. Proves reachability and captures real HTML for
-   fixtures. *Kill the whole plan here if PCS blocks Vercel and no simple
-   header fix works.*
-1. Parser + fixtures + tests (`lib/pcs-parse.ts`, `tests/pcs-parse.test.ts`).
-2. Endpoint (`api/admin/prefill-stage.ts`).
-3. UI button + shared matcher extraction + feedback.
-4. Optional: aliases in `riders-list`.
+0. **Spike — the only step left:** run `npm run pcs:fixtures -- 12 13`
+   from a network that reaches PCS (home connection). It fetches the three
+   pages, saves them as `tests/fixtures/pcs/real-*.html` (the test suite
+   picks them up automatically), and prints exactly what the parser
+   extracts. Then confirm the same from Vercel: press the button on a
+   preview deployment. *If PCS challenges Vercel's IPs, set
+   `PCS_FETCH_PROXY` or accept the paste flow as fallback.*
+1. ~~Parser + fixtures + tests~~ **done** (`lib/pcs-parse.ts`,
+   `tests/pcs-parse.test.ts`, synthetic fixtures under
+   `tests/fixtures/pcs/`).
+2. ~~Endpoint~~ **done** (`api/admin/prefill-stage.ts`, fetcher in
+   `lib/pcs-fetch.ts`).
+3. ~~UI button + matcher + feedback~~ **done** ("Haal op van PCS" card in
+   the entry form; matching in `lib/prefill.ts`, reusing the paste
+   matcher; re-tapping refetches without wiping filled fields).
+4. ~~Aliases in `riders-list`~~ **done** (client matching now resolves
+   e.g. PCS "GATE Aaron" → DB "AARON MURRAY GATE" via `rider_aliases`).
 
-Steps 1–3 are roughly one working session once the spike passes; this can
-be live before the next stage. Explicitly **not** planned: scheduled/cron
-auto-fetching, drafts stored in the DB, auto-submit — on-demand prefill
-with human review does the whole job with far less machinery.
+Explicitly **not** built: scheduled/cron auto-fetching, drafts stored in
+the DB, auto-submit — on-demand prefill with human review does the whole
+job with far less machinery.
+
+## 6. Verification status (July 18)
+
+- 59 vitest tests green (incl. 22 new parser/prefill tests), lint + both
+  typechecks clean.
+- Headless end-to-end run (vite + puppeteer, admin APIs stubbed with the
+  synthetic-fixture payload and the real 184-rider startlist): one tap
+  filled **20/20 positions**, all four jerseys, strijdlust, Dagploeg
+  (PCS "Netcompany INEOS Cycling Team" → pool "NETCOMPANY INEOS CYCLING
+  TEAM") and the DNF/DNS split (OTL → DNF list), with zero unmatched-name
+  warnings.
+- NOT yet verified (sandbox cannot reach PCS): live fetching, the exact
+  markup of the complementary-results page (my reconstruction is
+  header-driven and deliberately loose — `sections_found` in the endpoint
+  diagnostics shows what a real page contains), and Cloudflare behaviour
+  toward Vercel. That is what step 0 answers.

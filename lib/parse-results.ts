@@ -49,6 +49,33 @@ function tokens(line: string): string[] {
     .filter((t) => t.length > 0);
 }
 
+function matchTokens(
+  riders: Array<{ name: string; tokens: string[] }>,
+  lineTokens: Set<string>
+): string | null {
+  const hits = riders.filter((r) => r.tokens.every((t) => lineTokens.has(t)));
+  if (hits.length === 1) return hits[0].name;
+  if (hits.length > 1) {
+    const sorted = hits.slice().sort((a, b) => b.tokens.length - a.tokens.length);
+    if (sorted[0].tokens.length > sorted[1].tokens.length) return sorted[0].name;
+  }
+  return null;
+}
+
+/**
+ * Resolves one piece of free text (a PCS rider cell, a pasted name) to a
+ * canonical DB rider name — same rules as the paste parser: all name tokens
+ * must appear, longest match wins, a genuine tie never guesses.
+ */
+export function matchRiderName(text: string, riderNames: string[]): string | null {
+  const lineTokens = new Set(tokens(text));
+  if (lineTokens.size === 0) return null;
+  return matchTokens(
+    riderNames.map((name) => ({ name, tokens: tokens(name) })),
+    lineTokens
+  );
+}
+
 export function parseResultsPaste(
   text: string,
   riderNames: string[],
@@ -60,15 +87,8 @@ export function parseResultsPaste(
   const unmatched: string[] = [];
   const ignored: string[] = [];
 
-  const matchRider = (lineTokens: Set<string>): string | null => {
-    const hits = riders.filter((r) => r.tokens.every((t) => lineTokens.has(t)));
-    if (hits.length === 1) return hits[0].name;
-    if (hits.length > 1) {
-      const sorted = hits.slice().sort((a, b) => b.tokens.length - a.tokens.length);
-      if (sorted[0].tokens.length > sorted[1].tokens.length) return sorted[0].name;
-    }
-    return null;
-  };
+  const matchRider = (lineTokens: Set<string>): string | null =>
+    matchTokens(riders, lineTokens);
 
   for (const rawLine of text.split(/\r?\n/)) {
     if (entries.length >= maxEntries) break;

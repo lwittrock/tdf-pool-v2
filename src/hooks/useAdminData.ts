@@ -14,6 +14,8 @@ export interface AdminRider {
   id: string;
   name: string;
   team: string;
+  /** Alternative spellings (rider_aliases) — used by client-side matching. */
+  aliases?: string[];
 }
 
 export function useAdminRiders(enabled: boolean) {
