@@ -44,10 +44,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const combativeUrl = pcsCombativeRidersUrl(season);
   const warnings: string[] = [];
 
-  let stageHtml: string;
-  try {
-    stageHtml = await fetchPcsPage(stageUrl);
-  } catch (error) {
+  // All three pages in parallel: wall time = one fetch, which matters
+  // inside the function's maxDuration. Only the stage page is required.
+  const [stageResult, complementary, combative] = await Promise.allSettled([
+    fetchPcsPage(stageUrl),
+    fetchPcsPage(complementaryUrl).then(parsePcsComplementaryPage),
+    fetchPcsPage(combativeUrl).then(parsePcsCombativeRiders),
+  ]);
+
+  if (stageResult.status === 'rejected') {
+    const error = stageResult.reason;
     const kind = error instanceof PcsFetchError ? error.kind : 'network';
     const detail = error instanceof Error ? error.message : String(error);
     console.error('[Prefill Stage] stage page fetch failed:', detail);
@@ -60,7 +66,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const stagePage = parsePcsStagePage(stageHtml);
+  const stagePage = parsePcsStagePage(stageResult.value);
   if (stagePage.is_ttt) {
     warnings.push('Ploegentijdrit: PCS heeft geen individuele top-20 — vul de uitslag handmatig in.');
   } else if (stagePage.top20.length === 0) {
@@ -68,11 +74,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } else if (stagePage.top20.length < 20) {
     warnings.push(`Slechts ${stagePage.top20.length} posities gevonden op de PCS-pagina.`);
   }
-
-  const [complementary, combative] = await Promise.allSettled([
-    fetchPcsPage(complementaryUrl).then(parsePcsComplementaryPage),
-    fetchPcsPage(combativeUrl).then(parsePcsCombativeRiders),
-  ]);
+  // A hole in the rank sequence means a result row didn't parse — every
+  // position below it would silently shift. Loudly refuse to pretend.
+  if (stagePage.top20.some((row) => row.rank !== row.position)) {
+    warnings.push(
+      'PCS-ranglijst is niet doorlopend (rij niet herkend?) — controleer ALLE posities.'
+    );
+  }
 
   let teamDayWinner: string | null = null;
   let combativity: string | null = null;

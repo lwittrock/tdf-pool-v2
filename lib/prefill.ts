@@ -20,7 +20,7 @@ import { foldedRiderNameKey } from './rider-names.js';
 
 export interface PcsPrefillData {
   stage_number: number;
-  top20: Array<{ position: number; rider: string; team: string }>;
+  top20: Array<{ position: number; rank?: number; rider: string; team: string }>;
   jerseys: {
     yellow: string | null;
     green: string | null;
@@ -35,7 +35,9 @@ export interface PcsPrefillData {
 }
 
 export interface PrefillPatch {
-  top_20_finishers: Array<{ rider_name: string; position: number }>;
+  /** `matched: false` rows carry raw PCS text — appliers must not let
+   *  them overwrite a value the admin already filled in by hand. */
+  top_20_finishers: Array<{ rider_name: string; position: number; matched: boolean }>;
   jerseys: { yellow: string; green: string; polka_dot: string; white: string };
   combativity: string;
   dagploeg: string;
@@ -118,14 +120,14 @@ export function buildPrefillPatch(
 
   const top_20_finishers = Array.from({ length: 20 }, (_, i) => {
     const row = data.top20[i];
-    if (!row) return { rider_name: '', position: i + 1 };
+    if (!row) return { rider_name: '', position: i + 1, matched: false };
     const matched = resolveRider(row.rider);
     if (matched) {
       matchedCount++;
     } else {
       feedback.push(`Positie ${i + 1}: "${row.rider}" niet herkend — controleer.`);
     }
-    return { rider_name: matched ?? row.rider, position: i + 1 };
+    return { rider_name: matched ?? row.rider, position: i + 1, matched: matched !== null };
   });
 
   const jerseys = { yellow: '', green: '', polka_dot: '', white: '' };

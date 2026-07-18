@@ -117,9 +117,13 @@ function StageManagementPage() {
 
       setFormData(prev => ({
         ...prev,
-        top_20_finishers: prev.top_20_finishers.map((f, i) =>
-          patch.top_20_finishers[i].rider_name ? patch.top_20_finishers[i] : f
-        ),
+        // Matched names may always land; raw unmatched text only fills an
+        // empty slot — never over something the beheerder typed by hand.
+        top_20_finishers: prev.top_20_finishers.map((f, i) => {
+          const p = patch.top_20_finishers[i];
+          const take = p.rider_name && (p.matched || !f.rider_name.trim());
+          return take ? { rider_name: p.rider_name, position: i + 1 } : f;
+        }),
         jerseys: {
           yellow: patch.jerseys.yellow || prev.jerseys.yellow,
           green: patch.jerseys.green || prev.jerseys.green,

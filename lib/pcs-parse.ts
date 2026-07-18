@@ -19,7 +19,11 @@
 import { parse, HTMLElement } from 'node-html-parser';
 
 export interface PcsResultRow {
+  /** Sequential slot in our list (1-based). */
   position: number;
+  /** The rank PCS shows; differs from `position` only when a row above
+   *  failed to parse — callers must warn, positions may have shifted. */
+  rank: number;
   rider: string;
   team: string;
 }
@@ -190,6 +194,7 @@ export function parsePcsStagePage(html: string): PcsStagePage {
       if (top20.length < 20) {
         top20.push({
           position: top20.length + 1,
+          rank: Number(row.rankText),
           rider: row.rider,
           team: row.team ?? '',
         });
@@ -259,7 +264,10 @@ export function parsePcsComplementaryPage(html: string): PcsComplementaryPage {
   };
 
   return {
-    team_day_winner: sectionValue(/team.*(day|stage)|(day|daily).*team/i, 'team/'),
+    // "day" is required on purpose: a cumulative header like "Teams
+    // classification after stage 12" must NOT match — that's the wrong
+    // classification for the Dagploeg rule.
+    team_day_winner: sectionValue(/team.*day|day.*team/i, 'team/'),
     combativity: sectionValue(/combativ|most active/i, 'rider/'),
     sections_found: sections.map((s) => s.header),
   };

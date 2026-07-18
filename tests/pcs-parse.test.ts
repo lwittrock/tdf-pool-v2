@@ -29,9 +29,12 @@ describe('parsePcsStagePage (synthetic fixture)', () => {
     expect(page.top20).toHaveLength(20);
     expect(page.top20[0]).toEqual({
       position: 1,
+      rank: 1,
       rider: 'ARENSMAN Thymen',
       team: 'Netcompany INEOS Cycling Team',
     });
+    // the fixture's rank sequence is intact, so position === rank throughout
+    expect(page.top20.every((r) => r.rank === r.position)).toBe(true);
     expect(page.top20[1].rider).toBe('POGAČAR Tadej');
     expect(page.top20[7].rider).toBe('MERLIER Tim');
     // rank 21 exists in the fixture but must be cut off
@@ -66,6 +69,21 @@ describe('parsePcsStagePage (synthetic fixture)', () => {
   it('reports the tabs it found for diagnostics', () => {
     expect(page.tabs_found).toEqual(['Stage', 'GC', 'Points', 'KOM', 'Youth', 'Teams']);
     expect(page.is_ttt).toBe(false);
+  });
+
+  it('carries PCS ranks so callers can detect a parsing gap', () => {
+    const gappy = parsePcsStagePage(
+      `<div class="resTab"><table class="results">
+         <thead><tr><th>Rnk</th><th>Rider</th></tr></thead>
+         <tbody>
+           <tr><td>1</td><td><a href="rider/a">AAA Aa</a></td></tr>
+           <tr><td>3</td><td><a href="rider/b">BBB Bb</a></td></tr>
+         </tbody></table></div>`
+    );
+    expect(gappy.top20.map((r) => [r.position, r.rank])).toEqual([
+      [1, 1],
+      [2, 3], // hole at rank 2 → position ≠ rank, endpoint warns
+    ]);
   });
 
   it('degrades to empty output on unrecognizable HTML, never throws', () => {

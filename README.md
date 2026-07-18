@@ -33,10 +33,15 @@ against that sheet cell-for-cell).
 
 ## Operations (during the Tour)
 
-- **Enter a stage:** `/admin` (e-mail login or beheertoken) → top-20,
-  jerseys, combativity *(optional)*, Dagploeg *(optional — PCS → stage →
-  "Complementary results" → team day classification)*, DNS/DNF riders (PCS
-  startlist annotations). Save; the site follows within ~2 minutes.
+- **Enter a stage:** `/admin` (e-mail login or beheertoken) → tap **"Haal
+  op van PCS"** to prefill the whole form (top-20, jerseys, combativity,
+  Dagploeg, DNS/DNF) from ProCyclingStats — review, correct anything
+  flagged, save; the site follows within ~2 minutes. Re-tapping refetches
+  late fields (combativity) without overwriting manual edits. Manual entry
+  and the paste box remain as fallback; see
+  [docs/stage-prefill-plan.md](docs/stage-prefill-plan.md) for how the
+  prefill works and the `PCS_FETCH_PROXY` escape hatch if Cloudflare
+  blocks Vercel.
 - **Correct an old stage:** re-enter it (the UI asks for overwrite
   confirmation). Everything downstream recomputes automatically.
 - **Verify against the golden standings:** `npm run verify:standings`
@@ -66,6 +71,7 @@ deployments from writing production data); `VITE_*` are build-time.
 | `ADMIN_TOKEN` | Vercel (server) | static admin credential (UI fallback + scripts) |
 | `ADMIN_EMAILS` | Vercel (server) | allowlist for the e-mail login |
 | `SEASON` | Vercel (server) | season in snapshot paths (default 2026) |
+| `PCS_FETCH_PROXY` | Vercel (server), *optional* | scraping-proxy URL template (`{url}` placeholder) for the PCS prefill when Cloudflare blocks direct fetches |
 | `VITE_DATA_BASE_URL` | Vercel (build) + local | public Blob store origin |
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Vercel (build) | e-mail login screen |
 
