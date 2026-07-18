@@ -21,6 +21,9 @@ interface StageEntryModeProps {
   onSubmit: (e: React.FormEvent) => void;
   onUpdateFormData: (data: StageFormData) => void;
   onUpdateFinisher: (index: number, riderName: string) => void;
+  onPcsPrefill: () => void;
+  prefilling: boolean;
+  prefillFeedback: string[];
 }
 
 export function StageEntryMode({
@@ -35,6 +38,9 @@ export function StageEntryMode({
   onSubmit,
   onUpdateFormData,
   onUpdateFinisher,
+  onPcsPrefill,
+  prefilling,
+  prefillFeedback,
 }: StageEntryModeProps) {
   const isEditingCompletedStage = stages.find(
     s => s.stage_number === formData.stage_number && s.is_complete
@@ -107,6 +113,35 @@ export function StageEntryMode({
           </button>
         </div>
       )}
+
+      {/* PCS-prefill: één tik vult het formulier; nalezen + opslaan blijft
+          de menselijke stap. Nogmaals tikken haalt later binnengekomen
+          velden (strijdlust, dagploeg) op zonder ingevulde te wissen. */}
+      <div className="mb-6 bg-white rounded-lg shadow-md p-4 space-y-3">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h3 className="font-semibold text-lg">Automatisch invullen</h3>
+            <p className="text-sm text-gray-600">
+              Haalt uitslag, truien, strijdlust, dagploeg en opgaves op van ProCyclingStats.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onPcsPrefill}
+            disabled={prefilling || submitting}
+            className="px-4 py-2 bg-tdf-primary text-white rounded-lg hover:opacity-90 disabled:opacity-50 font-medium"
+          >
+            {prefilling ? 'Bezig met ophalen…' : '📥 Haal op van PCS'}
+          </button>
+        </div>
+        {prefillFeedback.length > 0 && (
+          <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
+            {prefillFeedback.map((line, i) => (
+              <li key={i}>{line}</li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
         <StageMetadataForm formData={formData} onUpdate={onUpdateFormData} />
