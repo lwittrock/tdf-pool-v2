@@ -21,3 +21,4 @@ clean up/combine various old plans in docs folder
 Full audit and polish round. Lots changed, so high chance old things are left over and not fully clean yet.
 5.3 Spelregels (the "in aanbouw" placeholder → scoring rules + icon legend, with 5.4 an inline legend on Ploegen).
 landing page with preview standings and so (bit later)
+update
