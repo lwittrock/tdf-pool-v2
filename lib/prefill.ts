@@ -15,7 +15,7 @@
  * versa); the largest token overlap wins, a tie never guesses.
  */
 
-import { matchRiderName } from './parse-results.js';
+import { createRiderMatcher } from './parse-results.js';
 import { foldedRiderNameKey } from './rider-names.js';
 
 export interface PcsPrefillData {
@@ -102,10 +102,12 @@ export function buildPrefillPatch(
       if (!aliasToCanonical.has(alias)) aliasToCanonical.set(alias, rider.name);
     }
   }
+  const matchDirect = createRiderMatcher(riderNames);
+  const matchAlias = createRiderMatcher([...aliasToCanonical.keys()]);
   const resolveRider = (raw: string): string | null => {
-    const direct = matchRiderName(raw, riderNames);
+    const direct = matchDirect(raw);
     if (direct) return direct;
-    const viaAlias = matchRiderName(raw, [...aliasToCanonical.keys()]);
+    const viaAlias = matchAlias(raw);
     return viaAlias ? (aliasToCanonical.get(viaAlias) ?? null) : null;
   };
   const teamNames = [
@@ -196,4 +198,88 @@ export function buildPrefillPatch(
     feedback,
     matchedCount,
   };
+}
+
+/** The form fields the prefill touches (structural subset of the form). */
+export interface PrefillableFields {
+  top_20_finishers: Array<{ rider_name: string; position: number }>;
+  jerseys: { yellow: string; green: string; polka_dot: string; white: string };
+  combativity: string;
+  dagploeg: string;
+  dnf_riders: string[];
+  dns_riders: string[];
+  won_how: string;
+}
+
+const FIELD_LABELS: Array<[key: 'combativity' | 'dagploeg', label: string]> = [
+  ['combativity', 'Strijdlust'],
+  ['dagploeg', 'Dagploeg'],
+];
+
+/**
+ * Merge a prefill patch into the current form (pure — the UI applies the
+ * result). The contract with the admin: a re-tap refreshes PCS data but
+ * NEVER silently discards something they entered or corrected by hand.
+ *
+ *   - top-20: matched names land (PCS corrections should flow through);
+ *     unmatched raw text only fills empty slots.
+ *   - single-value fields (jerseys, strijdlust, Dagploeg, won how): fill
+ *     when empty; when the form already holds a different value, keep it
+ *     and surface the difference as a note instead of overwriting.
+ *   - DNF/DNS: PCS's list replaces the form's when PCS reports any
+ *     abandons (so a corrected false abandon disappears on re-tap), with
+ *     a note for every removed name; when PCS reports none, the form's
+ *     lists stay untouched.
+ */
+export function mergePrefillIntoForm(
+  prev: PrefillableFields,
+  patch: PrefillPatch
+): { fields: PrefillableFields; notes: string[] } {
+  const notes: string[] = [];
+
+  const single = (label: string, prevValue: string, patchValue: string): string => {
+    if (!patchValue) return prevValue;
+    if (!prevValue.trim()) return patchValue;
+    if (prevValue.trim() !== patchValue) {
+      notes.push(`${label}: PCS zegt "${patchValue}", formulier houdt "${prevValue}".`);
+    }
+    return prevValue;
+  };
+
+  const jerseys = {
+    yellow: single('Gele trui', prev.jerseys.yellow, patch.jerseys.yellow),
+    green: single('Groene trui', prev.jerseys.green, patch.jerseys.green),
+    polka_dot: single('Bolletjestrui', prev.jerseys.polka_dot, patch.jerseys.polka_dot),
+    white: single('Witte trui', prev.jerseys.white, patch.jerseys.white),
+  };
+
+  const fields: PrefillableFields = {
+    top_20_finishers: prev.top_20_finishers.map((f, i) => {
+      const p = patch.top_20_finishers[i];
+      const take = p && p.rider_name && (p.matched || !f.rider_name.trim());
+      return take ? { rider_name: p.rider_name, position: i + 1 } : f;
+    }),
+    jerseys,
+    combativity: prev.combativity,
+    dagploeg: prev.dagploeg,
+    won_how: single('Gewonnen door', prev.won_how, patch.won_how),
+    dnf_riders: prev.dnf_riders,
+    dns_riders: prev.dns_riders,
+  };
+  for (const [key, label] of FIELD_LABELS) {
+    fields[key] = single(label, prev[key], patch[key]);
+  }
+
+  if (patch.dnf_riders.length + patch.dns_riders.length > 0) {
+    const kept = new Set([...patch.dnf_riders, ...patch.dns_riders]);
+    for (const name of [...prev.dnf_riders, ...prev.dns_riders]) {
+      if (!kept.has(name)) {
+        notes.push(`Opgave verwijderd (niet meer op PCS): ${name} — controleer.`);
+      }
+    }
+    fields.dnf_riders = patch.dnf_riders;
+    fields.dns_riders = patch.dns_riders;
+  }
+
+  return { fields, notes };
 }

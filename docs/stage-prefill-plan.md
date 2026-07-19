@@ -1,10 +1,26 @@
 # Stage-results prefill — investigation & plan
 
 *July 18, 2026 — investigation for making per-stage entry less manual.*
-*Updated same day: prototype built and verified headless (see §6). What
-remains before use is ONE thing: the Cloudflare spike (§5 step 0), i.e.
-`npm run pcs:fixtures -- <stage>` from a network that can reach PCS, and a
-preview-deploy test of the button.*
+*Updated same day: prototype built and verified headless (see §6).*
+
+*Spike outcome (July 18, production):* **Cloudflare blocks Vercel's
+servers** — the button on tdf-pool.vercel.app returns the designed
+"PCS blokkeert de server (Cloudflare)" message. The direct fetch now
+sends a full modern-Chrome header set (sometimes enough to pass the
+cheaper checks — re-test after deploying); the reliable fix is the
+`PCS_FETCH_PROXY` env var:
+
+1. Get a free scraping-proxy API key (e.g. ScraperAPI — free tier is
+   thousands of requests/month; a Tour needs ~100).
+2. In Vercel → Settings → Environment Variables (Production) set
+   `PCS_FETCH_PROXY` to the provider's URL template with `{url}` where
+   the target page goes, e.g.
+   `https://api.scraperapi.com/?api_key=YOURKEY&url={url}`.
+3. Redeploy, tap the button. Blocked direct fetches automatically retry
+   through the proxy.
+
+`npm run pcs:fixtures -- <stage>` from the home connection remains useful
+to capture real HTML fixtures for the test suite.
 
 **Goal:** open `/admin`, tap one button, and the whole stage form — top-20,
 jerseys, combativity, Dagploeg, DNS/DNF — is prefilled. The admin checks it

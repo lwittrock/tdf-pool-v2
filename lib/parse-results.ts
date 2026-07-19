@@ -63,17 +63,24 @@ function matchTokens(
 }
 
 /**
- * Resolves one piece of free text (a PCS rider cell, a pasted name) to a
- * canonical DB rider name — same rules as the paste parser: all name tokens
- * must appear, longest match wins, a genuine tie never guesses.
+ * Pre-tokenized matcher for repeated lookups against the same rider list —
+ * same rules as the paste parser: all name tokens must appear, longest
+ * match wins, a genuine tie never guesses. Tokenizing the 184-rider list
+ * happens once here, not once per lookup.
  */
+export function createRiderMatcher(
+  riderNames: string[]
+): (text: string) => string | null {
+  const riders = riderNames.map((name) => ({ name, tokens: tokens(name) }));
+  return (text) => {
+    const lineTokens = new Set(tokens(text));
+    return lineTokens.size > 0 ? matchTokens(riders, lineTokens) : null;
+  };
+}
+
+/** One-off variant of createRiderMatcher for single lookups. */
 export function matchRiderName(text: string, riderNames: string[]): string | null {
-  const lineTokens = new Set(tokens(text));
-  if (lineTokens.size === 0) return null;
-  return matchTokens(
-    riderNames.map((name) => ({ name, tokens: tokens(name) })),
-    lineTokens
-  );
+  return createRiderMatcher(riderNames)(text);
 }
 
 export function parseResultsPaste(

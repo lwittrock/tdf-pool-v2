@@ -15,6 +15,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fetchPcsPage } from '../lib/pcs-fetch.js';
+import { getSeason } from '../lib/publish.js';
 import {
   parsePcsStagePage,
   parsePcsComplementaryPage,
@@ -32,7 +33,7 @@ const FIXTURE_DIR = join(
   'pcs'
 );
 
-const season = process.env.SEASON || '2026';
+const season = getSeason();
 const stages = process.argv.slice(2).map(Number).filter(Number.isInteger);
 if (stages.length === 0) {
   console.error('Gebruik: npm run pcs:fixtures -- <etappenummer> [meer nummers]');
