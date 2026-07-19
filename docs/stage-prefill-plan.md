@@ -10,14 +10,7 @@ sends a full modern-Chrome header set (sometimes enough to pass the
 cheaper checks — re-test after deploying); the reliable fix is the
 `PCS_FETCH_PROXY` env var:
 
-1. Get a free scraping-proxy API key (e.g. ScraperAPI — free tier is
-   thousands of requests/month; a Tour needs ~100).
-2. In Vercel → Settings → Environment Variables (Production) set
-   `PCS_FETCH_PROXY` to the provider's URL template with `{url}` where
-   the target page goes, e.g.
-   `https://api.scraperapi.com/?api_key=YOURKEY&url={url}`.
-3. Redeploy, tap the button. Blocked direct fetches automatically retry
-   through the proxy.
+Full step-by-step setup: [scraperapi-setup.md](scraperapi-setup.md).
 
 `npm run pcs:fixtures -- <stage>` from the home connection remains useful
 to capture real HTML fixtures for the test suite.
