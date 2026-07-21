@@ -78,3 +78,42 @@ export function MedalCountsAligned({
     </span>
   );
 }
+
+/**
+ * Medal counts in three fixed gold/silver/bronze columns, so every medal type
+ * lines up down a column across rows (a lone bronze stays under the bronzes,
+ * not shoved left). Meant for a right-aligned table cell — the block hugs the
+ * right edge. Empty medal slots stay blank; no medals at all → em dash.
+ */
+export function MedalCountsColumns({
+  gold,
+  silver,
+  bronze,
+  className = '',
+}: {
+  gold: number;
+  silver: number;
+  bronze: number;
+  className?: string;
+}) {
+  if (gold + silver + bronze === 0) return <span className={`text-tdf-text-muted ${className}`}>—</span>;
+
+  const slot = (medal: string, count: number) =>
+    count > 0 ? (
+      <span className="inline-flex items-center gap-0.5">
+        <span>{medal}</span>
+        <span className="tabular-nums">{count}</span>
+      </span>
+    ) : (
+      // Empty placeholder keeps this medal's column slot so the others don't shift.
+      <span aria-hidden="true" />
+    );
+
+  return (
+    <span className={`inline-grid grid-cols-[2.3em_2.3em_2.3em] leading-none ${className}`}>
+      {slot(MEDALS.GOLD, gold)}
+      {slot(MEDALS.SILVER, silver)}
+      {slot(MEDALS.BRONZE, bronze)}
+    </span>
+  );
+}

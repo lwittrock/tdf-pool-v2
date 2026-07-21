@@ -8,7 +8,7 @@ import Layout from '../components/Layout';
 import { useMetadata, useLeaderboards, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { RankChange } from '../components/shared/RankChange';
-import { MedalIcon, MedalCountsAligned } from '../components/shared/MedalDisplay';
+import { MedalIcon, MedalCountsAligned, MedalCountsColumns } from '../components/shared/MedalDisplay';
 import { TabButton, SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
 import { FreshnessNote } from '../components/shared/FreshnessNote';
@@ -351,10 +351,10 @@ function Poule() {
     {
       key: 'medals',
       header: sortableHeader('medals', 'Etappe Medailles'),
-      align: 'center',
+      align: 'right',
       render: (e) => {
         const m = medalsByParticipant.get(e.participant_name) ?? NO_MEDALS;
-        return <MedalCountsAligned gold={m.gold} silver={m.silver} bronze={m.bronze} />;
+        return <MedalCountsColumns gold={m.gold} silver={m.silver} bronze={m.bronze} />;
       },
     },
   ];
