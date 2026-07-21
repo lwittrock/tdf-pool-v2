@@ -2,7 +2,7 @@
 
 > **HISTORICAL (July 2026).** The founding review; its roadmap was executed
 > through the WP series. For the current architecture read
-> [README.md](../README.md); for what's next, [handoff-cleanup.md](handoff-cleanup.md)
+> [README.md](../README.md); for what's next, [archive/handoff-cleanup.md](archive/handoff-cleanup.md)
 > and [season-2027-plan.md](season-2027-plan.md).
 
 *Written July 2026. Version 2: findings were verified against the code and Vercel/Supabase documentation by an independent second review before this document was finalized.*

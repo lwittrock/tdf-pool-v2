@@ -278,16 +278,13 @@ snapshot/JSON data-flow model, the `ploeg` = selection vs `team` = pro-team
 naming rule, the "CI uses `npm install` not `npm ci`" gotcha, and how
 `beheer`/admin publishing works. Keep it short — it's loaded every session.
 
-### #20 — Consolidate the `docs/` folder
-`docs/` has 10 files, several overlapping/stale: `architecture-review.md`,
-`frontend-improvement-plan.md`, `handoff-cleanup.md`, `implementation-plan.md`,
-`next-steps-plan.md`, `phase-a-go-live.md`, `phase-a-review-findings.md`,
-`stage-prefill-plan.md`, plus this file and `TODO.md`.
-- **Keep live:** `TODO.md`, this `todo-plan.md`, `season-2027-plan.md`,
-  `phase-a-go-live.md` (runbook).
-- **Archive/merge:** fold the historical plans/reviews into a single
-  `docs/archive/` folder or one `history.md`, or delete the ones fully
-  superseded. Verify nothing (CI, scripts) references them before deleting.
+### #20 — Consolidate the `docs/` folder — DONE (2026-07-21)
+Moved the four unreferenced historical planning docs (`frontend-improvement-plan`,
+`handoff-cleanup`, `implementation-plan`, `next-steps-plan`) into `docs/archive/`
+with a README; fixed the one inbound link from `architecture-review.md`. Kept in
+`docs/`: `TODO.md`, this `todo-plan.md`, `season-2027-plan.md`, plus the docs
+still referenced by the README / `.env.example` / `data/` (`architecture-review`,
+`phase-a-go-live`, `phase-a-review-findings`, `stage-prefill-plan`).
 
 ### #21 — Full audit & polish round
 After Phases 1–3, do a sweep for leftovers: dead labels (e.g. `LABELS.TOTAL_POINTS`
