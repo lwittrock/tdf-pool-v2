@@ -4,17 +4,11 @@ Open items only. Completed design/polish/table work was pruned 2026-07-21 —
 see the git log and `docs/todo-plan.md` for the full plan and rationale.
 
 ## New ideas (not grouped yet)
-description for ploegen is wrong "Gebaseerd op 128 deelnemers met elk 10 renners." It should say that it is based on the active renners or something like this. so uitgevallen and reserve aren't included. not sure what best way of phrasing this is. 
-
 The design of the fold out when clicking on one row in the table feels inconsistent with new table design. let's iterate on this and improve. (on desktop) it also takes too much vertical space and wastes a lot of horizontal space on desktop.
-
-what additional interaction can i add for users? that doesn't change the rules of the pool. smaller things i guess
-
-I want the medalls to be better vertically aligned i think. 
 
 somehow the width of columns in tables is still not perfect. for example algemeen klassement table. it looked better in snapshot you showed me earlier while deciding between design options. also maybe should be more consistent with mobile in the sense what is bold and so, also not sure what should be.
 
-this content on etappe page: Uitgevallen (DNF): FLORIAN LIPOWITZ. Niet gestart (DNS): LARS CRAPS., should be in style more similar to subheadings of uitslag and truien klassement. also while at it. the truien klassement seems very small right now. somehow between two sections that have tables/cards. not sure how to visually improve? also not fully sure if needed
+what additional interaction can i add for users? that doesn't change the rules of the pool. smaller things i guess
 
 
 ## Content  [#22, #1]
