@@ -8,7 +8,7 @@ import Layout from '../components/Layout';
 import { useMetadata, useLeaderboards, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { RankChange } from '../components/shared/RankChange';
-import { MedalIcon } from '../components/shared/MedalDisplay';
+import { MedalIcon, MedalCountsAligned } from '../components/shared/MedalDisplay';
 import { TabButton, SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
 import { FreshnessNote } from '../components/shared/FreshnessNote';
@@ -352,7 +352,10 @@ function Poule() {
       key: 'medals',
       header: sortableHeader('medals', 'Etappe Medailles'),
       align: 'center',
-      render: (e) => (medalsByParticipant.get(e.participant_name) ?? NO_MEDALS).display || '—',
+      render: (e) => {
+        const m = medalsByParticipant.get(e.participant_name) ?? NO_MEDALS;
+        return <MedalCountsAligned gold={m.gold} silver={m.silver} bronze={m.bronze} />;
+      },
     },
   ];
 
@@ -501,7 +504,11 @@ function Poule() {
 
                       <div className="text-right">
                         <div className="text-lg font-bold text-tdf-primary">{entry.overall_score}</div>
-                        {medals.display && <div className="text-sm leading-none mt-0.5">{medals.display}</div>}
+                        {medals.display && (
+                          <div className="text-sm mt-0.5 flex justify-end">
+                            <MedalCountsAligned gold={medals.gold} silver={medals.silver} bronze={medals.bronze} />
+                          </div>
+                        )}
                       </div>
                     </div>
                   }

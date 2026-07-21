@@ -99,7 +99,7 @@ function IconSlot({ children }: { children: React.ReactNode }) {
 /** Jersey holders + strijdlust + dagploeg after this stage. */
 function JerseyStrip({ stage }: { stage: StageData }) {
   return (
-    <div className="flex flex-wrap gap-x-6 gap-y-2 mb-6 px-1">
+    <div className="flex flex-wrap gap-x-6 gap-y-2">
       {JERSEY_ORDER.map((jersey) =>
         stage.jerseys[jersey] ? (
           <div key={jersey} className="flex items-center gap-2">
@@ -280,10 +280,12 @@ function Etappes() {
         </div>
       ) : (
         <>
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary mb-2.5">
-            Truien &amp; klassementen
-          </h3>
-          <JerseyStrip stage={stage} />
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 mb-6">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary mb-3">
+              Truien &amp; klassementen
+            </h3>
+            <JerseyStrip stage={stage} />
+          </div>
 
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary mb-3">
             Uitslag
@@ -319,10 +321,15 @@ function Etappes() {
           <StandingsTable columns={columns} rows={resultRows} getRowKey={(r) => r.key} />
 
           {hasDropouts && (
-            <p className="mt-6 text-xs sm:text-sm text-tdf-text-muted">
-              {stage.dnf_riders.length > 0 && <>Uitgevallen (DNF): {stage.dnf_riders.join(', ')}. </>}
-              {stage.dns_riders.length > 0 && <>Niet gestart (DNS): {stage.dns_riders.join(', ')}.</>}
-            </p>
+            <div className="mt-8">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary mb-2">
+                Uitvallers
+              </h3>
+              <p className="text-xs sm:text-sm text-tdf-text-muted">
+                {stage.dnf_riders.length > 0 && <>Uitgevallen (DNF): {stage.dnf_riders.join(', ')}. </>}
+                {stage.dns_riders.length > 0 && <>Niet gestart (DNS): {stage.dns_riders.join(', ')}.</>}
+              </p>
+            </div>
           )}
         </>
       )}

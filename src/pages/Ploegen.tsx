@@ -262,7 +262,7 @@ function Ploegen() {
           </h2>
         )}
         <p className="text-xs sm:text-sm mb-4 sm:mb-6 text-tdf-text-highlight">
-          Gebaseerd op {totalParticipants} deelnemers met elk 10 renners.
+          Populariteit onder {totalParticipants} deelnemers — alleen actieve renners.
         </p>
 
         {/* Mobile Card View */}
