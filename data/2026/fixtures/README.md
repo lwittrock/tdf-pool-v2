@@ -6,7 +6,7 @@ the owner's `UITSLAG ETAPPE 9.xlsx` export in July 2026 — every value
 machine-extracted and cross-validated, 0 transcription mismatches). The
 rebuilt scoring engine must reproduce `expected_standings.json` from
 `team_selections.json` + `stage_results/` + the scoring rules documented
-in `docs/architecture-review.md` ("Scoring specification").
+in `docs/archive/architecture-review.md` ("Scoring specification").
 
 ## Files
 
@@ -46,7 +46,7 @@ participant names to these files.
 4. The sheet scored the spellings "TOBIAS JOHANNESSEN" and "TOBIAS HALLAND
    JOHANNESSEN" as different riders (same person). These fixtures reproduce
    that faithfully; the production DB merged them by owner ruling (see
-   `docs/phase-a-review-findings.md` 8b).
+   `docs/archive/phase-a-review-findings.md` 8b).
 
 Verification: all 128 × 9 stage totals and cumulatives recompute exactly
 from these files (finish points 25/19/18…1, jerseys 15/10/10/10,

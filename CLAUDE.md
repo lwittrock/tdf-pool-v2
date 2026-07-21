@@ -4,6 +4,10 @@ Guidance for working in this repo. For the domain/architecture, read
 [README.md](README.md) first — it explains the snapshot/publish model, scoring
 rules, and stage-entry flow. This file covers conventions and gotchas.
 
+Roadmap: near-term todos in [docs/TODO.md](docs/TODO.md); future work & ideas
+(engagement, landing page, login, season 2027) in [docs/ideas.md](docs/ideas.md);
+old/superseded plans in [docs/archive/](docs/archive/).
+
 ## What it is
 A 128-participant Tour de France fantasy pool: a public read-only standings
 site + an admin stage-entry panel. Dutch UI. React + Vite + TypeScript +

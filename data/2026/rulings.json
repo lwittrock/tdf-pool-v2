@@ -1,5 +1,5 @@
 {
-  "_comment": "Owner rulings that are applied ON TOP of the faithful fixture import (the golden fixtures reproduce the Excel verbatim, including its quirks). npm run rebuild re-applies these after the replay. See docs/phase-a-review-findings.md 8b.",
+  "_comment": "Owner rulings that are applied ON TOP of the faithful fixture import (the golden fixtures reproduce the Excel verbatim, including its quirks). npm run rebuild re-applies these after the replay. See docs/archive/phase-a-review-findings.md 8b.",
   "rulings": [
     {
       "type": "merge_riders",

@@ -39,7 +39,7 @@ against that sheet cell-for-cell).
   flagged, save; the site follows within ~2 minutes. Re-tapping refetches
   late fields (combativity) without overwriting manual edits. Manual entry
   and the paste box remain as fallback; see
-  [docs/stage-prefill-plan.md](docs/stage-prefill-plan.md) for how the
+  [docs/archive/stage-prefill-plan.md](docs/archive/stage-prefill-plan.md) for how the
   prefill works and the `PCS_FETCH_PROXY` escape hatch if Cloudflare
   blocks Vercel.
 - **Correct an old stage:** re-enter it (the UI asks for overwrite
@@ -80,7 +80,7 @@ deployments from writing production data); `VITE_*` are build-time.
 SQL migrations live in [supabase/migrations/](supabase/migrations/) — run
 them **in order** in the Supabase SQL editor (000 base schema, 001 phase A,
 002 phase B1, 003 cleanup). They are idempotent. Full dashboard walkthrough (auth, blob
-store, env vars, smoke tests): [docs/phase-a-go-live.md](docs/phase-a-go-live.md).
+store, env vars, smoke tests): [docs/archive/phase-a-go-live.md](docs/archive/phase-a-go-live.md).
 
 ## Scripts
 
@@ -97,7 +97,7 @@ store, env vars, smoke tests): [docs/phase-a-go-live.md](docs/phase-a-go-live.md
 Data quirks of the 2026 season (Excel legacy: spelling variants, the
 9-rider participant, owner rulings) are documented in
 [data/2026/fixtures/README.md](data/2026/fixtures/README.md) and
-[docs/phase-a-review-findings.md](docs/phase-a-review-findings.md).
+[docs/archive/phase-a-review-findings.md](docs/archive/phase-a-review-findings.md).
 
 ## Repository layout
 

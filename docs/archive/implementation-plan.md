@@ -2,7 +2,7 @@
 
 > **SUPERSEDED (July 2026).** This plan was executed; the WP numbering is
 > still referenced by commits and other docs, but nothing here should drive
-> new work. Current references: [README.md](../README.md) (architecture,
+> new work. Current references: [README.md](../../README.md) (architecture,
 > operations) and [handoff-cleanup.md](handoff-cleanup.md) (the live
 > backlog). File/line references below predate the WP-B2 rewrite.
 

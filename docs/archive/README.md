@@ -1,14 +1,24 @@
-# Archived planning docs
+# Archived docs
 
-Historical, superseded planning documents, kept for reference only. They
-describe work that has since shipped and are no longer maintained.
+Historical, superseded documents kept for reference only — plans that shipped,
+reviews of past states, and go-live runbooks from the 2026 migration. Not
+maintained; internal links may be stale.
 
-- **frontend-improvement-plan.md** — an earlier frontend/IA plan. Superseded by
-  [../todo-plan.md](../todo-plan.md) (and the nav was ultimately named
-  Klassement · Ploegen · Etappes · Renners · Spelregels, not the IA proposed here).
+Some are still cited from live files (the top-level README, `.env.example`, and
+`data/2026/…` comments) for specific facts (e.g. a ruling in `rulings.json`
+explains itself via `phase-a-review-findings.md` §8b), which is why they're kept
+rather than deleted.
+
+- **architecture-review.md** — the founding architecture review + scoring spec.
+- **phase-a-go-live.md** — the 2026 go-live runbook.
+- **phase-a-review-findings.md** — pre-go-live review findings (cited by rulings).
+- **stage-prefill-plan.md** — the PCS stage-prefill feature plan (shipped).
 - **implementation-plan.md**, **next-steps-plan.md**, **handoff-cleanup.md** —
-  the Phase-A build/handoff sequence, executed July 2026. They cross-reference
-  each other; kept together so those links still resolve.
+  the Phase-A build/handoff sequence (July 2026).
+- **frontend-improvement-plan.md** — an early frontend/IA plan; its proposed nav
+  did not ship (the nav was renamed Klassement · Ploegen · Etappes · Renners ·
+  Spelregels, 2026-07-21).
 
-For the current state see the top-level [README.md](../../README.md),
-[../todo-plan.md](../todo-plan.md), and the open [../TODO.md](../TODO.md).
+For the current state: [../../README.md](../../README.md),
+[../../CLAUDE.md](../../CLAUDE.md), the open [../TODO.md](../TODO.md), and the
+future work in [../ideas.md](../ideas.md).

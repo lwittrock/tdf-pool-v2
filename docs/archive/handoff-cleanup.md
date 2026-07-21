@@ -17,10 +17,10 @@ features. The app is live and trusted; don't break it for elegance.
   `data/2026/fixtures/expected_standings.json` (the owner's Excel, extracted
   and machine-validated). `npm test` runs the golden suite (128 × 9) plus
   scoring/parser units. All green as of commit `a221ca1`.
-- Architecture, operations, scripts: see [README.md](../README.md).
+- Architecture, operations, scripts: see [README.md](../../README.md).
   History and rationale: [next-steps-plan.md](next-steps-plan.md) (all steps
   done), [phase-a-review-findings.md](phase-a-review-findings.md) (findings
-  1–10, two still open — see backlog), [season-2027-plan.md](season-2027-plan.md).
+  1–10, two still open — see backlog), [season-2027-plan.md](../ideas.md).
 
 ## Non-negotiable invariants
 
@@ -85,7 +85,7 @@ Ordered by value; verify each with the invariant-3 loop.
    "DTe", "DtE" and "Dte" (verbatim-Excel free text), so the site's
    directie klassement shows them as four directies while the sheet's
    groups fold them into one. Same root cause as the
-   [season-2027-plan](season-2027-plan.md) identity work. Options: fold by
+   [season-2027-plan](../ideas.md) identity work. Options: fold by
    name-key in `generateLeaderboardsJSON` (display-level), or merge the
    `directie` rows via a ruling (data-level, needs a merge script). Owner
    call on the canonical spellings either way.
