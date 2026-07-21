@@ -13,9 +13,18 @@ import {
   competitionRankMap,
   getAllParticipantMedals,
   getParticipantStages,
+  stageWinCounts,
+  combativityPointsByParticipant,
+  classificationLeaders,
 } from '../lib/data-transforms';
 import { formatMedalDisplay } from '../lib/scoring-constants';
-import type { LeaderboardEntry, LeaderboardsData } from '../lib/types';
+import type {
+  LeaderboardEntry,
+  LeaderboardsData,
+  RidersData,
+  RiderStageData,
+  TeamSelectionsData,
+} from '../lib/types';
 
 function entry(
   participant_name: string,
@@ -165,5 +174,69 @@ describe('getParticipantStages', () => {
       { stageNum: 2, stageKey: 'stage_2', stage_score: 70, stage_rank: 1 },
     ]);
     expect(getParticipantStages(data, 'C').map((s) => s.stage_rank)).toEqual([3, 2]);
+  });
+});
+
+// ---- Jersey classifications -------------------------------------------------
+
+/** RiderData carrying only the per-stage combativity points the tests read. */
+function riderWithCombative(perStage: number[]): RidersData[string] {
+  const stages: Record<string, RiderStageData> = {};
+  perStage.forEach((combative, i) => {
+    stages[`stage_${i + 1}`] = {
+      date: '',
+      stage_finish_points: 0,
+      stage_finish_position: 0,
+      jersey_points: { yellow: 0, green: 0, polka_dot: 0, white: 0, combative },
+      stage_total: combative,
+      cumulative_total: 0,
+    };
+  });
+  return { team: 'T', total_points: 0, stages };
+}
+
+function team(participant_name: string, riders: string[]): TeamSelectionsData[string] {
+  return { participant_name, directie_name: 'D', riders };
+}
+
+describe('stageWinCounts', () => {
+  it('counts daily wins tie-aware and ignores zero-point stages', () => {
+    const data = leaderboards({
+      stage_1: [entry('A', 95), entry('B', 95), entry('C', 80)], // A & B share the win
+      stage_2: [entry('A', 50), entry('B', 70), entry('C', 60)], // B wins
+      stage_3: [entry('A', 0), entry('B', 0), entry('C', 0)], // nobody scored → no win
+    });
+    const wins = stageWinCounts(data);
+    expect(wins.get('A')).toBe(1);
+    expect(wins.get('B')).toBe(2);
+    expect(wins.get('C')).toBeUndefined();
+  });
+});
+
+describe('combativityPointsByParticipant', () => {
+  it('sums roster combativity across stages, skips unknown riders', () => {
+    const riders: RidersData = {
+      Simmons: riderWithCombative([5, 0, 5]),
+      Pidcock: riderWithCombative([0, 5, 0]),
+      Pogacar: riderWithCombative([0, 0, 0]),
+    };
+    const selections: TeamSelectionsData = {
+      Alice: team('Alice', ['Simmons', 'Pogacar', 'Ghost']), // Ghost not in ridersData
+      Bob: team('Bob', ['Pidcock']),
+    };
+    const totals = combativityPointsByParticipant(riders, selections);
+    expect(totals.get('Alice')).toBe(10);
+    expect(totals.get('Bob')).toBe(5);
+  });
+});
+
+describe('classificationLeaders', () => {
+  it('returns all names tied at the max', () => {
+    const leaders = classificationLeaders(new Map([['A', 3], ['B', 3], ['C', 1]]));
+    expect(leaders).toEqual(new Set(['A', 'B']));
+  });
+
+  it('is empty when nobody has scored', () => {
+    expect(classificationLeaders(new Map([['A', 0], ['B', 0]])).size).toBe(0);
   });
 });

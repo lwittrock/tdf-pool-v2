@@ -13,6 +13,7 @@ import type {
   StageData,
   MedalCounts,
   LeaderboardsData,
+  TeamSelectionsData,
 } from './types';
 import { MEDAL_POSITIONS, formatMedalDisplay } from './scoring-constants.js';
 
@@ -210,6 +211,78 @@ export function getAllParticipantMedals(
     medals.set(name, { gold, silver, bronze, display: formatMedalDisplay(gold, silver, bronze) });
   });
   return medals;
+}
+
+// ============================================================================
+// Jersey classifications (Klassement markers)
+// ============================================================================
+//
+// Three season-long side competitions surfaced next to the main standings:
+//   • yellow  = current overall leader (computed in the page from overall_score)
+//   • green   = most daily stage wins (stageWinCounts)
+//   • polka   = most combativity points on your roster (combativityPointsByParticipant)
+// Green rewards day-to-day spikes, polka rewards picking non-GC breakaway
+// attackers — axes the yellow (GC consistency) competition doesn't reward.
+
+/**
+ * Daily-win count per participant: how many stages they topped the daily
+ * (stage_score) ranking. Tie-aware — co-leaders sharing the top stage_score
+ * each get a win, matching the 1,2,2,4 semantics used for medals. Stages where
+ * nobody scored (top score 0) award no win. Feeds the green-jersey marker.
+ */
+export function stageWinCounts(leaderboardsData: LeaderboardsData): Map<string, number> {
+  const wins = new Map<string, number>();
+  Object.values(leaderboardsData.leaderboard_by_stage).forEach((stageData) => {
+    assignCompetitionRanks(stageData, (e) => e.stage_score).forEach(({ item, rank }) => {
+      if (rank !== 1 || item.stage_score <= 0) return;
+      wins.set(item.participant_name, (wins.get(item.participant_name) ?? 0) + 1);
+    });
+  });
+  return wins;
+}
+
+/**
+ * Combativity points accumulated by each participant's roster across the Tour:
+ * the sum of jersey_points.combative over every rider on their team, every
+ * stage. Combativity is a flat COMBATIVITY_POINTS award to the day's most
+ * aggressive rider, so this rewards picking breakaway attackers (Simmons,
+ * Pidcock…) rather than GC favourites. Feeds the polka-dot competition (#13).
+ */
+export function combativityPointsByParticipant(
+  ridersData: RidersData,
+  teamSelections: TeamSelectionsData
+): Map<string, number> {
+  const totals = new Map<string, number>();
+  Object.values(teamSelections).forEach(({ participant_name, riders }) => {
+    let sum = 0;
+    riders.forEach((riderName) => {
+      const rider = ridersData[riderName];
+      if (!rider) return;
+      Object.values(rider.stages).forEach((s) => {
+        sum += s.jersey_points?.combative ?? 0;
+      });
+    });
+    totals.set(participant_name, sum);
+  });
+  return totals;
+}
+
+/**
+ * Names holding the maximum value in a classification map (ties share the
+ * lead). Returns an empty set when every value is 0 — i.e. no jersey is
+ * awarded before anyone has scored in that competition.
+ */
+export function classificationLeaders(scores: Map<string, number>): Set<string> {
+  let max = 0;
+  scores.forEach((v) => {
+    if (v > max) max = v;
+  });
+  if (max <= 0) return new Set();
+  const leaders = new Set<string>();
+  scores.forEach((v, name) => {
+    if (v === max) leaders.add(name);
+  });
+  return leaders;
 }
 
 // ============================================================================
