@@ -4,8 +4,6 @@ Open items only. Completed design/polish/table work was pruned 2026-07-21 —
 see the git log and `docs/todo-plan.md` for the full plan and rationale.
 
 ## New ideas (not grouped yet)
-The design of the fold out when clicking on one row in the table feels inconsistent with new table design. let's iterate on this and improve. (on desktop) it also takes too much vertical space and wastes a lot of horizontal space on desktop.
-
 somehow the width of columns in tables is still not perfect. for example algemeen klassement table. it looked better in snapshot you showed me earlier while deciding between design options. also maybe should be more consistent with mobile in the sense what is bold and so, also not sure what should be.
 
 what additional interaction can i add for users? that doesn't change the rules of the pool. smaller things i guess
