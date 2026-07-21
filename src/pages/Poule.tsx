@@ -241,7 +241,7 @@ function Poule() {
       key: 'punten',
       header: 'Punten',
       align: 'right',
-      cellClassName: 'font-semibold',
+      cellClassName: 'font-semibold text-tdf-score',
       render: (e) => e.stage_score,
     },
   ];
@@ -280,6 +280,13 @@ function Poule() {
       return (b.overall_score - a.overall_score) * dirSign;
     });
 
+  // The Algemeen rows in display order, shared by the desktop table and mobile
+  // cards. Rank blanking (#5) keys off adjacency in this exact order.
+  const algemeenDisplayed = algemeenRows(filteredResults as LeaderboardEntry[]);
+  const algemeenRankAt = (i: number) =>
+    algemeenRankMap.get(algemeenDisplayed[i].participant_name) ?? algemeenDisplayed[i].overall_rank;
+  const isRepeatRank = (i: number) => i > 0 && algemeenRankAt(i) === algemeenRankAt(i - 1);
+
   const sortArrow = (key: 'points' | 'medals') =>
     sortKey === key ? (sortDir === 'desc' ? ' ▼' : ' ▲') : '';
   const sortableHeader = (key: 'points' | 'medals', label: string) => (
@@ -297,25 +304,34 @@ function Poule() {
   const standingsColumns: Column<LeaderboardEntry>[] = [
     {
       key: 'pos',
+      // Positie + +/- form one tight "rank & movement" unit: narrow rank cell,
+      // minimal padding between them, then a clear gap before Deelnemer.
       header: 'Positie',
-      cellClassName: 'font-medium',
-      render: (e) => algemeenRankMap.get(e.participant_name) ?? e.overall_rank,
+      headerClassName: 'w-10 pr-1',
+      cellClassName: 'font-medium w-10 pr-1',
+      // On a tie, only the first row of the group shows the shared rank; the
+      // repeats stay blank for visual calm (#5). Rows arrive pre-sorted, so a
+      // repeat is any row whose rank equals the one above it.
+      render: (e, index) =>
+        isRepeatRank(index) ? '' : algemeenRankMap.get(e.participant_name) ?? e.overall_rank,
     },
     ...(medalSorted
       ? []
       : [{
           key: 'change',
           header: '+/-',
-          align: 'center' as const,
+          align: 'left' as const,
+          headerClassName: 'w-11 pl-1',
+          cellClassName: 'w-11 pl-1',
           render: (e: LeaderboardEntry) => <RankChange change={e.overall_rank_change} />,
         }]),
-    { key: 'deelnemer', header: 'Deelnemer', render: (e) => e.participant_name },
+    { key: 'deelnemer', header: 'Deelnemer', headerClassName: 'pl-8', cellClassName: 'pl-8', render: (e) => e.participant_name },
     { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
     {
       key: 'punten',
       header: sortableHeader('points', 'Punten'),
       align: 'right',
-      cellClassName: 'font-semibold',
+      cellClassName: 'font-semibold text-tdf-score',
       render: (e) => e.overall_score,
     },
     {
@@ -330,16 +346,17 @@ function Poule() {
     {
       key: 'pos',
       header: 'Positie',
-      cellClassName: 'font-medium',
+      headerClassName: 'w-10 pr-1',
+      cellClassName: 'font-medium w-10 pr-1',
       render: (e) => directieOverallRankMap.get(e.directie_name) ?? e.overall_rank,
     },
-    { key: 'change', header: '+/-', align: 'center', render: (e) => <RankChange change={e.overall_rank_change} /> },
-    { key: 'directie', header: 'Directie', cellClassName: 'font-medium', render: (e) => e.directie_name },
+    { key: 'change', header: '+/-', align: 'left', headerClassName: 'w-11 pl-1', cellClassName: 'w-11 pl-1', render: (e) => <RankChange change={e.overall_rank_change} /> },
+    { key: 'directie', header: 'Directie', headerClassName: 'pl-8', cellClassName: 'font-medium pl-8', render: (e) => e.directie_name },
     {
       key: 'punten',
       header: 'Punten',
       align: 'right',
-      cellClassName: 'font-semibold',
+      cellClassName: 'font-semibold text-tdf-score',
       render: (e) => e.overall_score.toFixed(1),
     },
   ];
@@ -443,7 +460,7 @@ function Poule() {
           </div>
 
           <div className="block lg:hidden space-y-2">
-            {algemeenRows(filteredResults as LeaderboardEntry[]).map((entry) => {
+            {algemeenDisplayed.map((entry) => {
               const medals = medalsByParticipant.get(entry.participant_name) ?? NO_MEDALS;
               const rank = algemeenRankMap.get(entry.participant_name) ?? entry.overall_rank;
               return (
@@ -483,7 +500,7 @@ function Poule() {
 
           <StandingsTable
             columns={standingsColumns}
-            rows={algemeenRows(filteredResults as LeaderboardEntry[])}
+            rows={algemeenDisplayed}
             getRowKey={(e) => e.participant_name}
             onRowClick={(e) => toggleItemDetails(e.participant_name)}
             isRowExpanded={(e) => isOpen(e.participant_name)}

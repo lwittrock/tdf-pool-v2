@@ -171,7 +171,7 @@ function Rennerpunten() {
       key: 'punten',
       header: 'Punten',
       align: 'right',
-      cellClassName: 'font-semibold',
+      cellClassName: 'font-semibold text-tdf-score',
       render: (r) => r.total_points,
     },
     {

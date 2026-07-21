@@ -51,23 +51,28 @@ export function StandingsTable<T>({
   const expandable = Boolean(onRowClick);
 
   return (
-    <div className="hidden lg:block">
+    // Card surface (design direction A): one rounded, bordered surface with a
+    // soft shadow, hairline row dividers and no zebra — the same language as
+    // the mobile ExpandableCards. No overflow-hidden here: the header stays
+    // sticky to the page scroll, which an overflow container would disable.
+    <div className="hidden lg:block rounded-xl border border-gray-200 bg-white shadow-sm">
       <table className="w-full">
         <thead>
-          {/* Sticky to the page scroll: each th carries its own bg so rows
-              don't bleed through as they scroll under it (6.3). */}
+          {/* Uppercase micro-labels over a hairline rule (no fill). bg-white
+              keeps the header opaque so rows don't bleed through as they
+              scroll under it — it stays sticky to the page scroll (6.3). */}
           <tr>
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`sticky top-0 z-10 bg-table-header px-4 py-4 text-sm font-semibold text-tdf-text-highlight ${alignClass[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
+                className={`sticky top-0 z-10 bg-white px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary border-b border-gray-200 first:rounded-tl-xl last:rounded-tr-xl ${alignClass[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
               >
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100">
           {rows.map((row, idx) => {
             const key = getRowKey(row);
             const expanded = isRowExpanded?.(row) ?? false;
@@ -75,7 +80,7 @@ export function StandingsTable<T>({
             return (
               <React.Fragment key={key}>
                 <tr
-                  className={`${expandable ? 'cursor-pointer hover:bg-tdf-card-hover' : ''} ${idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'}`}
+                  className={expandable ? 'cursor-pointer hover:bg-tdf-card-hover' : ''}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   tabIndex={expandable ? 0 : undefined}
                   aria-expanded={expandable ? expanded : undefined}
@@ -93,7 +98,7 @@ export function StandingsTable<T>({
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className={`px-4 py-3 text-sm ${alignClass[col.align ?? 'left']} ${col.cellClassName ?? ''}`}
+                      className={`px-4 py-2.5 text-sm ${alignClass[col.align ?? 'left']} ${col.cellClassName ?? ''}`}
                     >
                       {col.render(row, idx)}
                     </td>
@@ -127,7 +132,7 @@ interface ExpandableCardProps {
 /** Mobile counterpart to a StandingsTable row: card shell + expansion region. */
 export function ExpandableCard({ expanded, onToggle, header, children }: ExpandableCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div
         onClick={onToggle}
         role="button"

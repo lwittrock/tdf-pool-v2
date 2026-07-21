@@ -3,12 +3,13 @@
  * selected renners) when a deelnemer is searched.
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { Autocomplete } from '../components/Autocomplete';
 import { RiderName } from '../components/shared/RiderName';
+import { StandingsTable, type Column } from '../components/shared/StandingsTable';
 import { useRiders, useTeamSelections, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import {
@@ -20,6 +21,15 @@ import {
 } from '../../lib/data-transforms';
 import { JERSEY_ICONS, SELECTION_ICONS, SELECTION_THRESHOLDS, LABELS } from '../../lib/constants';
 import type { RidersData, RiderStageData, StageInfo } from '../../lib/types';
+
+interface PloegRow {
+  name: string;
+  team: string;
+  total_points: number;
+  stages: Record<string, RiderStageData>;
+  selection_count: number;
+  selection_percentage: number;
+}
 
 function Ploegen() {
   usePageTitle(LABELS.PLOEGEN);
@@ -161,6 +171,72 @@ function Ploegen() {
 
   if (!ridersData || !teamSelectionsData) return null;
 
+  // Per-rider etappe breakdown, shared by the mobile card and the desktop
+  // table's expanded row.
+  const riderStageBreakdown = (name: string) => (
+    <div className="space-y-1">
+      {getRiderStages(ridersData as RidersData, name).map((stage) => {
+        const stageJerseys = getStageJerseys(stage);
+        return (
+          <div key={stage.stageKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-table-header">
+            <div className="flex items-center">
+              <span className="text-sm text-tdf-text-highlight w-24">Etappe {stage.stageNum}:</span>
+              <span className="text-xs text-tdf-text-secondary w-16">
+                {stage.stage_finish_position > 0 ? `# ${stage.stage_finish_position}` : ''}
+              </span>
+              {stageJerseys.length > 0 && (
+                <div className="flex gap-1 items-center">
+                  {stageJerseys.map((jersey) => (
+                    <img key={jersey} src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]} alt={`${jersey} jersey`} className="w-4 h-4" />
+                  ))}
+                </div>
+              )}
+            </div>
+            <span className="text-sm font-bold">{stage.stage_total}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  // Desktop columns for the shared StandingsTable (card surface, caps header,
+  // gold points — same treatment as the other pages).
+  const columns: Column<PloegRow>[] = [
+    {
+      key: 'sel',
+      header: 'Geselecteerd',
+      align: 'center',
+      render: (r) => (
+        <div className="flex flex-col items-center">
+          <div className="text-sm font-bold text-tdf-text-primary">{r.selection_percentage}%</div>
+          <div className="text-xs text-tdf-text-secondary">{r.selection_count}/{totalParticipants}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'renner',
+      header: 'Renner',
+      render: (r) => <RiderName name={r.name} abandoned={abandoned.has(r.name)} />,
+    },
+    { key: 'team', header: 'Team', cellClassName: 'text-tdf-text-secondary', render: (r) => r.team },
+    {
+      key: 'punten',
+      header: 'Punten',
+      align: 'right',
+      render: (r) => (
+        <div className="flex items-center justify-end gap-2">
+          <span className="text-lg w-6 flex items-center justify-center leading-none">
+            {isTop10(r.name) &&
+              (r.selection_percentage >= SELECTION_THRESHOLDS.POPULAR
+                ? SELECTION_ICONS.POPULAR_TOP_10
+                : SELECTION_ICONS.RARE_TOP_10)}
+          </span>
+          <span className="font-semibold text-tdf-score w-12 text-right">{r.total_points}</span>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <Layout title={LABELS.PLOEGEN}>
       <main>
@@ -234,148 +310,30 @@ function Ploegen() {
                 />
               </div>
 
-              <CardExpandedSection 
+              <CardExpandedSection
                 title="Punten per Etappe"
                 isExpanded={expandedRider === rider.name}
               >
-                {getRiderStages(ridersData as RidersData, rider.name).map((stage) => {
-                  const stageJerseys = getStageJerseys(stage);
-                  return (
-                    <div key={stage.stageKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-table-header">
-                      <div className="flex items-center">
-                        <span className="text-sm text-tdf-text-highlight w-20">
-                          Etappe {stage.stageNum}: 
-                        </span>
-                        
-                        <span className="text-xs text-tdf-text-secondary w-10">
-                          {stage.stage_finish_position > 0 ? `# ${stage.stage_finish_position}` : ''}
-                        </span>
-
-                        {stageJerseys.length > 0 && (
-                          <div className="flex gap-1 items-center">
-                            {stageJerseys.map(jersey => (
-                              <img 
-                                key={jersey}
-                                src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
-                                alt={`${jersey} jersey`}
-                                className="w-4 h-4"
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold">{stage.stage_total}</span>
-                      </div>
-                    </div>
-                  );
-                })}
+                {riderStageBreakdown(rider.name)}
               </CardExpandedSection>
             </Card>
           ))}
         </div>
 
-        {/* Desktop Table View */}
-        <div className="hidden lg:block overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-table-header">
-                <th className="px-4 py-4 text-center text-sm font-semibold text-tdf-text-highlight">Geselecteerd</th>
-                <th className="px-4 py-4 text-left text-sm font-semibold text-tdf-text-highlight">Renner</th>
-                <th className="px-4 py-4 text-left text-sm font-semibold text-tdf-text-highlight">Team</th>
-                <th className="px-4 py-4 text-right text-sm font-semibold text-tdf-text-highlight">Totaal Punten</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayData.map((rider, idx) => (
-                <React.Fragment key={rider.name}>
-                  <tr
-                    className={`cursor-pointer hover:bg-tdf-card-hover ${
-                      idx % 2 === 0 ? 'bg-white' : 'bg-tdf-bg'
-                    }`}
-                    onClick={() => setExpandedRider(
-                      expandedRider === rider.name ? null : rider.name
-                    )}
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col items-center">
-                        <div className="text-sm font-bold text-tdf-text-primary">
-                          {rider.selection_percentage}%
-                        </div>
-                        <div className="text-xs text-tdf-text-secondary">
-                          {rider.selection_count}/{totalParticipants}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-tdf-text-primary">
-                      <RiderName name={rider.name} abandoned={abandoned.has(rider.name)} />
-                    </td>
-                    <td className="px-4 py-3 text-sm text-tdf-text-secondary">{rider.team}</td>
-                    <td className="px-4 py-3 text-sm text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <div className="text-lg w-6 flex items-center justify-center"> 
-                          {isTop10(rider.name) && (
-                            <span className="leading-none">
-                              {rider.selection_percentage >= SELECTION_THRESHOLDS.POPULAR ? SELECTION_ICONS.POPULAR_TOP_10 : SELECTION_ICONS.RARE_TOP_10}
-                            </span>
-                          )}
-                        </div>                        
-                        <div className="w-12 text-right"> 
-                          <span className="font-semibold text-tdf-text-primary">
-                            {rider.total_points}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {expandedRider === rider.name && (
-                    <tr className="bg-tdf-card-hover">
-                      <td colSpan={4} className="px-4 py-4">
-                        <div className="ml-8 max-w-md">
-                          <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Etappe</h3>
-                          <div className="space-y-1">
-                            {getRiderStages(ridersData as RidersData, rider.name).map((stage) => {
-                              const stageJerseys = getStageJerseys(stage);
-                              return (
-                                <div key={stage.stageKey} className="flex justify-between items-center py-1 px-2 rounded hover:bg-table-header">
-                                  <div className="flex items-center">
-                                    <span className="text-sm text-tdf-text-highlight w-24">
-                                      Etappe {stage.stageNum}: 
-                                    </span>
-                                    
-                                    <span className="text-xs text-tdf-text-secondary w-16">
-                                      {stage.stage_finish_position > 0 ? `# ${stage.stage_finish_position}` : ''}
-                                    </span>
-
-                                    {stageJerseys.length > 0 && (
-                                      <div className="flex gap-1 items-center">
-                                        {stageJerseys.map(jersey => (
-                                          <img 
-                                            key={jersey}
-                                            src={JERSEY_ICONS[jersey as keyof typeof JERSEY_ICONS]}
-                                            alt={`${jersey} jersey`}
-                                            className="w-4 h-4"
-                                          />
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-sm font-bold">{stage.stage_total}</span>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* Desktop Table View — shared StandingsTable (card surface). */}
+        <StandingsTable
+          columns={columns}
+          rows={displayData as PloegRow[]}
+          getRowKey={(r) => r.name}
+          onRowClick={(r) => setExpandedRider(expandedRider === r.name ? null : r.name)}
+          isRowExpanded={(r) => expandedRider === r.name}
+          renderExpanded={(r) => (
+            <div className="ml-8 max-w-md">
+              <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Etappe</h3>
+              {riderStageBreakdown(r.name)}
+            </div>
+          )}
+        />
 
         {displayData.length === 0 && (
           <div className="text-center py-12 text-tdf-text-secondary">

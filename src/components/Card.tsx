@@ -8,7 +8,7 @@ interface CardProps {
 
 export function Card({ onClick, children, className = '' }: CardProps) {
   return (
-    <div className={`bg-tdf-card rounded-lg shadow-md overflow-hidden ${className}`}>
+    <div className={`bg-tdf-card rounded-xl border border-gray-200 shadow-sm overflow-hidden ${className}`}>
       <div
         onClick={onClick}
         className={`p-3 ${onClick ? 'cursor-pointer active:bg-gray-50' : ''}`}

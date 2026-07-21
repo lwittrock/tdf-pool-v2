@@ -12,10 +12,10 @@ export function TabButton({ onClick, active = false, children, className = '' }:
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`flex-1 py-3 px-2 rounded-lg font-semibold transition-all text-xs sm:text-sm lg:text-base ${
+      className={`flex-1 py-2.5 px-2 rounded-xl font-semibold shadow-sm transition-all text-xs sm:text-sm lg:text-base ${
         active
-          ? 'bg-tdf-accent text-tdf-on-accent border-2 border-tdf-accent'
-          : 'bg-tdf-button-inactive text-tdf-button-text border-2 border-transparent'
+          ? 'bg-tdf-accent text-tdf-on-accent border border-tdf-accent'
+          : 'bg-white text-tdf-text-secondary border border-gray-200 hover:bg-tdf-card-hover'
       } ${className}`}
     >
       {children}
@@ -37,7 +37,7 @@ export function SearchInput({ value, onChange, placeholder = "Zoek..." }: Search
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3 pr-10 rounded-lg bg-white border-2 border-gray-300 text-tdf-text-primary focus:outline-none focus:border-tdf-accent text-sm sm:text-base"
+        className="w-full px-4 py-2.5 pr-10 rounded-xl bg-white border border-gray-200 shadow-sm text-tdf-text-primary focus:outline-none focus:border-tdf-accent text-sm sm:text-base"
       />
       {value && (
         <button

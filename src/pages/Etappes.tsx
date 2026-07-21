@@ -76,7 +76,7 @@ function StageHeader({ stage }: { stage: StageData }) {
   ].filter(Boolean);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-4">
       <h2 className="text-lg sm:text-2xl font-bold text-tdf-heading">
         Etappe {stage.stage_number}
         {dateLabel && <span className="font-normal text-tdf-text-secondary"> · {dateLabel}</span>}
@@ -286,7 +286,7 @@ function Etappes() {
           {/* Mobile cards */}
           <div className="block lg:hidden space-y-2">
             {resultRows.map((r) => (
-              <div key={r.key} className="bg-white rounded-lg shadow-md p-3">
+              <div key={r.key} className="bg-white rounded-xl border border-gray-200 shadow-sm p-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1 min-w-[44px]">
                     <span className={`font-bold ${r.position === null ? 'text-sm text-tdf-text-muted' : 'text-lg text-tdf-text-primary'}`}>
