@@ -21,3 +21,4 @@ see the git log and `docs/todo-plan.md` for the full plan and rationale.
 - Simple shared-password **login** (~30-day cache) for privacy once real names go live.
 - **2027 team submission** flow (see `docs/season-2027-plan.md`).
 - **Landing page** with preview standings.
+
