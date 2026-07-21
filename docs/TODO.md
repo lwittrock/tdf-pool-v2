@@ -3,9 +3,11 @@
 Open items only. Completed design/polish/table work was pruned 2026-07-21 —
 see the git log and `docs/todo-plan.md` for the full plan and rationale.
 
-## New ideas (not grouped yet)
-what additional interaction can i add for users? that doesn't change the rules of the pool. smaller things i guess
-
+## Engagement & interactions  [D]
+- More interactions that don't change the pool's rules — ideas captured in
+  [engagement-plan.md](engagement-plan.md). Top ROI: **pin yourself**
+  (localStorage). "Biggest winner of the day" is earmarked for the landing page.
+  Not building yet.
 
 ## Content  [#22, #1]
 - **Spelregels**: replace the "in aanbouw" placeholder with scoring rules + an
@@ -19,7 +21,8 @@ what additional interaction can i add for users? that doesn't change the rules o
 ## Later / bigger  [#15, #16, #23]
 - Simple shared-password **login** (~30-day cache) for privacy once real names go live.
 - **2027 team submission** flow (see `docs/season-2027-plan.md`).
-- **Landing page** with preview standings.
+- **Landing page** — aggregates preview standings + **biggest winner of the day**
+  + jersey classementen (#12/#13). See [engagement-plan.md](engagement-plan.md).
 
 ## Jersey competitions  [#12, #13]
 - Green (most stage wins) + yellow (#1 leader) markers, and polka (combativity
