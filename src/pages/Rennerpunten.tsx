@@ -183,7 +183,7 @@ function Rennerpunten() {
   ];
 
   return (
-    <Layout title="Rennerpunten">
+    <Layout title={LABELS.RENNERPUNTEN}>
       {/* Search */}
       <div className="mb-6">
         <SearchInput

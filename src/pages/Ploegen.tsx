@@ -33,7 +33,7 @@ interface PloegRow {
 
 function Ploegen() {
   usePageTitle(LABELS.PLOEGEN);
-  // Deelnemer is kept in the URL (?deelnemer=X) so /poule can deep-link to a
+  // Deelnemer is kept in the URL (?deelnemer=X) so /klassement can deep-link to a
   // participant's ploeg (5.6) and the view is shareable.
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('deelnemer') ?? '');

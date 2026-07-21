@@ -362,7 +362,7 @@ function Poule() {
   ];
 
   return (
-    <Layout title="Poule">
+    <Layout title={LABELS.POULE}>
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex gap-2">
           <TabButton active={activeView === 'stage_individual'} onClick={() => switchView('stage_individual')}>

@@ -31,9 +31,9 @@ export const JERSEY_LABELS = {
 
 export const LABELS = {
   // Pages
-  POULE: 'Poule',
+  POULE: 'Klassement',
   ETAPPES: 'Etappes',
-  RENNERPUNTEN: 'Rennerpunten',
+  RENNERPUNTEN: 'Renners',
   PLOEGEN: 'Ploegen',
   SPELREGELS: 'Spelregels',
   ETAPPE_BEHEER: 'Etappe Beheer',

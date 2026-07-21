@@ -111,7 +111,7 @@ export function getPointsForJersey(
 /**
  * Format medal counts into a compact "emoji + count" display string. Counts
  * are far easier to scan (and compare) than repeated emoji, especially when
- * medals are the active sort key on /poule (7.4).
+ * medals are the active sort key on /klassement (7.4).
  * @example formatMedalDisplay(2, 1, 3) => "🥇2 🥈1 🥉3"
  */
 export function formatMedalDisplay(

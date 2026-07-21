@@ -10,10 +10,10 @@ import EtappeBeheer from './pages/EtappeBeheer';
 // Navigation items (public site only — beheer is bereikbaar via /admin,
 // achter login; bewust niet in de publieke navigatie)
 const navItems = [
-  { path: '/poule', label: 'Poule' },
-  { path: '/etappes', label: 'Etappes' },
-  { path: '/rennerpunten', label: 'Rennerpunten' },
+  { path: '/klassement', label: 'Klassement' },
   { path: '/ploegen', label: 'Ploegen' },
+  { path: '/etappes', label: 'Etappes' },
+  { path: '/renners', label: 'Renners' },
   { path: '/spelregels', label: 'Spelregels' },
 ];
 
@@ -34,7 +34,7 @@ function Navigation() {
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   const linkClass = (path: string) => {
-    const isActive = pathname === path || (path === '/poule' && pathname === '/');
+    const isActive = pathname === path || (path === '/klassement' && pathname === '/');
     if (mobileMenuOpen) {
       return `block py-3 px-4 rounded transition-colors ${
         isActive ? 'text-tdf-accent font-semibold bg-gray-700/50' : 'text-white hover:bg-gray-700/30'
@@ -97,23 +97,26 @@ function App() {
       <main className="max-w-7xl mx-auto">
         <Routes>
           <Route path="/" element={<Poule />} />
-          <Route path="/poule" element={<Poule />} />
-          <Route path="/etappes" element={<Etappes />} />
-          <Route path="/rennerpunten" element={<Rennerpunten />} />
+          <Route path="/klassement" element={<Poule />} />
           <Route path="/ploegen" element={<Ploegen />} />
+          <Route path="/etappes" element={<Etappes />} />
+          <Route path="/renners" element={<Rennerpunten />} />
           <Route path="/spelregels" element={<Spelregels />} />
           <Route path="/admin" element={<EtappeBeheer />} />
           <Route path="/EtappeBeheer" element={<EtappeBeheer />} />
 
-          {/* Redirect the previous PascalCase routes to the new lowercase ones. */}
-          <Route path="/Klassement" element={<Navigate to="/poule" replace />} />
+          {/* Redirect the previous route names (renamed 2026-07: poule→klassement,
+              rennerpunten→renners) plus the legacy PascalCase paths. */}
+          <Route path="/poule" element={<Navigate to="/klassement" replace />} />
+          <Route path="/rennerpunten" element={<Navigate to="/renners" replace />} />
+          <Route path="/Klassement" element={<Navigate to="/klassement" replace />} />
           <Route path="/Etappes" element={<Navigate to="/etappes" replace />} />
-          <Route path="/RennerPunten" element={<Navigate to="/rennerpunten" replace />} />
+          <Route path="/RennerPunten" element={<Navigate to="/renners" replace />} />
           <Route path="/TeamSelectie" element={<Navigate to="/ploegen" replace />} />
           <Route path="/OverDezePoule" element={<Navigate to="/spelregels" replace />} />
 
-          {/* Unknown paths (incl. lowercase typos) fall back to the home page. */}
-          <Route path="*" element={<Navigate to="/poule" replace />} />
+          {/* Unknown paths fall back to the standings. */}
+          <Route path="*" element={<Navigate to="/klassement" replace />} />
         </Routes>
       </main>
     </BrowserRouter>
