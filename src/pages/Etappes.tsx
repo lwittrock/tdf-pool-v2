@@ -15,8 +15,7 @@ import Layout from '../components/Layout';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { StandingsTable, type Column } from '../components/shared/StandingsTable';
 import { MedalIcon } from '../components/shared/MedalDisplay';
-import { CombativityIcon } from '../components/shared/CombativityIcon';
-import { DagploegIcon } from '../components/shared/DagploegIcon';
+import { NumberBib } from '../components/shared/NumberBib';
 import { JERSEY_ICONS, JERSEY_LABELS, LABELS } from '../../lib/constants';
 import type { StageData, RiderStageData } from '../../lib/types';
 
@@ -113,13 +112,13 @@ function JerseyStrip({ stage }: { stage: StageData }) {
       )}
       {stage.combativity && (
         <div className="flex items-center gap-2">
-          <IconSlot><CombativityIcon sizePx={15} /></IconSlot>
+          <IconSlot><NumberBib variant="combative" sizePx={15} /></IconSlot>
           <span className="text-sm text-tdf-text-primary">{stage.combativity}</span>
         </div>
       )}
       {stage.dagploeg && (
         <div className="flex items-center gap-2">
-          <IconSlot><DagploegIcon sizePx={17} /></IconSlot>
+          <IconSlot><NumberBib variant="best" sizePx={17} /></IconSlot>
           <span className="text-sm text-tdf-text-primary">{stage.dagploeg}</span>
         </div>
       )}
@@ -214,7 +213,7 @@ function Etappes() {
       ))}
       {/* The solid red square reads heavier than the jersey glyphs, so render it
           a touch smaller to balance inline next to the name. */}
-      {isCombative(name) && <CombativityIcon sizePx={Math.round(size * 0.8)} />}
+      {isCombative(name) && <NumberBib variant="combative" sizePx={Math.round(size * 0.8)} />}
     </>
   );
 

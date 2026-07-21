@@ -5,7 +5,7 @@
  */
 
 import { JerseyList } from './JerseyIcons';
-import { CombativityIcon } from './CombativityIcon';
+import { NumberBib } from './NumberBib';
 import { getStageAwards } from '../../../lib/data-transforms';
 import type { StageInfo } from '../../../lib/types';
 
@@ -39,7 +39,7 @@ function StageRow({ stage }: StageRowProps) {
         {(jerseys.length > 0 || hasCombative) && (
           <div className="flex gap-1 items-center">
             <JerseyList jerseys={jerseys} />
-            {hasCombative && <CombativityIcon size="sm" />}
+            {hasCombative && <NumberBib variant="combative" size="sm" />}
           </div>
         )}
       </div>
