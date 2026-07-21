@@ -50,7 +50,9 @@ function Navigation() {
       <div className="max-w-7xl mx-auto">
         {/* Mobile Header */}
         <div className="flex justify-between items-center lg:hidden">
-          <span className="text-white font-bold text-lg">TdF Poule</span>
+          <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-white font-bold text-lg">
+            TdF Poule
+          </Link>
           <button
             onClick={toggleMobileMenu}
             className="text-white p-2 hover:bg-gray-700 rounded"
