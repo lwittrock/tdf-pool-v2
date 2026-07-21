@@ -107,7 +107,7 @@ export function Autocomplete({ options, value, onChange, placeholder, disabled, 
       />
       
       {isOpen && filteredOptions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {filteredOptions.map((option, index) => (
             <div
               key={option.id}
@@ -133,7 +133,7 @@ export function Autocomplete({ options, value, onChange, placeholder, disabled, 
       )}
       
       {isOpen && filteredOptions.length === 0 && inputValue && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg px-3 py-2 text-gray-500 text-sm">
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg px-3 py-2 text-gray-500 text-sm">
           {emptyLabel}
         </div>
       )}
@@ -218,7 +218,7 @@ export function MultiAutocomplete({ options, selectedValues, onChange, placehold
 
       {/* Dropdown */}
       {isOpen && filteredOptions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
           {filteredOptions.map((option) => (
             <div
               key={option.id}

@@ -8,7 +8,7 @@ export function RiderName({ name, abandoned }: { name: string; abandoned?: boole
   return (
     <span className="inline-flex items-center gap-1.5">
       <span className="text-tdf-text-muted">{name}</span>
-      <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-tdf-button-inactive text-tdf-text-secondary">
+      <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-gray-100 text-tdf-text-secondary">
         uitgevallen
       </span>
     </span>

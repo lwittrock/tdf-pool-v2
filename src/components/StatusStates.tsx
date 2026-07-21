@@ -25,7 +25,7 @@ export function ErrorState({ message }: { message?: string }) {
         {message && <div className="text-tdf-text-secondary mb-4">{message}</div>}
         <button
           onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-tdf-accent text-tdf-on-accent font-semibold rounded hover:brightness-95"
+          className="px-4 py-2 bg-tdf-accent text-tdf-on-accent font-semibold rounded-xl shadow-sm hover:brightness-95"
         >
           {LABELS.RETRY}
         </button>

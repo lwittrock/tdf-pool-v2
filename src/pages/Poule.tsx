@@ -449,8 +449,10 @@ function Poule() {
                 key={key}
                 type="button"
                 onClick={() => toggleSort(key)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                  sortKey === key ? 'bg-tdf-accent text-tdf-on-accent' : 'bg-tdf-button-inactive text-tdf-button-text'
+                className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                  sortKey === key
+                    ? 'bg-tdf-accent text-tdf-on-accent border-tdf-accent'
+                    : 'bg-white text-tdf-text-secondary border-gray-200 hover:bg-tdf-card-hover'
                 }`}
               >
                 {key === 'points' ? 'Punten' : 'Medailles'}

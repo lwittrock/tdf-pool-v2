@@ -47,12 +47,12 @@ function StageSelector({
             key={n}
             onClick={() => onSelect(n)}
             aria-current={isActive ? 'true' : undefined}
-            className={`w-10 h-10 rounded-lg font-semibold text-sm transition-all ${
+            className={`w-10 h-10 rounded-xl font-semibold text-sm transition-all ${
               isActive
-                ? 'bg-tdf-accent text-tdf-on-accent'
+                ? 'bg-tdf-accent text-tdf-on-accent shadow-sm'
                 : isDone
-                ? 'bg-tdf-button-inactive text-tdf-button-text hover:brightness-95'
-                : 'bg-white text-tdf-text-secondary border border-gray-300 hover:brightness-95'
+                ? 'bg-gray-100 text-tdf-text-primary hover:bg-gray-200'
+                : 'bg-white text-tdf-text-muted border border-gray-200 hover:bg-tdf-card-hover'
             }`}
           >
             {n}
