@@ -13,7 +13,7 @@ import { TabButton, SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
 import { FreshnessNote } from '../components/shared/FreshnessNote';
 import { LoadingState, ErrorState } from '../components/StatusStates';
-import { competitionRankMap, getAllParticipantMedals, getParticipantStages, formatLastUpdated } from '../../lib/data-transforms';
+import { competitionRankMap, rankChangeMap, getAllParticipantMedals, getParticipantStages, formatLastUpdated } from '../../lib/data-transforms';
 import { LABELS } from '../../lib/constants';
 import type { MedalCounts } from '../../lib/types';
 
@@ -132,6 +132,20 @@ function Poule() {
     () => (leaderboardsData ? getAllParticipantMedals(leaderboardsData) : new Map<string, MedalCounts>()),
     [leaderboardsData]
   );
+
+  // Tie-aware +/- vs the previous stage: co-leaders who stay tied show no
+  // change, only a real position move does. The snapshot's *_rank_change is
+  // dense-rank based and wrong across ties, so we recompute it here.
+  const overallChangeMap = useMemo(() => {
+    if (!metadata || !leaderboardsData) return new Map<string, number | null>();
+    const prev = leaderboardsData.leaderboard_by_stage[`stage_${metadata.current_stage - 1}`] ?? [];
+    return rankChangeMap(currentLeaderboard, prev, (e) => e.overall_score, (e) => e.participant_name);
+  }, [metadata, leaderboardsData, currentLeaderboard]);
+  const directieChangeMap = useMemo(() => {
+    if (!metadata || !leaderboardsData) return new Map<string, number | null>();
+    const prev = leaderboardsData.directie_leaderboard_by_stage[`stage_${metadata.current_stage - 1}`] ?? [];
+    return rankChangeMap(currentDirectieLeaderboard, prev, (e) => e.overall_score, (e) => e.directie_name);
+  }, [metadata, leaderboardsData, currentDirectieLeaderboard]);
 
   // Filter and sort results
   const filteredResults = useMemo(() => {
@@ -323,7 +337,7 @@ function Poule() {
           align: 'left' as const,
           headerClassName: 'w-11 pl-1',
           cellClassName: 'w-11 pl-1',
-          render: (e: LeaderboardEntry) => <RankChange change={e.overall_rank_change} />,
+          render: (e: LeaderboardEntry) => <RankChange change={overallChangeMap.get(e.participant_name) ?? 0} />,
         }]),
     { key: 'deelnemer', header: 'Deelnemer', headerClassName: 'pl-8', cellClassName: 'pl-8', render: (e) => e.participant_name },
     { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
@@ -350,7 +364,7 @@ function Poule() {
       cellClassName: 'font-medium w-10 pr-1',
       render: (e) => directieOverallRankMap.get(e.directie_name) ?? e.overall_rank,
     },
-    { key: 'change', header: '+/-', align: 'left', headerClassName: 'w-11 pl-1', cellClassName: 'w-11 pl-1', render: (e) => <RankChange change={e.overall_rank_change} /> },
+    { key: 'change', header: '+/-', align: 'left', headerClassName: 'w-11 pl-1', cellClassName: 'w-11 pl-1', render: (e) => <RankChange change={directieChangeMap.get(e.directie_name) ?? 0} /> },
     { key: 'directie', header: 'Directie', headerClassName: 'pl-8', cellClassName: 'font-medium pl-8', render: (e) => e.directie_name },
     {
       key: 'punten',
@@ -476,7 +490,7 @@ function Poule() {
                         <div className="text-lg font-bold text-tdf-text-primary">#{rank}</div>
                         {/* rank_change describes the points ranking; hide it while medal-sorted */}
                         {!medalSorted && (
-                          <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
+                          <div className="text-xs"><RankChange change={overallChangeMap.get(entry.participant_name) ?? 0} /></div>
                         )}
                       </div>
 
@@ -534,7 +548,7 @@ function Poule() {
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-center justify-center min-w-[50px]">
                       <div className="text-lg font-bold text-tdf-text-primary">#{directieOverallRankMap.get(entry.directie_name) ?? entry.overall_rank}</div>
-                      <div className="text-xs"><RankChange change={entry.overall_rank_change} /></div>
+                      <div className="text-xs"><RankChange change={directieChangeMap.get(entry.directie_name) ?? 0} /></div>
                     </div>
 
                     <div className="flex-1 min-w-0">

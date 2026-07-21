@@ -16,6 +16,7 @@ import {
   stageWinCounts,
   combativityPointsByParticipant,
   classificationLeaders,
+  rankChangeMap,
 } from '../lib/data-transforms';
 import { formatMedalDisplay } from '../lib/scoring-constants';
 import type {
@@ -227,6 +228,30 @@ describe('combativityPointsByParticipant', () => {
     const totals = combativityPointsByParticipant(riders, selections);
     expect(totals.get('Alice')).toBe(10);
     expect(totals.get('Bob')).toBe(5);
+  });
+});
+
+describe('rankChangeMap', () => {
+  const score = (x: { name: string; s: number }) => x.s;
+  const key = (x: { name: string; s: number }) => x.name;
+
+  it('is tie-aware: co-leaders who stay tied show 0, the one who drops shows the real delta', () => {
+    // Three tied for 1st, then one falls to 3rd while two stay tied at 1st.
+    const previous = [{ name: 'A', s: 100 }, { name: 'B', s: 100 }, { name: 'C', s: 100 }];
+    const current = [{ name: 'A', s: 120 }, { name: 'B', s: 120 }, { name: 'C', s: 90 }];
+    const change = rankChangeMap(current, previous, score, key);
+    expect(change.get('A')).toBe(0); // 1 -> 1
+    expect(change.get('B')).toBe(0); // 1 -> 1
+    expect(change.get('C')).toBe(-2); // 1 -> 3
+  });
+
+  it('reports positive for a climb and null for a new entrant', () => {
+    const previous = [{ name: 'A', s: 100 }, { name: 'B', s: 90 }];
+    const current = [{ name: 'B', s: 200 }, { name: 'A', s: 100 }, { name: 'C', s: 50 }];
+    const change = rankChangeMap(current, previous, score, key);
+    expect(change.get('B')).toBe(1); // 2 -> 1
+    expect(change.get('A')).toBe(-1); // 1 -> 2
+    expect(change.get('C')).toBeNull(); // not in previous
   });
 });
 

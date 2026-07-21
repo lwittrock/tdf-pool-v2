@@ -368,6 +368,32 @@ export function competitionRankMap<T>(
 }
 
 /**
+ * Key → tie-aware rank change (previous competition rank − current), so a
+ * positive number means "moved up". Both sides use standard competition ranks
+ * (1,2,2,4), so co-leaders who stay tied register 0 and only a real position
+ * change shows an arrow — matching the displayed Positie. Keys absent from the
+ * previous list (new entrants, or stage 1) map to null (no arrow).
+ *
+ * The snapshot's stored *_rank_change is derived from dense server ranks and is
+ * wrong across ties, so the frontend computes this instead.
+ */
+export function rankChangeMap<T>(
+  current: readonly T[],
+  previous: readonly T[],
+  getScore: (item: T) => number,
+  getKey: (item: T) => string
+): Map<string, number | null> {
+  const currRanks = competitionRankMap(current, getScore, getKey);
+  const prevRanks = competitionRankMap(previous, getScore, getKey);
+  const out = new Map<string, number | null>();
+  currRanks.forEach((rank, key) => {
+    const prev = prevRanks.get(key);
+    out.set(key, prev === undefined ? null : prev - rank);
+  });
+  return out;
+}
+
+/**
  * Create overall rank map for riders
  */
 export function createRiderRankMap(ridersData: RidersData): Record<string, number> {
