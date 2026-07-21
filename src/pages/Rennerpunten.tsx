@@ -8,6 +8,7 @@ import { useMetadata, useRiders, useRiderRankings, useStagesData } from '../hook
 import { usePageTitle } from '../hooks/usePageTitle';
 import { SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
+import { spacerColumn } from '../components/shared/spacerColumn';
 import { FreshnessNote } from '../components/shared/FreshnessNote';
 import { RiderName } from '../components/shared/RiderName';
 import { abandonedRiderSet } from '../../lib/data-transforms';
@@ -165,19 +166,23 @@ function Rennerpunten() {
       cellClassName: 'font-medium',
       render: (r) => totalDisplayRanks.get(r.name) ?? r.overall_rank,
     },
-    { key: 'renner', header: 'Renner', render: (r) => <RiderName name={r.name} abandoned={abandoned.has(r.name)} /> },
+    { key: 'renner', header: 'Renner', headerClassName: 'pl-6', cellClassName: 'pl-6', render: (r) => <RiderName name={r.name} abandoned={abandoned.has(r.name)} /> },
+    spacerColumn('mid'),
     { key: 'team', header: 'Team', cellClassName: 'text-tdf-text-highlight', render: (r) => r.team },
     {
       key: 'punten',
       header: 'Punten',
       align: 'right',
-      cellClassName: 'font-semibold text-tdf-score',
+      headerClassName: 'pr-2',
+      cellClassName: 'font-semibold text-tdf-score pr-2',
       render: (r) => r.total_points,
     },
     {
       key: 'medals',
       header: 'Etappe Medailles',
-      align: 'center',
+      align: 'right',
+      headerClassName: 'pl-2',
+      cellClassName: 'pl-2',
       render: (r) => r.medal_counts?.display || '—',
     },
   ];

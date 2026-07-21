@@ -10,6 +10,7 @@ import { Card, CardRow, CardExpandedSection } from '../components/Card';
 import { Autocomplete } from '../components/Autocomplete';
 import { RiderName } from '../components/shared/RiderName';
 import { StandingsTable, type Column } from '../components/shared/StandingsTable';
+import { spacerColumn } from '../components/shared/spacerColumn';
 import { useRiders, useTeamSelections, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
 import {
@@ -216,8 +217,11 @@ function Ploegen() {
     {
       key: 'renner',
       header: 'Renner',
+      headerClassName: 'pl-6',
+      cellClassName: 'pl-6',
       render: (r) => <RiderName name={r.name} abandoned={abandoned.has(r.name)} />,
     },
+    spacerColumn<PloegRow>('mid'),
     { key: 'team', header: 'Team', cellClassName: 'text-tdf-text-secondary', render: (r) => r.team },
     {
       key: 'punten',

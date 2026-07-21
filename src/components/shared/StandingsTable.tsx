@@ -65,7 +65,7 @@ export function StandingsTable<T>({
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`sticky top-0 z-10 bg-white px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary border-b border-gray-200 first:rounded-tl-xl last:rounded-tr-xl ${alignClass[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
+                className={`sticky top-0 z-10 whitespace-nowrap bg-white px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary border-b border-gray-200 first:rounded-tl-xl last:rounded-tr-xl ${alignClass[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
               >
                 {col.header}
               </th>
@@ -98,7 +98,7 @@ export function StandingsTable<T>({
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className={`px-4 py-2.5 text-sm ${alignClass[col.align ?? 'left']} ${col.cellClassName ?? ''}`}
+                      className={`whitespace-nowrap px-4 py-2.5 text-sm ${alignClass[col.align ?? 'left']} ${col.cellClassName ?? ''}`}
                     >
                       {col.render(row, idx)}
                     </td>

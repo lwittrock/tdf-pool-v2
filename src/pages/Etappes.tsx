@@ -14,6 +14,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import Layout from '../components/Layout';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { StandingsTable, type Column } from '../components/shared/StandingsTable';
+import { spacerColumn } from '../components/shared/spacerColumn';
 import { MedalIcon } from '../components/shared/MedalDisplay';
 import { NumberBib } from '../components/shared/NumberBib';
 import { JERSEY_ICONS, JERSEY_LABELS, LABELS } from '../../lib/constants';
@@ -232,6 +233,8 @@ function Etappes() {
     {
       key: 'renner',
       header: 'Renner',
+      headerClassName: 'pl-6',
+      cellClassName: 'pl-6',
       render: (r) => (
         <div className="flex items-center gap-2">
           <span>{r.name}</span>
@@ -239,6 +242,7 @@ function Etappes() {
         </div>
       ),
     },
+    spacerColumn<ResultRow>('mid'),
     {
       key: 'team',
       header: 'Team',

@@ -11,6 +11,7 @@ import { RankChange } from '../components/shared/RankChange';
 import { MedalIcon, MedalCountsAligned, MedalCountsColumns } from '../components/shared/MedalDisplay';
 import { TabButton, SearchInput } from '../components/Button';
 import { StandingsTable, ExpandableCard, type Column } from '../components/shared/StandingsTable';
+import { spacerColumn } from '../components/shared/spacerColumn';
 import { FreshnessNote } from '../components/shared/FreshnessNote';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { competitionRankMap, rankChangeMap, getAllParticipantMedals, getParticipantStages, formatLastUpdated } from '../../lib/data-transforms';
@@ -278,7 +279,8 @@ function Poule() {
         return (<>{rank} <MedalIcon position={rank} className="ml-1" /></>);
       },
     },
-    { key: 'deelnemer', header: 'Deelnemer', render: (e) => e.participant_name },
+    { key: 'deelnemer', header: 'Deelnemer', headerClassName: 'pl-6', cellClassName: 'pl-6', render: (e) => e.participant_name },
+    spacerColumn<LeaderboardEntry>('mid'),
     { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
     {
       key: 'punten',
@@ -368,19 +370,23 @@ function Poule() {
           cellClassName: 'w-11 pl-1',
           render: (e: LeaderboardEntry) => <RankChange change={overallChangeMap.get(e.participant_name) ?? 0} />,
         }]),
-    { key: 'deelnemer', header: 'Deelnemer', headerClassName: 'pl-8', cellClassName: 'pl-8', render: (e) => e.participant_name },
+    { key: 'deelnemer', header: 'Deelnemer', headerClassName: 'pl-6', cellClassName: 'pl-6', render: (e) => e.participant_name },
+    spacerColumn<LeaderboardEntry>('mid'),
     { key: 'directie', header: 'Directie', cellClassName: 'text-tdf-text-highlight', render: (e) => e.directie_name },
     {
       key: 'punten',
       header: sortableHeader('points', 'Punten'),
       align: 'right',
-      cellClassName: 'font-semibold text-tdf-score',
+      headerClassName: 'pr-2',
+      cellClassName: 'font-semibold text-tdf-score pr-2',
       render: (e) => e.overall_score,
     },
     {
       key: 'medals',
       header: sortableHeader('medals', 'Etappe Medailles'),
       align: 'right',
+      headerClassName: 'pl-2',
+      cellClassName: 'pl-2',
       render: (e) => {
         const m = medalsByParticipant.get(e.participant_name) ?? NO_MEDALS;
         return <MedalCountsColumns gold={m.gold} silver={m.silver} bronze={m.bronze} />;
@@ -397,12 +403,13 @@ function Poule() {
       render: (e) => directieOverallRankMap.get(e.directie_name) ?? e.overall_rank,
     },
     { key: 'change', header: '+/-', align: 'left', headerClassName: 'w-11 pl-1', cellClassName: 'w-11 pl-1', render: (e) => <RankChange change={directieChangeMap.get(e.directie_name) ?? 0} /> },
-    { key: 'directie', header: 'Directie', headerClassName: 'pl-8', cellClassName: 'font-medium pl-8', render: (e) => e.directie_name },
+    { key: 'directie', header: 'Directie', headerClassName: 'pl-6', cellClassName: 'font-medium pl-6', render: (e) => e.directie_name },
+    spacerColumn<DirectieEntry>('mid'),
     {
       key: 'punten',
       header: 'Punten',
       align: 'right',
-      cellClassName: 'font-semibold text-tdf-score',
+      cellClassName: 'font-semibold text-tdf-score pr-2',
       render: (e) => e.overall_score.toFixed(1),
     },
   ];
