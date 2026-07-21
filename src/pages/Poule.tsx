@@ -226,7 +226,8 @@ function Poule() {
     </Link>
   );
 
-  // Per-etappe list for a participant, shared by the Algemeen card and row.
+  // Per-etappe list for a participant — the mobile card body (narrow, so a
+  // vertical list reads best).
   const participantStageList = (name: string) =>
     getParticipantStages(leaderboardsData, name).map((stage) => (
       <div key={stage.stageKey} className="flex justify-between py-1.5 border-b border-gray-100 last:border-0">
@@ -237,6 +238,34 @@ function Poule() {
         </div>
       </div>
     ));
+
+  // Desktop expansion: the same per-etappe points as a compact full-width grid
+  // of tiles (etappe · dagrang · punten), so it uses the horizontal space and
+  // stays a few rows tall instead of one long column. Points is the anchor;
+  // etappe is a quiet label; the dagrang whispers. Grey tiles = no points.
+  const participantStageGrid = (name: string) => (
+    <div className="grid gap-1.5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(104px, 1fr))' }}>
+      {getParticipantStages(leaderboardsData, name).map((stage) => {
+        const zero = stage.stage_score <= 0;
+        return (
+          <div
+            key={stage.stageKey}
+            className={`flex items-baseline gap-1.5 px-2.5 py-1.5 rounded-lg bg-white ${zero ? 'opacity-70' : ''}`}
+          >
+            <span className={`text-xs ${zero ? 'text-tdf-text-muted' : 'text-tdf-text-secondary'}`}>
+              E{stage.stageNum}
+            </span>
+            {!zero && <span className="text-[11px] text-tdf-text-muted tabular-nums">#{stage.stage_rank}</span>}
+            <span
+              className={`ml-auto text-sm tabular-nums ${zero ? 'font-medium text-tdf-text-muted' : 'font-bold text-tdf-text-primary'}`}
+            >
+              {stage.stage_score}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
 
   // ---- Column specs -----------------------------------------------------------
   const stageColumns: Column<LeaderboardEntry>[] = [
@@ -528,9 +557,11 @@ function Poule() {
             onRowClick={(e) => toggleItemDetails(e.participant_name)}
             isRowExpanded={(e) => isOpen(e.participant_name)}
             renderExpanded={(entry) => (
-              <div className="ml-8 max-w-md">
-                <h3 className="text-sm font-semibold mb-2 pb-2 text-tdf-text-highlight border-b">Punten per Etappe</h3>
-                {participantStageList(entry.participant_name)}
+              <div>
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary mb-2.5">
+                  Punten per etappe
+                </h3>
+                {participantStageGrid(entry.participant_name)}
                 {ploegLink(entry.participant_name)}
               </div>
             )}
