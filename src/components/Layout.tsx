@@ -22,7 +22,7 @@ function Layout({ children, title, subtitle }: LayoutProps) {
       {children}
 
       <footer className="mt-12 sm:mt-16 pt-6 border-t border-gray-200 text-center text-xs text-tdf-text-secondary">
-        <p>© {new Date().getFullYear()} TdF Poule</p>
+        <p>© {new Date().getFullYear()} Lars Wittrock</p>
         <p className="mt-1">Onofficieel poulespel · niet geaffilieerd met A.S.O. of de Tour de France</p>
       </footer>
     </div>
