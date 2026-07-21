@@ -281,8 +281,14 @@ function Etappes() {
         </div>
       ) : (
         <>
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary mb-2.5">
+            Truien &amp; klassementen
+          </h3>
           <JerseyStrip stage={stage} />
 
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-tdf-text-secondary mb-3">
+            Uitslag
+          </h3>
           {/* Mobile cards */}
           <div className="block lg:hidden space-y-2">
             {resultRows.map((r) => (
