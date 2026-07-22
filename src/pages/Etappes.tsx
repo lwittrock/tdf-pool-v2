@@ -268,7 +268,7 @@ function Etappes() {
   ];
 
   return (
-    <Layout title="Etappes">
+    <Layout title={LABELS.ETAPPES}>
       <StageSelector
         stageNumbers={stageNumbers}
         completed={completed}

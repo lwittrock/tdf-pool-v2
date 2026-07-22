@@ -13,6 +13,7 @@ import { StandingsTable, type Column } from '../components/shared/StandingsTable
 import { spacerColumn } from '../components/shared/spacerColumn';
 import { useRiders, useTeamSelections, useStagesData } from '../hooks/useTdfData';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { LoadingState, ErrorState } from '../components/StatusStates';
 import {
   getRiderStages,
   calculateSelectionCounts,
@@ -154,20 +155,12 @@ function Ploegen() {
 
   // Loading state
   if (loading) {
-    return (
-      <Layout title={LABELS.PLOEGEN}>
-        <div className="text-center py-12">Loading...</div>
-      </Layout>
-    );
+    return <LoadingState />;
   }
 
   // Error state
   if (error) {
-    return (
-      <Layout title={LABELS.PLOEGEN}>
-        <div className="text-center py-12 text-red-600">Error: {error.message}</div>
-      </Layout>
-    );
+    return <ErrorState message={error.message} />;
   }
 
   if (!ridersData || !teamSelectionsData) return null;

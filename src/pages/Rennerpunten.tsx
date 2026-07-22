@@ -11,45 +11,13 @@ import { StandingsTable, ExpandableCard, type Column } from '../components/share
 import { spacerColumn } from '../components/shared/spacerColumn';
 import { FreshnessNote } from '../components/shared/FreshnessNote';
 import { RiderName } from '../components/shared/RiderName';
+import { NumberBib } from '../components/shared/NumberBib';
+import { MedalCountsAligned, MedalCountsColumns } from '../components/shared/MedalDisplay';
 import { abandonedRiderSet } from '../../lib/data-transforms';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { competitionRankMap, getRiderStagesFromData, formatLastUpdated } from '../../lib/data-transforms';
 import { JERSEY_ICONS, LABELS } from '../../lib/constants';
-import type { RidersData, RiderData, RiderStageData, StageInfo } from '../../lib/types';
-
-// Combative Icon Component
-interface CombativeIconProps {
-  size?: 'sm' | 'md';
-}
-
-const CombativeIcon = ({ size = 'sm' }: CombativeIconProps) => {
-  const dimensions = size === 'sm' ? 12 : 16;
-  const fontSize = size === 'sm' ? 10 : 12;
-
-  return (
-    <svg
-      width={dimensions}
-      height={dimensions}
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-      className="flex-shrink-0"
-    >
-      <rect width="20" height="20" fill="#d32f2fd0" rx="2"/>
-      <text
-        x="10"
-        y="10"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="white"
-        fontSize={fontSize}
-        fontWeight="bold"
-        fontFamily="Arial, sans-serif"
-      >
-        #
-      </text>
-    </svg>
-  );
-};
+import type { RidersData, RiderData, RiderStageData, StageInfo, RiderRankingsTotalEntry } from '../../lib/types';
 
 function Rennerpunten() {
   usePageTitle(LABELS.RENNERPUNTEN);
@@ -143,7 +111,7 @@ function Rennerpunten() {
                 {stageAwards.jerseys.map((jersey) => (
                   <img key={jersey} src={JERSEY_ICONS[jersey]} alt={`${jersey} jersey`} className="w-3.5 h-3.5" />
                 ))}
-                {stageAwards.hasCombative && <CombativeIcon size="sm" />}
+                {stageAwards.hasCombative && <NumberBib variant="combative" size="sm" />}
               </div>
             )}
           </div>
@@ -159,7 +127,7 @@ function Rennerpunten() {
       );
     });
 
-  const columns: Column<any>[] = [
+  const columns: Column<RiderRankingsTotalEntry>[] = [
     {
       key: 'pos',
       header: 'Positie',
@@ -167,7 +135,7 @@ function Rennerpunten() {
       render: (r) => totalDisplayRanks.get(r.name) ?? r.overall_rank,
     },
     { key: 'renner', header: 'Renner', headerClassName: 'pl-6', cellClassName: 'pl-6', render: (r) => <RiderName name={r.name} abandoned={abandoned.has(r.name)} /> },
-    spacerColumn('mid'),
+    spacerColumn<RiderRankingsTotalEntry>('mid'),
     { key: 'team', header: 'Team', cellClassName: 'text-tdf-text-highlight', render: (r) => r.team },
     {
       key: 'punten',
@@ -179,11 +147,17 @@ function Rennerpunten() {
     },
     {
       key: 'medals',
-      header: 'Etappe Medailles',
+      header: LABELS.STAGE_MEDALS,
       align: 'right',
       headerClassName: 'pl-2',
       cellClassName: 'pl-2',
-      render: (r) => r.medal_counts?.display || '—',
+      render: (r) => (
+        <MedalCountsColumns
+          gold={r.medal_counts.gold}
+          silver={r.medal_counts.silver}
+          bronze={r.medal_counts.bronze}
+        />
+      ),
     },
   ];
 
@@ -202,7 +176,7 @@ function Rennerpunten() {
       <main>
         {/* Mobile Cards */}
         <div className="block lg:hidden space-y-2">
-          {filteredResults.map((rider: any) => {
+          {filteredResults.map((rider) => {
             const riderData = getRiderData(rider.name);
             return (
               <ExpandableCard
@@ -224,8 +198,14 @@ function Rennerpunten() {
 
                     <div className="text-right">
                       <div className="text-lg font-bold text-tdf-primary">{rider.total_points}</div>
-                      {rider.medal_counts?.display && (
-                        <div className="text-sm leading-none mt-0.5">{rider.medal_counts.display}</div>
+                      {rider.medal_counts.display && (
+                        <div className="text-sm mt-0.5 flex justify-end">
+                          <MedalCountsAligned
+                            gold={rider.medal_counts.gold}
+                            silver={rider.medal_counts.silver}
+                            bronze={rider.medal_counts.bronze}
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
@@ -246,10 +226,10 @@ function Rennerpunten() {
         <StandingsTable
           columns={columns}
           rows={filteredResults}
-          getRowKey={(r: any) => r.name}
-          onRowClick={(r: any) => setExpandedRider(expandedRider === r.name ? null : r.name)}
-          isRowExpanded={(r: any) => expandedRider === r.name}
-          renderExpanded={(r: any) => {
+          getRowKey={(r) => r.name}
+          onRowClick={(r) => setExpandedRider(expandedRider === r.name ? null : r.name)}
+          isRowExpanded={(r) => expandedRider === r.name}
+          renderExpanded={(r) => {
             const riderData = getRiderData(r.name);
             if (!riderData) return null;
             return (

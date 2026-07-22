@@ -1,11 +1,11 @@
 /**
  * Shared standings primitives used by Poule, Rennerpunten and Etappes.
  *
- * `StandingsTable` renders the desktop table skeleton (scroll wrapper, styled
- * header, zebra striping, optional click-to-expand row) from a column spec, so
- * the five hand-rolled tables share one place for header tokens, striping and
- * keyboard affordance. `ExpandableCard` is the mobile counterpart: the card
- * shell + expansion region, with bespoke content passed as children.
+ * `StandingsTable` renders the desktop table skeleton (card surface, styled
+ * header, hairline row dividers — no zebra, optional click-to-expand row) from
+ * a column spec, so the hand-rolled tables share one place for header tokens,
+ * dividers and keyboard affordance. `ExpandableCard` is the mobile counterpart:
+ * the card shell + expansion region, with bespoke content passed as children.
  *
  * Cell/heading content stays bespoke — pass it via `Column.render` / `header`
  * and per-column `cellClassName` (e.g. font-semibold, score colours).

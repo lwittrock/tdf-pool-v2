@@ -50,8 +50,7 @@ export const LABELS = {
   STAGE_MEDALS: 'Etappe Medailles',
   RANK_CHANGE: '+/-',
   SEARCH_PLACEHOLDER: 'Zoek deelnemer of directie...',
-  SEARCH_TEAM_PLACEHOLDER: 'Toon team van deelnemer...',
-  
+
   // Riders
   RIDER: 'Renner',
   POINTS_PER_STAGE: 'Punten per Etappe',
@@ -93,29 +92,6 @@ export const SELECTION_ICONS = {
 export const SELECTION_THRESHOLDS = {
   POPULAR: 50, // percentage
   TOP_RIDER_RANK: 10,
-} as const;
-
-// ============================================================================
-// Table Configuration
-// ============================================================================
-
-export const TABLE_CLASSES = {
-  HEADER: 'bg-table-header',
-  ROW_EVEN: 'bg-white',
-  ROW_ODD: 'bg-tdf-bg',
-  ROW_HOVER: 'hover:bg-gray-100',
-  EXPANDED: 'bg-gray-100',
-} as const;
-
-// ============================================================================
-// Breakpoints (matching Tailwind)
-// ============================================================================
-
-export const BREAKPOINTS = {
-  SM: 640,
-  MD: 768,
-  LG: 1024,
-  XL: 1280,
 } as const;
 
 // ============================================================================
